@@ -13,6 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.sarthak.trackit.trackit.fragments.MapsFragment;
+
 public class LocationService extends Service {
 
     public static final String BROADCAST_ACTION = "Hello World";

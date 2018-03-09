@@ -1,4 +1,4 @@
-package com.sarthak.trackit.trackit;
+package com.sarthak.trackit.trackit.activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -14,6 +14,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.sarthak.trackit.trackit.utils.Constants;
+import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.model.User;
+import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
 public class AccountSetupActivity extends AppCompatActivity implements View.OnFocusChangeListener, View.OnClickListener {
 

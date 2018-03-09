@@ -1,4 +1,4 @@
-package com.sarthak.trackit.trackit;
+package com.sarthak.trackit.trackit.activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -22,6 +22,9 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.sarthak.trackit.trackit.utils.Constants;
+import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
 import java.util.concurrent.TimeUnit;
 

@@ -1,4 +1,4 @@
-package com.sarthak.trackit.trackit;
+package com.sarthak.trackit.trackit.utils;
 
 public class Constants {
 

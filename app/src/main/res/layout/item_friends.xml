@@ -1,0 +1,53 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="horizontal"
+    android:weightSum="5">
+
+    <com.sarthak.trackit.trackit.utils.SquareImageView
+        android:id="@+id/image_friend"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="@dimen/padding_smaller"/>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/margin_small">
+
+        <TextView
+            android:id="@+id/text_friend_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="City" />
+
+        <TextView
+            android:id="@+id/text_friend_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_friend_name"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:textSize="12dp"
+            tools:text="filler" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="#bdbdbd" />
+
+    </RelativeLayout>
+
+</LinearLayout>

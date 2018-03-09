@@ -19,7 +19,7 @@ import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
-public class AccountSetupActivity extends AppCompatActivity implements View.OnFocusChangeListener, View.OnClickListener {
+public class AccountSetupActivity extends BaseActivity implements View.OnFocusChangeListener, View.OnClickListener {
 
     private String displayName, username;
 
@@ -33,6 +33,7 @@ public class AccountSetupActivity extends AppCompatActivity implements View.OnFo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_setup);
+        setUpToolbar(this);
 
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
@@ -43,6 +44,11 @@ public class AccountSetupActivity extends AppCompatActivity implements View.OnFo
 
         mUsernameEt.setOnFocusChangeListener(this);
         mSignUpBtn.setOnClickListener(this);
+    }
+
+    @Override
+    protected int getToolbarID() {
+        return R.id.account_setup_activity_toolbar;
     }
 
     @Override

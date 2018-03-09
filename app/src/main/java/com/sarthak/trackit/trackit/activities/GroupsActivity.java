@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
 
-public class GroupsActivity extends AppCompatActivity implements View.OnClickListener
+public class GroupsActivity extends BaseActivity implements View.OnClickListener
 ,GroupFriendsAdapter.setOnGroupFriendClickListener{
 
     FloatingActionButton fabBottomSheet;
@@ -25,6 +25,7 @@ public class GroupsActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
+        setUpToolbar(this);
 
         rvGroupMembers=findViewById(R.id.recycler_group_members);
         fabBottomSheet = findViewById(R.id.fab_bottom_sheet);
@@ -67,6 +68,11 @@ public class GroupsActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
         fabBottomSheet.setOnClickListener(this);
+    }
+
+    @Override
+    protected int getToolbarID() {
+        return R.id.groups_activity_toolbar;
     }
 
     @Override

@@ -28,7 +28,7 @@ import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
 import java.util.concurrent.TimeUnit;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
     private String phone, verificationId;
@@ -49,6 +49,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setUpToolbar(this);
 
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
@@ -60,6 +61,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mLoginBtn = findViewById(R.id.login_login_btn);
 
         mLoginBtn.setOnClickListener(this);
+    }
+
+    @Override
+    protected int getToolbarID() {
+        return R.id.login_activity_toolbar;
     }
 
     @Override

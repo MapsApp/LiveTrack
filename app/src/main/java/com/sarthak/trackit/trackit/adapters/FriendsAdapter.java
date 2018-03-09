@@ -60,7 +60,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
         TextView txtFriendName,txtFriendUserName;
         ImageView imgFriend;
 
-        public FriendsViewHolder(View itemView) {
+        private FriendsViewHolder(View itemView) {
             super(itemView);
 
             txtFriendName=itemView.findViewById(R.id.text_friend_name);

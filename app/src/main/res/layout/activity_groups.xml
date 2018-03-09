@@ -6,13 +6,26 @@
     android:layout_height="match_parent"
     tools:context="com.sarthak.trackit.trackit.activities.GroupsActivity">
 
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include
+            android:id="@+id/groups_activity_toolbar"
+            layout="@layout/toolbar" />
+
+    </android.support.design.widget.AppBarLayout>
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/mapActivity"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="?actionBarSize"/>
+        android:layout_marginBottom="?actionBarSize" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_bottom_sheet"

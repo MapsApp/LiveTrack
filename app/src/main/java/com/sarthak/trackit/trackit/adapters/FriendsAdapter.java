@@ -35,6 +35,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
 
     @Override
     public void onBindViewHolder(FriendsViewHolder holder, int position) {
+
+        //Dummy Data
         String[] names=holder.itemView.getContext().getResources().getStringArray(R.array.names);
         String[] user_names=holder.itemView.getContext().getResources().getStringArray(R.array.user_names);
 

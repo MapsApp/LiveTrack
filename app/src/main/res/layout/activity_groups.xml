@@ -1,9 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.sarthak.trackit.trackit.activities.GroupsActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/mapActivity"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="?actionBarSize"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_bottom_sheet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_smaller"
+        app:fabSize="mini"
+        app:layout_anchor="@+id/bottom_sheet_layout"
+        app:layout_anchorGravity="right|top"
+        app:srcCompat="@drawable/ic_expand_less"
+        tools:ignore="RtlCompat" />
+
+    <include
+        android:id="@+id/bottom_sheet_layout"
+        layout="@layout/fragment_bottom_sheet" />
+</android.support.design.widget.CoordinatorLayout>

@@ -90,6 +90,15 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private String[] mLikelyPlaceAttributions;
     private LatLng[] mLikelyPlaceLatLngs;
 
+    public static MapsFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        MapsFragment fragment = new MapsFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 

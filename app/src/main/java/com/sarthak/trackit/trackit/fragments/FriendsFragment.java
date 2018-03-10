@@ -1,5 +1,6 @@
 package com.sarthak.trackit.trackit.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.activities.SearchActivity;
 import com.sarthak.trackit.trackit.adapters.FriendsAdapter;
 
 /**
@@ -53,11 +55,22 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.fab_create_group:
+                launchSearch();
+                break;
+        }
 
     }
 
     @Override
     public void OnFriendItemClicked(View view, int position) {
+
+    }
+
+    private void launchSearch(){
+        Intent intent = new Intent(getContext(), SearchActivity.class);
+        startActivity(intent);
 
     }
 }

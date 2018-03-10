@@ -22,7 +22,7 @@ import com.squareup.picasso.Picasso;
 
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
 
-    setOnFriendClickListener mListener;
+    private setOnFriendClickListener mListener;
 
     public FriendsAdapter(setOnFriendClickListener mListener) {
         this.mListener = mListener;

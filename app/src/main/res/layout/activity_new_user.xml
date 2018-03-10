@@ -35,7 +35,7 @@
             android:id="@+id/button_phone_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
+            android:layout_margin="@dimen/margin_small"
             android:background="@drawable/button_blue"
             android:text="Log In With Phone Number"
             android:textColor="@android:color/white" />
@@ -44,10 +44,10 @@
             android:id="@+id/button_guest_sign_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
+            android:layout_margin="@dimen/margin_small"
             android:background="@drawable/button_red"
             android:text="Log In As Guest"
-            android:textColor="@android:color/white"/>
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

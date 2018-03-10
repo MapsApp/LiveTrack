@@ -26,10 +26,10 @@
             android:id="@+id/text_group_friend_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
+            android:paddingEnd="@dimen/padding_small"
+            android:paddingStart="@dimen/padding_small"
             android:textColor="@android:color/black"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             tools:text="City" />
 
@@ -38,16 +38,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/text_group_friend_name"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
-            android:textSize="12sp"
+            android:paddingEnd="@dimen/padding_small"
+            android:paddingStart="@dimen/padding_small"
+            android:textSize="14sp"
             tools:text="filler" />
 
         <View
             android:layout_width="wrap_content"
             android:layout_alignParentBottom="true"
+            android:paddingStart="@dimen/padding_small"
             android:layout_height=".5dp"
-            android:background="#d7d7d7" />
+            android:background="#d7d7d7"
+            tools:ignore="RtlCompat" />
 
     </RelativeLayout>
 

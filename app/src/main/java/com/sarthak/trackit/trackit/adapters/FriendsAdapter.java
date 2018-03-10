@@ -1,14 +1,19 @@
 package com.sarthak.trackit.trackit.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.sarthak.trackit.trackit.utils.CircleTransform;
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.utils.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -23,29 +28,30 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
         this.mListener = mListener;
     }
 
-    public interface setOnFriendClickListener{
-        void OnFriendItemClicked(View view,int position);
+    public interface setOnFriendClickListener {
+        void OnFriendItemClicked(View view, int position);
     }
 
+    @NonNull
     @Override
-    public FriendsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friends,parent,false);
+    public FriendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friends, parent, false);
         return new FriendsAdapter.FriendsViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(FriendsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull FriendsViewHolder holder, int position) {
 
         //Dummy Data
-        String[] names=holder.itemView.getContext().getResources().getStringArray(R.array.names);
-        String[] user_names=holder.itemView.getContext().getResources().getStringArray(R.array.user_names);
+        String[] names = holder.itemView.getContext().getResources().getStringArray(R.array.names);
+        String[] user_names = holder.itemView.getContext().getResources().getStringArray(R.array.user_names);
 
         Picasso.with(holder.itemView.getContext())
                 .load("https://www.w3schools.com/css/trolltunga.jpg")
                 .transform(new CircleTransform())
                 .into(holder.imgFriend);
 
-        for(int i=0;i<=position;i++){
+        for (int i = 0; i <= position; i++) {
             holder.txtFriendName.setText(names[i]);
             holder.txtFriendUserName.setText(user_names[i]);
         }
@@ -56,24 +62,87 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
         return 3;
     }
 
-    public class FriendsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView txtFriendName,txtFriendUserName;
+    public class FriendsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+            , View.OnLongClickListener {
+
+        TextView txtFriendName, txtFriendUserName;
         ImageView imgFriend;
+        LinearLayout optionsLayout;
+        ImageButton btnRemoveFriend, btnCreateGroup, btnExpand, btnDummy;
+        RelativeLayout parentLayout;
 
         private FriendsViewHolder(View itemView) {
             super(itemView);
 
-            txtFriendName=itemView.findViewById(R.id.text_friend_name);
-            txtFriendUserName=itemView.findViewById(R.id.text_friend_username);
+            parentLayout = itemView.findViewById(R.id.parent_layout_friends);
+            txtFriendName = itemView.findViewById(R.id.text_friend_name);
+            txtFriendUserName = itemView.findViewById(R.id.text_friend_username);
+            optionsLayout = itemView.findViewById(R.id.options_layout);
 
-            imgFriend=itemView.findViewById(R.id.image_friend);
+            btnRemoveFriend = itemView.findViewById(R.id.button_remove_friend);
+            btnCreateGroup = itemView.findViewById(R.id.button_create_group);
+            btnDummy = itemView.findViewById(R.id.button_dummy);
 
-            itemView.setOnClickListener(this);
+            btnExpand = itemView.findViewById(R.id.button_expand);
+
+            imgFriend = itemView.findViewById(R.id.image_friend);
+
+            btnRemoveFriend.setOnLongClickListener(this);
+            btnCreateGroup.setOnLongClickListener(this);
+            btnDummy.setOnLongClickListener(this);
+
+            btnExpand.setOnClickListener(this);
+            parentLayout.setOnClickListener(this);
+
+            btnRemoveFriend.setOnClickListener(this);
+            btnCreateGroup.setOnClickListener(this);
+            btnDummy.setOnClickListener(this);
+
         }
 
         @Override
         public void onClick(View v) {
-            mListener.OnFriendItemClicked(v,getAdapterPosition());
+
+
+            switch (v.getId()) {
+                case R.id.parent_layout_friends:
+                    mListener.OnFriendItemClicked(v, getAdapterPosition());
+                    break;
+
+                case R.id.button_expand:
+
+                    switch (optionsLayout.getVisibility()) {
+                        case View.INVISIBLE:
+                        case View.GONE:
+                            optionsLayout.setVisibility(View.VISIBLE);
+                            btnExpand.setImageResource(R.drawable.ic_expand_less_black);
+                            break;
+                        case View.VISIBLE:
+                            optionsLayout.setVisibility(View.GONE);
+                            btnExpand.setImageResource(R.drawable.ic_expand_more_black);
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            switch (v.getId()) {
+
+                case R.id.button_remove_friend:
+                    Toast.makeText(itemView.getContext(), "Remove Friend Clicked", Toast.LENGTH_SHORT).show();
+                    break;
+
+                case R.id.button_create_group:
+                    Toast.makeText(itemView.getContext(), "Create Group Clicked", Toast.LENGTH_SHORT).show();
+                    break;
+
+                case R.id.button_dummy:
+                    Toast.makeText(itemView.getContext(), "Dummy Clicked", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+            return false;
         }
     }
 }

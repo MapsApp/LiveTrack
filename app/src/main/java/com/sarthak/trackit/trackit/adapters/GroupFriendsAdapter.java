@@ -1,5 +1,6 @@
 package com.sarthak.trackit.trackit.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,14 +28,15 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
         void OnGroupFriendItemClicked(View view, int position);
     }
 
+    @NonNull
     @Override
-    public GroupFriendsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public GroupFriendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group_friends,parent,false);
         return new GroupFriendsAdapter.GroupFriendsViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(GroupFriendsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull GroupFriendsViewHolder holder, int position) {
         String[] names=holder.itemView.getContext().getResources().getStringArray(R.array.names);
 
         Picasso.with(holder.itemView.getContext())

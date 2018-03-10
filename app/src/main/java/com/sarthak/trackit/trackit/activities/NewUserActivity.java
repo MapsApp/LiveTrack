@@ -2,43 +2,52 @@ package com.sarthak.trackit.trackit.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.sarthak.trackit.trackit.FacebookLoginManager;
 import com.sarthak.trackit.trackit.GuestLogin;
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
-public class NewUserActivity extends BaseActivity implements View.OnClickListener {
+import java.util.Arrays;
 
-    Button btnGuestLogin,btnPhoneLogin;
+public class NewUserActivity extends BaseActivity implements View.OnClickListener, FacebookCallback<LoginResult> {
+
+    private Button btnPhoneLogin;
+    private Button btnFbLogin;
+    private Button btnGuestLogin;
+
     private ProgressBar progressNewUser;
+
     private FirebaseAuth mAuth;
+    private CallbackManager mCallbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
         setUpToolbar(this);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-        progressNewUser=findViewById(android.R.id.progress);
-        btnGuestLogin = findViewById(R.id.button_guest_sign_in);
-        btnPhoneLogin=findViewById(R.id.button_phone_login);
+        setUpView();
 
         mAuth = FirebaseAuth.getInstance();
-        btnGuestLogin.setOnClickListener(this);
+
+        mCallbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(mCallbackManager, NewUserActivity.this);
+
         btnPhoneLogin.setOnClickListener(this);
+        btnFbLogin.setOnClickListener(this);
+        btnGuestLogin.setOnClickListener(this);
     }
 
     @Override
@@ -50,11 +59,26 @@ public class NewUserActivity extends BaseActivity implements View.OnClickListene
     protected void onStart() {
         super.onStart();
 
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            startActivity(new Intent(this, HomeActivity.class));
-            finish();
+            // check userStatus in shared prefs
+            // if true, launch HomeActivity. else AccountSetupActivity.
+            String userStatus = new UserSharedPreferences(NewUserActivity.this).getUserStatus();
+
+            if (userStatus != null) {
+
+                if (userStatus.equals("true")) {
+
+                    Intent homeIntent = new Intent(NewUserActivity.this, HomeActivity.class);
+                    startActivity(homeIntent);
+                    finish();
+                } else {
+
+                    Intent accountSetupIntent = new Intent(NewUserActivity.this, AccountSetupActivity.class);
+                    startActivity(accountSetupIntent);
+                    finish();
+                }
+            }
         }
     }
 
@@ -63,13 +87,56 @@ public class NewUserActivity extends BaseActivity implements View.OnClickListene
         switch (v.getId()) {
 
             case R.id.button_guest_sign_in:
-                GuestLogin guestLogin=new GuestLogin(this,mAuth,progressNewUser);
+
+                GuestLogin guestLogin = new GuestLogin(this, progressNewUser);
                 guestLogin.guestLogin();
                 break;
+
             case R.id.button_phone_login:
-                startActivity(new Intent(this,LoginActivity.class));
+
+                Intent loginIntent = new Intent(this, LoginActivity.class);
+                startActivity(loginIntent);
+                break;
+
+            case R.id.button_fb_login:
+                // create an instance of facebook loginManager to login via facebook
+                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile", "user_friends"));
                 break;
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // facebook login callbacks
+    //----------------------------------------------------------------------------------------------
+    @Override
+    public void onSuccess(LoginResult loginResult) {
+
+        new FacebookLoginManager(NewUserActivity.this, progressNewUser).handleFacebookAccessToken(loginResult.getAccessToken());
+    }
+
+    @Override
+    public void onCancel() {
+
+    }
+
+    @Override
+    public void onError(FacebookException error) {
+
+        Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    private void setUpView() {
+
+        progressNewUser = findViewById(android.R.id.progress);
+        btnPhoneLogin = findViewById(R.id.button_phone_login);
+        btnFbLogin = findViewById(R.id.button_fb_login);
+        btnGuestLogin = findViewById(R.id.button_guest_sign_in);
+    }
 }

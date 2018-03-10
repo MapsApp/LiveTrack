@@ -110,8 +110,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
 
-        getActivity().startService(new Intent(getActivity(), LocationService.class));
-
         // Construct a GeoDataClient.
         mGeoDataClient = Places.getGeoDataClient(getActivity(), null);
 

@@ -54,6 +54,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
 
+        // initialise phone auth callback
         initPhoneAuthCallback();
 
         mPhoneEt = findViewById(R.id.login_phone_et);
@@ -66,31 +67,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected int getToolbarID() {
         return R.id.login_activity_toolbar;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-
-            String userStatus = new UserSharedPreferences(LoginActivity.this).getUserStatus();
-
-            if (userStatus != null) {
-
-                if (userStatus.equals("true")) {
-
-                    Intent homeIntent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(homeIntent);
-                    finish();
-                } else {
-
-                    Intent accountSetupIntent = new Intent(LoginActivity.this, AccountSetupActivity.class);
-                    startActivity(accountSetupIntent);
-                    finish();
-                }
-            }
-        }
     }
 
     @Override

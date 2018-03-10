@@ -13,8 +13,7 @@ import android.widget.LinearLayout;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
 
-public class GroupsActivity extends BaseActivity implements View.OnClickListener
-,GroupFriendsAdapter.setOnGroupFriendClickListener{
+public class GroupsActivity extends BaseActivity implements View.OnClickListener, GroupFriendsAdapter.setOnGroupFriendClickListener{
 
     FloatingActionButton fabBottomSheet;
     LinearLayout layoutBottomSheet;

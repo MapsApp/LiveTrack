@@ -14,51 +14,52 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.sarthak.trackit.trackit.activities.HomeActivity;
+import com.sarthak.trackit.trackit.activities.LoginActivity;
+import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
 import static android.content.ContentValues.TAG;
 
-/**
- * Created by karan on 3/10/2018.
- */
-
 public class GuestLogin {
 
-    private Context context;
+    private Context mContext;
     private FirebaseAuth mAuth;
-    private ProgressBar progressBar;
+    private ProgressBar mProgressBar;
 
+    public GuestLogin(Context context, ProgressBar progressBar) {
 
-    public GuestLogin(Context context, FirebaseAuth mAuth, ProgressBar progressBar) {
-        this.context = context;
-        this.mAuth = mAuth;
-        this.progressBar = progressBar;
+        mContext = context;
+        mProgressBar = progressBar;
+
+        mAuth = FirebaseAuth.getInstance();
     }
 
     public void guestLogin() {
-        progressBar.setVisibility(View.VISIBLE);
+
+        mProgressBar.setVisibility(View.VISIBLE);
 
         mAuth.signInAnonymously()
-                .addOnCompleteListener((Activity) context, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener((Activity) mContext, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInAnonymously:success");
-                            Toast.makeText(context, "Signed In as Guest",
-                                    Toast.LENGTH_SHORT).show();
-                            context.startActivity(new Intent(context, HomeActivity.class));
-                            progressBar.setVisibility(View.INVISIBLE);
+
+                            UserSharedPreferences preferences = new UserSharedPreferences(mContext);
+                            preferences.setUserStatus("true");
+
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                            Toast.makeText(mContext, "Signed In as Guest", Toast.LENGTH_SHORT).show();
+                            mContext.startActivity(new Intent(mContext, HomeActivity.class));
+                            ((Activity) mContext).finish();
 
                         } else {
-                            // If sign in fails, display a message to the user.                            Log.w(TAG, "signInAnonymously:failure", task.getException());
-                            Toast.makeText(context, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            progressBar.setVisibility(View.INVISIBLE);
+                            // If sign in fails, display a message to the user.
+                            // Log.w(TAG, "signInAnonymously:failure", task.getException());
+                            Toast.makeText(mContext, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            mProgressBar.setVisibility(View.INVISIBLE);
                         }
                     }
                 });
-
-
     }
-
 }

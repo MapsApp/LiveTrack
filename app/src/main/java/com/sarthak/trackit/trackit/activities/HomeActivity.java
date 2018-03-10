@@ -13,11 +13,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.sarthak.trackit.trackit.LocationService;
 import com.sarthak.trackit.trackit.fragments.FriendsFragment;
 import com.sarthak.trackit.trackit.fragments.GroupsFragment;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
 public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -30,10 +35,11 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         setContentView(R.layout.activity_home);
         setUpToolbar(this);
 
+        startService(new Intent(HomeActivity.this, LocationService.class));
+
         /*If the instance state of app onCreate is null,
         MapsFragment is inflated*/
-
-        if (savedInstanceState==null){
+        if (savedInstanceState == null){
             fragmentInflate(MapsFragment.newInstance());
         }
 
@@ -65,6 +71,13 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
             startActivity(loginIntent);
             finish();
         }*/
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        stopService(new Intent(HomeActivity.this, LocationService.class));
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -127,8 +140,11 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()){
             case R.id.action_settings:
+
+                new UserSharedPreferences(HomeActivity.this).deleteStatus();
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                LoginManager.getInstance().logOut();
+                startActivity(new Intent(HomeActivity.this, NewUserActivity.class));
                 finish();
                 break;
             case R.id.action_search:

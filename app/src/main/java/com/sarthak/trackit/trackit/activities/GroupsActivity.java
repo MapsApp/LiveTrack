@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -48,11 +47,11 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                     case BottomSheetBehavior.STATE_HIDDEN:
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED: {
-                        fabBottomSheet.setImageResource(R.drawable.ic_expand_more);
+                        fabBottomSheet.setImageResource(R.drawable.ic_expand_more_white);
                     }
                     break;
                     case BottomSheetBehavior.STATE_COLLAPSED: {
-                        fabBottomSheet.setImageResource(R.drawable.ic_expand_less);
+                        fabBottomSheet.setImageResource(R.drawable.ic_expand_less_white);
                     }
                     break;
                     case BottomSheetBehavior.STATE_DRAGGING:
@@ -81,10 +80,10 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             case R.id.fab_bottom_sheet:
                 if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
                     sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    fabBottomSheet.setImageResource(R.drawable.ic_expand_less);
+                    fabBottomSheet.setImageResource(R.drawable.ic_expand_less_white);
                 } else {
                     sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    fabBottomSheet.setImageResource(R.drawable.ic_expand_more);
+                    fabBottomSheet.setImageResource(R.drawable.ic_expand_more_white);
                 }
                 break;
         }

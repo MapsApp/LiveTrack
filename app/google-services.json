@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1055656899878-a0uklnjcekrikdvqapl03du6jgpjqles.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sarthak.trackit.trackit",
+            "certificate_hash": "cde5db6b2b3b216dbc9aebabdfb3093e9cee1762"
+          }
+        },
+        {
           "client_id": "1055656899878-kq6lnurqvugru6an1170dgr6q17h06m2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

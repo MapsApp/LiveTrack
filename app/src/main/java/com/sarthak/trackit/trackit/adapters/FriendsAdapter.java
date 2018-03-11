@@ -119,11 +119,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                         case View.INVISIBLE:
                         case View.GONE:
                             optionsLayout.setVisibility(View.VISIBLE);
-                            btnExpand.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward));
+                            btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(),R.anim.rotate_forward));
                             break;
                         case View.VISIBLE:
                             optionsLayout.setVisibility(View.GONE);
-                            btnExpand.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward));
+                            btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(),R.anim.rotate_backward));
                             break;
                     }
                     break;

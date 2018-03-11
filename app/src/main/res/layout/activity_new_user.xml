@@ -32,15 +32,6 @@
 
 
         <Button
-            android:id="@+id/button_fb_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/button_blue"
-            android:text="Log In With Facebook"
-            android:textColor="@android:color/white" />
-
-        <Button
             android:id="@+id/button_phone_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,7 +44,7 @@
             android:id="@+id/button_fb_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
+            android:layout_margin="@dimen/margin_small"
             android:background="@drawable/button_blue"
             android:text="Log In With Facebook"
             android:textColor="@android:color/white" />

@@ -21,6 +21,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.SearchAdapter;
+import com.sarthak.trackit.trackit.adapters.SearchCursorAdapter;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 
@@ -31,10 +32,11 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
     private ArrayList<String> userKeyList = new ArrayList<>();
     private ArrayList<User> userList = new ArrayList<>();
 
+    SearchView searchView;
     private ImageButton mSearchBtn;
     private EditText mSearchEt;
     private RecyclerView mSearchRecyclerView;
-
+    private SearchCursorAdapter searchCursorAdapter;
     private SearchAdapter searchAdapter;
     private FirebaseFirestore mFirestore;
 
@@ -45,7 +47,7 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
         setUpToolbar(this);
 
         mFirestore = FirebaseFirestore.getInstance();
-
+        //searchCursorAdapter = new SearchCursorAdapter(this, , true);
         initView();
 
         mSearchEt.addTextChangedListener(this);
@@ -77,8 +79,9 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
 
         //Sets the search icon in the Toolbar
         //Also, its behaviour is defined
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.isSubmitButtonEnabled();
+        //searchView.setSuggestionsAdapter();
         searchView.animate();
         return true;
     }
@@ -86,8 +89,9 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_search:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -113,7 +117,7 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
     public void afterTextChanged(Editable s) {
     }
 
-    private void initView () {
+    private void initView() {
 
         mSearchBtn = findViewById(R.id.search_btn);
         mSearchRecyclerView = findViewById(R.id.result_list);
@@ -122,9 +126,14 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
         initRecyclerView();
     }
 
+<<<<<<< HEAD
     private void initRecyclerView (){
 
         searchAdapter = new SearchAdapter(SearchActivity.this, userKeyList, userList);
+=======
+    private void initRecyclerView() {
+        searchAdapter = new SearchAdapter(searchResultArrayList);
+>>>>>>> 59943ee4c1c66b3b2bd2e490372370ed65add1ff
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSearchRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mSearchRecyclerView.setAdapter(searchAdapter);

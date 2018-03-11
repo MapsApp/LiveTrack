@@ -35,7 +35,7 @@
         app:fabSize="mini"
         app:layout_anchor="@+id/bottom_sheet_layout"
         app:layout_anchorGravity="right|top"
-        app:srcCompat="@drawable/ic_expand_more_white"
+        app:srcCompat="@drawable/ic_expand_less_white"
         tools:ignore="RtlCompat" />
 
     <include

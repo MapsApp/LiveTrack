@@ -124,13 +124,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                             checkForRequest(searchOptionsLayout);
 
                             searchOptionsLayout.setVisibility(View.VISIBLE);
+<<<<<<< HEAD
                             mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_forward));
+=======
+                            mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_forward));
+>>>>>>> 59943ee4c1c66b3b2bd2e490372370ed65add1ff
                             break;
 
                         case View.VISIBLE:
 
                             searchOptionsLayout.setVisibility(View.GONE);
+<<<<<<< HEAD
                             mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_backward));
+=======
+                            mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_backward));
+>>>>>>> 59943ee4c1c66b3b2bd2e490372370ed65add1ff
                             break;
                     }
                     break;

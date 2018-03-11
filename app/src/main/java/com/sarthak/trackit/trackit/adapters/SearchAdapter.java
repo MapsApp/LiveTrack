@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,6 +35,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     // If 0, no request sent/received.
     // If 1, request sent.
     // If 2, request received.
+    // If 3, friends.
     int requestType = 0;
 
     private ArrayList<String> userKeyList = new ArrayList<>();
@@ -76,7 +78,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         String userKey;
 
         private TextView mUserNameTv, mDisplayNameTv;
-        private ImageButton mRequestBtn, mSearchExpandBtn;
+        private Button mRequestBtn, mCancelBtn;
+        private ImageButton mSearchExpandBtn;
         private ImageView mSearchUserIv;
 
         private LinearLayout searchOptionsLayout;
@@ -94,12 +97,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             mUserNameTv = view.findViewById(R.id.text_search_username);
             mDisplayNameTv = view.findViewById(R.id.text_search_name);
             mRequestBtn = view.findViewById(R.id.button_search_add_friend);
+            mCancelBtn = view.findViewById(R.id.button_cancel);
             mSearchUserIv = view.findViewById(R.id.image_search);
             mSearchExpandBtn = view.findViewById(R.id.button_search_expand);
             searchOptionsLayout = view.findViewById(R.id.search_options_layout);
 
             mSearchExpandBtn.setOnClickListener(this);
             mRequestBtn.setOnClickListener(this);
+            mCancelBtn.setOnClickListener(this);
 
             mRequestBtn.setOnLongClickListener(this);
         }
@@ -130,7 +135,23 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                     }
                     break;
 
+                case R.id.button_cancel:
+
+                    switch (requestType) {
+
+                        case 2:
+
+                            declineRequest();
+                            break;
+                        case 3:
+
+                            unFriend();
+                            break;
+                    }
+                    break;
+
                 case R.id.button_search_expand:
+
                     switch (searchOptionsLayout.getVisibility()) {
 
                         case View.INVISIBLE:
@@ -222,6 +243,23 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                     }
                 }
             });
+
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends").document(userKey).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                    if (task.isSuccessful()) {
+
+                        DocumentSnapshot document = task.getResult();
+
+                        if (document != null && document.exists()) {
+
+                            requestType = 3;
+                            layout.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_purple));
+                        }
+                    }
+                }
+            });
         }
 
         private void sendFriendRequest() {
@@ -286,7 +324,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
                                                         if (task.isSuccessful()) {
 
-                                                            requestType = 0;
+                                                            requestType = 3;
                                                             Toast.makeText(mContext, "Added as friends.", Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
@@ -294,6 +332,30 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                                             }
                                         }
                                     });
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        private void declineRequest() {
+
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Received").document(userKey).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+
+                    if (task.isSuccessful()) {
+
+                        mFirestore.collection(Constants.CONTACTS_REFERENCE).document(userKey).collection("Sent").document(mUser.getUid()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+                                if (task.isSuccessful()) {
+
+                                    requestType = 0;
+                                    Toast.makeText(mContext, "Request declined.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -318,6 +380,31 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
                                     requestType = 0;
                                     Toast.makeText(mContext, "Request cancelled.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        private void unFriend() {
+
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends").document(userKey).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+
+                    if (task.isSuccessful()) {
+
+                        mFirestore.collection(Constants.CONTACTS_REFERENCE).document(userKey).collection("Friends").document(mUser.getUid()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+                                if (task.isSuccessful()) {
+
+                                    // TODO: Prompt confirmation
+                                    requestType = 0;
+                                    Toast.makeText(mContext, "Unfriend.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

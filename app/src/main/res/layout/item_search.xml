@@ -65,34 +65,34 @@
         android:visibility="gone"
         android:weightSum="2">
 
-        <ImageButton
+        <Button
             android:id="@+id/button_search_add_friend"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textAllCaps="false"
+            android:text="Add friend"
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            android:longClickable="true"
-            app:srcCompat="@drawable/ic_unfriend"
-            tools:ignore="ContentDescription" />
+            android:longClickable="true" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="#eeeeee" />
 
-        <ImageButton
-            android:id="@+id/button_search"
+        <Button
+            android:id="@+id/button_cancel"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textAllCaps="false"
+            android:text="Cancel"
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            android:longClickable="true"
-            app:srcCompat="@drawable/ic_create_group"
-            tools:ignore="ContentDescription" />
+            android:longClickable="true" />
 
         <View
             android:layout_width="1dp"

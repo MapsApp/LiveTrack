@@ -148,8 +148,10 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 finish();
                 break;
             case R.id.action_search:
+
                 break;
         }
+
         return super.onOptionsItemSelected(item);
     }
 

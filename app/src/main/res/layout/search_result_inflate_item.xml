@@ -21,14 +21,18 @@
         android:text="TextView"
         android:textSize="18sp" />
 
-    <ImageView
-        android:id="@+id/imageView2"
+    <Button
+        android:id="@+id/request_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Send friend request"
+        android:textColor="@android:color/white"
+        android:background="@android:color/holo_red_light"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="31dp"
-        android:layout_marginRight="31dp"
-        app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
+        android:padding="5dp"/>
+
 </RelativeLayout>

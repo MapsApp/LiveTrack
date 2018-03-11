@@ -4,56 +4,42 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.sarthak.trackit.trackit.R;
-import com.sarthak.trackit.trackit.model.UserSearchResult;
+import com.sarthak.trackit.trackit.model.User;
 
 import java.util.ArrayList;
 
-/**
- * Created by hp on 3/10/2018.
- */
+public class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder> {
 
-public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.mViewHolder> {
+    private ArrayList<User> searchResultArrayList = new ArrayList<>();
+    private Context mContext;
 
-    private ArrayList<UserSearchResult> searchResultArrayList = new ArrayList<>();
+    public SearchAdapter(Context context, ArrayList<User> searchResultArrayList){
 
-    public class mViewHolder extends RecyclerView.ViewHolder{
-        public TextView userName , displayName;
-        public mViewHolder(View view){
-            super(view);
-            userName = view.findViewById(R.id.username);
-            displayName = view.findViewById(R.id.displayname);
-        }
-
-    }
-
-    public SearchAdapter(ArrayList<UserSearchResult> searchResultArrayList){
+        this.mContext = context;
         this.searchResultArrayList=searchResultArrayList;
     }
 
     @NonNull
     @Override
-    public mViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.search_result_inflate_item, parent, false);
+    public SearchViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        return new mViewHolder(itemView);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_result_inflate_item, parent, false);
+
+        return new SearchViewHolder(mContext, itemView);
     }
-
 
     @Override
-    public void onBindViewHolder(@NonNull SearchAdapter.mViewHolder holder, int position) {
-        UserSearchResult userSearchResult = searchResultArrayList.get(position);
-        holder.displayName.setText(userSearchResult.getDisplayName());
-        holder.userName.setText(userSearchResult.getUserName());
+    public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
+
+        User userSearchResult = searchResultArrayList.get(position);
+
+        holder.mDisplayNameTv.setText(userSearchResult.getDisplayName());
+        holder.mUserNameTv.setText(userSearchResult.getUsername());
     }
-
-
 
     @Override
     public int getItemCount() {

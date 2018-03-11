@@ -43,7 +43,7 @@ public class FriendsFragment extends Fragment implements View.OnClickListener, F
         fabCreateGroup=view.findViewById(R.id.fab_create_group);
 
         rvFriends.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
-        rvFriends.setAdapter(new FriendsAdapter(this));
+        rvFriends.setAdapter(new FriendsAdapter(getActivity(), this));
 
         fabCreateGroup.setOnClickListener(this);
     }

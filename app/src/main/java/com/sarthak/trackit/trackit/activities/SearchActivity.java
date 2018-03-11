@@ -1,6 +1,5 @@
 package com.sarthak.trackit.trackit.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +28,8 @@ import java.util.ArrayList;
 
 public class SearchActivity extends BaseActivity implements TextWatcher, View.OnClickListener {
 
-    private ArrayList<User> searchResultArrayList = new ArrayList<>();
+    private ArrayList<String> userKeyList = new ArrayList<>();
+    private ArrayList<User> userList = new ArrayList<>();
 
     private ImageButton mSearchBtn;
     private EditText mSearchEt;
@@ -124,7 +123,8 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
     }
 
     private void initRecyclerView (){
-        searchAdapter=new SearchAdapter(searchResultArrayList);
+
+        searchAdapter = new SearchAdapter(SearchActivity.this, userKeyList, userList);
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSearchRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mSearchRecyclerView.setAdapter(searchAdapter);
@@ -140,13 +140,15 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
 
                 if (snapshot != null) {
 
-                    searchResultArrayList.clear();
+                    userKeyList.clear();
+                    userList.clear();
 
                     for (DocumentSnapshot documentSnapshot : snapshot.getDocuments()) {
 
                         if (documentSnapshot != null && documentSnapshot.exists()) {
 
-                            searchResultArrayList.add(documentSnapshot.toObject(User.class));
+                            userKeyList.add(documentSnapshot.getId());
+                            userList.add(documentSnapshot.toObject(User.class));
                         } else {
 
                             break;
@@ -154,9 +156,11 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
                     }
 
                     searchAdapter.notifyDataSetChanged();
+
                 } else {
 
-                    searchResultArrayList.clear();
+                    userKeyList.clear();
+                    userList.clear();
                     searchAdapter.notifyDataSetChanged();
                 }
             }

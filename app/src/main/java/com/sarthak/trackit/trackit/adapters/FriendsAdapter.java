@@ -1,5 +1,6 @@
 package com.sarthak.trackit.trackit.adapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,28 +19,29 @@ import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
 import com.squareup.picasso.Picasso;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
-
-/**
- * Created by karan on 3/9/2018.
- */
-
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
 
     private setOnFriendClickListener mListener;
 
-    public FriendsAdapter(setOnFriendClickListener mListener) {
+    private Context mContext;
+
+    public FriendsAdapter(Context context, setOnFriendClickListener mListener) {
+
+        this.mContext = context;
         this.mListener = mListener;
     }
 
     public interface setOnFriendClickListener {
+
         void OnFriendItemClicked(View view, int position);
     }
 
     @NonNull
     @Override
     public FriendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friends, parent, false);
+
         return new FriendsAdapter.FriendsViewHolder(itemView);
     }
 
@@ -66,8 +68,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
         return 3;
     }
 
-    public class FriendsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
-            , View.OnLongClickListener {
+    public class FriendsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         TextView txtFriendName, txtFriendUserName;
         ImageView imgFriend;
@@ -76,6 +77,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
         RelativeLayout parentLayout;
 
         private FriendsViewHolder(View itemView) {
+
             super(itemView);
 
             parentLayout = itemView.findViewById(R.id.parent_layout_friends);
@@ -116,14 +118,19 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                 case R.id.button_expand:
 
                     switch (optionsLayout.getVisibility()) {
+
                         case View.INVISIBLE:
+
                         case View.GONE:
+
                             optionsLayout.setVisibility(View.VISIBLE);
-                            btnExpand.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward));
+                            btnExpand.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_forward));
                             break;
+
                         case View.VISIBLE:
+
                             optionsLayout.setVisibility(View.GONE);
-                            btnExpand.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward));
+                            btnExpand.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_backward));
                             break;
                     }
                     break;
@@ -132,20 +139,25 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
 
         @Override
         public boolean onLongClick(View v) {
+
             switch (v.getId()) {
 
                 case R.id.button_remove_friend:
+
                     Toast.makeText(itemView.getContext(), "Remove Friend Clicked", Toast.LENGTH_SHORT).show();
                     break;
 
                 case R.id.button_create_group:
+
                     Toast.makeText(itemView.getContext(), "Create Group Clicked", Toast.LENGTH_SHORT).show();
                     break;
 
                 case R.id.button_dummy:
+
                     Toast.makeText(itemView.getContext(), "Dummy Clicked", Toast.LENGTH_SHORT).show();
                     break;
             }
+
             return false;
         }
     }

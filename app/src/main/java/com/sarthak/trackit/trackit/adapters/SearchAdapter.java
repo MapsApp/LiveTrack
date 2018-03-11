@@ -1,5 +1,6 @@
 package com.sarthak.trackit.trackit.adapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,22 +13,39 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
+import com.sarthak.trackit.trackit.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
 
-    private ArrayList<User> searchResultArrayList = new ArrayList<>();
+    // If 0, no request sent/received.
+    // If 1, request sent.
+    // If 2, request received.
+    int requestType = 0;
 
-    public SearchAdapter(ArrayList<User> searchResultArrayList) {
+    private ArrayList<String> userKeyList = new ArrayList<>();
+    private ArrayList<User> userList = new ArrayList<>();
 
-        this.searchResultArrayList = searchResultArrayList;
+    private Context mContext;
+
+    public SearchAdapter(Context context, ArrayList<String> userKeyList, ArrayList<User> userList) {
+
+        this.mContext = context;
+        this.userKeyList = userKeyList;
+        this.userList = userList;
     }
 
     @NonNull
@@ -42,33 +60,36 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     @Override
     public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
 
-        User userSearchResult = searchResultArrayList.get(position);
+        String userKey = userKeyList.get(holder.getAdapterPosition());
+        User mUser = userList.get(holder.getAdapterPosition());
 
-        holder.mDisplayNameTv.setText(userSearchResult.getDisplayName());
-        holder.mUserNameTv.setText(userSearchResult.getUsername());
-
-        Picasso.with(holder.itemView.getContext())
-                .load("https://www.w3schools.com/css/trolltunga.jpg")
-                .transform(new CircleTransform())
-                .into(holder.mSearchUserIv);
+        holder.bindView(userKey, mUser);
     }
 
     @Override
     public int getItemCount() {
-        return searchResultArrayList.size();
+        return userList.size();
     }
 
-    public class SearchViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
-            , View.OnLongClickListener {
+    public class SearchViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        TextView mUserNameTv, mDisplayNameTv;
+        String userKey;
+
+        private TextView mUserNameTv, mDisplayNameTv;
         private ImageButton mRequestBtn, mSearchExpandBtn;
         private ImageView mSearchUserIv;
-        LinearLayout searchOptionsLayout;
+
+        private LinearLayout searchOptionsLayout;
+
+        private FirebaseFirestore mFirestore;
+        private FirebaseUser mUser;
 
         SearchViewHolder(View view) {
 
             super(view);
+
+            mFirestore = FirebaseFirestore.getInstance();
+            mUser = FirebaseAuth.getInstance().getCurrentUser();
 
             mUserNameTv = view.findViewById(R.id.text_search_username);
             mDisplayNameTv = view.findViewById(R.id.text_search_name);
@@ -90,19 +111,26 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
                 case R.id.button_search_add_friend:
 
-                    Toast.makeText(itemView.getContext(), "Request sent.", Toast.LENGTH_SHORT).show();
+                    sendFriendRequest();
                     break;
 
                 case R.id.button_search_expand:
                     switch (searchOptionsLayout.getVisibility()) {
+
                         case View.INVISIBLE:
+
                         case View.GONE:
+
+                            checkForRequest(searchOptionsLayout);
+
                             searchOptionsLayout.setVisibility(View.VISIBLE);
-                            mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_forward));
+                            mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_forward));
                             break;
+
                         case View.VISIBLE:
+
                             searchOptionsLayout.setVisibility(View.GONE);
-                            mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate_backward));
+                            mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_backward));
                             break;
                     }
                     break;
@@ -111,13 +139,92 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
         @Override
         public boolean onLongClick(View v) {
+
             switch (v.getId()) {
+
                 case R.id.button_search_add_friend:
 
                     Toast.makeText(itemView.getContext(), "Request sent.", Toast.LENGTH_SHORT).show();
                     break;
             }
             return false;
+        }
+
+        void bindView(String userKey, User user) {
+
+            this.userKey = userKey;
+
+            mDisplayNameTv.setText(user.getDisplayName());
+            mUserNameTv.setText(user.getUsername());
+
+            Picasso.with(itemView.getContext())
+                    .load("https://www.w3schools.com/css/trolltunga.jpg")
+                    .transform(new CircleTransform())
+                    .into(mSearchUserIv);
+        }
+
+        private void sendFriendRequest() {
+
+            Long time = System.currentTimeMillis()/1000;
+            final String timestamp = time.toString();
+
+            final Map<String, Object> timeMap = new HashMap<>();
+            timeMap.put("timestamp", timestamp);
+
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Sent").document(userKey).set(timeMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+
+                    if (task.isSuccessful()) {
+
+                        mFirestore.collection(Constants.CONTACTS_REFERENCE).document(userKey).collection("Received").document(mUser.getUid()).set(timeMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+                                if (task.isSuccessful()) {
+
+                                    Toast.makeText(mContext, "Request sent.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        private void checkForRequest(final LinearLayout layout) {
+
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Sent").document(userKey).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                    if (task.isSuccessful()) {
+
+                        DocumentSnapshot document = task.getResult();
+
+                        if (document != null && document.exists()) {
+
+                            layout.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_green_dark));
+                        }
+                    }
+                }
+            });
+
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Received").document(userKey).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                    if (task.isSuccessful()) {
+
+                        DocumentSnapshot document = task.getResult();
+
+                        if (document != null && document.exists()) {
+
+                            layout.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_blue_light));
+                        }
+                    }
+                }
+            });
         }
     }
 }

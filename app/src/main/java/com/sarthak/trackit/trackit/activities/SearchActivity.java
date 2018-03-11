@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -25,7 +28,7 @@ import com.sarthak.trackit.trackit.utils.Constants;
 
 import java.util.ArrayList;
 
-public class SearchActivity extends AppCompatActivity implements TextWatcher, View.OnClickListener {
+public class SearchActivity extends BaseActivity implements TextWatcher, View.OnClickListener {
 
     private ArrayList<User> searchResultArrayList = new ArrayList<>();
 
@@ -40,6 +43,7 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Vi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        setUpToolbar(this);
 
         mFirestore = FirebaseFirestore.getInstance();
 
@@ -47,6 +51,11 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Vi
 
         mSearchEt.addTextChangedListener(this);
         mSearchBtn.setOnClickListener(this);
+    }
+
+    @Override
+    protected int getToolbarID() {
+        return R.id.search_activity_toolbar;
     }
 
     @Override
@@ -60,6 +69,28 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Vi
                 firestoreUserSearch(searchText);
                 break;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_search, menu);
+
+        //Sets the search icon in the Toolbar
+        //Also, its behaviour is defined
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.isSubmitButtonEnabled();
+        searchView.animate();
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.action_search:
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -93,9 +124,7 @@ public class SearchActivity extends AppCompatActivity implements TextWatcher, Vi
     }
 
     private void initRecyclerView (){
-
-        searchAdapter = new SearchAdapter(searchResultArrayList);
-
+        searchAdapter=new SearchAdapter(searchResultArrayList);
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSearchRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mSearchRecyclerView.setAdapter(searchAdapter);

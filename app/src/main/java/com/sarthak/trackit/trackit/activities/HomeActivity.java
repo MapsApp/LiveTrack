@@ -158,6 +158,13 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+
+            case R.id.nav_camera:
+                startActivity(new Intent(this,FriendsStatusActivity.class));
+                break;
+        }
         return true;
     }
 }

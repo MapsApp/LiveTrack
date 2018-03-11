@@ -226,7 +226,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
         private void sendFriendRequest() {
 
-            Long time = System.currentTimeMillis()/1000;
+            Long time = System.currentTimeMillis() / 1000;
             final String timestamp = time.toString();
 
             final Map<String, Object> timeMap = new HashMap<>();
@@ -256,7 +256,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
         private void acceptRequest() {
 
-            Long time = System.currentTimeMillis()/1000;
+            Long time = System.currentTimeMillis() / 1000;
             final String timestamp = time.toString();
 
             final Map<String, Object> timeMap = new HashMap<>();

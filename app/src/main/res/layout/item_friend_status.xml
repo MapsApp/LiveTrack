@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lblListHeader"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingEnd="40dp"
+    android:paddingStart="40dp"
+    android:paddingTop="@dimen/padding_small"
+    android:paddingBottom="@dimen/padding_small"
+    android:text="@string/app_name"
+    style="@style/TextAppearance.AppCompat.Subhead"
+    android:textSize="16sp"
+    android:textStyle="bold" />
+

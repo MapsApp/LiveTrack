@@ -1,5 +1,6 @@
 package com.sarthak.trackit.trackit.activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -31,7 +33,7 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
 
     private ArrayList<String> userKeyList = new ArrayList<>();
     private ArrayList<User> userList = new ArrayList<>();
-
+    Menu menu;
     SearchView searchView;
     private ImageButton mSearchBtn;
     private EditText mSearchEt;
@@ -48,7 +50,20 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
 
         mFirestore = FirebaseFirestore.getInstance();
         //searchCursorAdapter = new SearchCursorAdapter(this, , true);
-        initView();
+        mSearchBtn = findViewById(R.id.search_btn);
+
+        mToolbar.inflateMenu(R.menu.home);
+        menu=mToolbar.getMenu();
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        mSearchEt = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        mSearchEt.setHint("Search..");
+        mSearchEt.setHintTextColor(Color.DKGRAY);
+        mSearchEt.setTextColor(getResources().getColor(R.color.colorPrimary));
+        //searchView.setSuggestionsAdapter();
+        searchView.animate();
+        mSearchRecyclerView = findViewById(R.id.result_list);
+
+        initRecyclerView();
 
         mSearchEt.addTextChangedListener(this);
         mSearchBtn.setOnClickListener(this);
@@ -66,8 +81,8 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
 
             case R.id.search_btn:
 
-                String searchText = mSearchEt.getText().toString();
-                firestoreUserSearch(searchText);
+                /*String searchText = mSearchEt.getText().toString();
+                firestoreUserSearch(searchText);*/
                 break;
         }
     }
@@ -75,22 +90,26 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.activity_search, menu);
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.isSubmitButtonEnabled();
+        ImageView closeButton = searchView.findViewById(R.id.search_close_btn);
+        closeButton.setImageResource(R.drawable.ic_close);
 
         //Sets the search icon in the Toolbar
         //Also, its behaviour is defined
-        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.isSubmitButtonEnabled();
-        //searchView.setSuggestionsAdapter();
-        searchView.animate();
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.action_search:
+                String searchText = mSearchEt.getText().toString();
+                firestoreUserSearch(searchText);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -115,15 +134,6 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
 
     @Override
     public void afterTextChanged(Editable s) {
-    }
-
-    private void initView() {
-
-        mSearchBtn = findViewById(R.id.search_btn);
-        mSearchRecyclerView = findViewById(R.id.result_list);
-        mSearchEt = findViewById(R.id.search_field);
-
-        initRecyclerView();
     }
 
     private void initRecyclerView() {

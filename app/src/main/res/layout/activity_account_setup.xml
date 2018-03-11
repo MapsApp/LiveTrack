@@ -32,9 +32,12 @@
 
     <Button
         android:id="@+id/account_sign_up_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:text="SET UP ACCOUNT" />
+        android:padding="@dimen/padding_small"
+        android:text="SET UP ACCOUNT"
+        android:textColor="@android:color/white"
+        android:background="@drawable/button_selector_states"/>
 
 </LinearLayout>

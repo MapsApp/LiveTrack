@@ -126,14 +126,10 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
         initRecyclerView();
     }
 
-<<<<<<< HEAD
-    private void initRecyclerView (){
+    private void initRecyclerView() {
 
         searchAdapter = new SearchAdapter(SearchActivity.this, userKeyList, userList);
-=======
-    private void initRecyclerView() {
-        searchAdapter = new SearchAdapter(searchResultArrayList);
->>>>>>> 59943ee4c1c66b3b2bd2e490372370ed65add1ff
+
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSearchRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mSearchRecyclerView.setAdapter(searchAdapter);

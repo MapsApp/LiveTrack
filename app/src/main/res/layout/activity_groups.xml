@@ -41,4 +41,5 @@
     <include
         android:id="@+id/bottom_sheet_layout"
         layout="@layout/fragment_bottom_sheet" />
+
 </android.support.design.widget.CoordinatorLayout>

@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,6 +17,8 @@ import android.widget.Toast;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
 import com.squareup.picasso.Picasso;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by karan on 3/9/2018.
@@ -115,11 +119,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                         case View.INVISIBLE:
                         case View.GONE:
                             optionsLayout.setVisibility(View.VISIBLE);
-                            btnExpand.setImageResource(R.drawable.ic_expand_less_black);
+                            btnExpand.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward));
                             break;
                         case View.VISIBLE:
                             optionsLayout.setVisibility(View.GONE);
-                            btnExpand.setImageResource(R.drawable.ic_expand_more_black);
+                            btnExpand.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward));
                             break;
                     }
                     break;

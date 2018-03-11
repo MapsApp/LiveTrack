@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -31,12 +30,22 @@
         android:orientation="vertical"
         android:layout_gravity="bottom">
 
+
+        <Button
+            android:id="@+id/button_fb_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:background="@drawable/button_blue"
+            android:text="Log In With Facebook"
+            android:textColor="@android:color/white" />
+
         <Button
             android:id="@+id/button_phone_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/button_blue"
+            android:background="@drawable/button_green"
             android:text="Log In With Phone Number"
             android:textColor="@android:color/white" />
 

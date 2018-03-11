@@ -7,13 +7,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
 
-public class GroupsActivity extends BaseActivity implements View.OnClickListener
-,GroupFriendsAdapter.setOnGroupFriendClickListener{
+public class GroupsActivity extends BaseActivity implements View.OnClickListener, GroupFriendsAdapter.setOnGroupFriendClickListener{
 
     FloatingActionButton fabBottomSheet;
     LinearLayout layoutBottomSheet;
@@ -55,8 +56,10 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                     }
                     break;
                     case BottomSheetBehavior.STATE_DRAGGING:
+                        //fabBottomSheet.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward));
                         break;
                     case BottomSheetBehavior.STATE_SETTLING:
+                        //fabBottomSheet.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward));
                         break;
                 }
             }

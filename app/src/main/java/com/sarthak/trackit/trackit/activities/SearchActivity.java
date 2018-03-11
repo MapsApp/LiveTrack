@@ -1,7 +1,7 @@
 package com.sarthak.trackit.trackit.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,7 +29,6 @@ public class SearchActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String searchRawData;
     private ArrayList<UserSearchResult> searchResultArrayList = new ArrayList<>();
-    private SearchAdapter searchAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,46 +37,45 @@ public class SearchActivity extends AppCompatActivity {
         init();
     }
 
-    private void init (){
-        searchButton=findViewById(R.id.SearchButton);
-        searchRecyclerView =findViewById(R.id.SearchResultList);
-        searchText=findViewById(R.id.searchText);
+    private void init() {
+        searchButton = findViewById(R.id.SearchButton);
+        searchRecyclerView = findViewById(R.id.SearchResultList);
+        searchText = findViewById(R.id.searchText);
         db = FirebaseFirestore.getInstance();
     }
 
-    private void getSearchRawData (){
-        searchRawData=searchText.getText().toString();
+    private void getSearchRawData() {
+        searchRawData = searchText.getText().toString();
     }
 
-    public void StartSearch (View v){
+    public void StartSearch(View v) {
         getSearchRawData();
         readDatabase();
         initRecyclerView();
     }
 
-    private void initRecyclerView (){
-        searchAdapter = new SearchAdapter(searchResultArrayList);
-        RecyclerView.LayoutManager manager= new LinearLayoutManager(getApplicationContext());
+    private void initRecyclerView() {
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
         searchRecyclerView.setLayoutManager(manager);
         searchRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        searchRecyclerView.setAdapter(searchAdapter);
+        searchRecyclerView.setAdapter(new SearchAdapter(searchResultArrayList));
     }
 
-    private void readDatabase(){
+    private void readDatabase() {
         db.collection("Users")
-                .whereGreaterThan("username",searchRawData)
+                .whereGreaterThan("username", searchRawData)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
-           searchResultArrayList.clear();
-           for (DocumentSnapshot snapshot: documentSnapshots){
-               String userName=snapshot.getString("username");
-               String displayName=snapshot.getString("displayName");
-               Log.d("db", userName+"  ,  "+displayName);
-               UserSearchResult userSearchResult = new UserSearchResult(userName,displayName);
-               searchResultArrayList.add(userSearchResult);
-           }
-            }
-        });
+                    @Override
+                    public void onEvent(QuerySnapshot documentSnapshots, FirebaseFirestoreException e) {
+                        searchResultArrayList.clear();
+                        for (DocumentSnapshot snapshot : documentSnapshots) {
+                            String userName = snapshot.getString("username");
+                            String displayName = snapshot.getString("displayName");
+                            Log.d("db", userName + "  ,  " + displayName);
+                            UserSearchResult userSearchResult = new UserSearchResult(userName, displayName);
+                            searchResultArrayList.add(userSearchResult);
+                        }
+                    }
+                });
     }
 }

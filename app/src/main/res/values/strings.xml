@@ -25,8 +25,7 @@
     <string name="search">Search</string>
 
     <!--Facebook Keys-->
-    <string name="facebook_app_id">416754738745487</string>
-    <string name="fb_login_protocol_scheme">fb416754738745487</string>
-
+    <string name="facebook_app_id">633735216975951</string>
+    <string name="fb_login_protocol_scheme">fb633735216975951</string>
 
 </resources>

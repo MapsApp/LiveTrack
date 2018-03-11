@@ -21,7 +21,10 @@ import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
 public class AccountSetupActivity extends BaseActivity implements View.OnFocusChangeListener, View.OnClickListener {
 
+    String providerId;
+
     private String displayName, username;
+    private String account, profileImage;
 
     private EditText mDisplayNameEt, mUsernameEt;
     private Button mSignUpBtn;
@@ -38,12 +41,25 @@ public class AccountSetupActivity extends BaseActivity implements View.OnFocusCh
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
 
+        setUpView();
+
+        mUsernameEt.setOnFocusChangeListener(this);
+        mSignUpBtn.setOnClickListener(this);
+    }
+
+    private void setUpView() {
+
         mDisplayNameEt = findViewById(R.id.account_display_name_et);
         mUsernameEt = findViewById(R.id.account_username_et);
         mSignUpBtn = findViewById(R.id.account_sign_up_btn);
 
-        mUsernameEt.setOnFocusChangeListener(this);
-        mSignUpBtn.setOnClickListener(this);
+        providerId = mAuth.getCurrentUser().getProviders().get(0);
+
+        if (providerId.equals("facebook.com")) {
+
+            mDisplayNameEt.setText(mAuth.getCurrentUser().getDisplayName());
+            mDisplayNameEt.setEnabled(false);
+        }
     }
 
     @Override
@@ -51,6 +67,9 @@ public class AccountSetupActivity extends BaseActivity implements View.OnFocusCh
         return R.id.account_setup_activity_toolbar;
     }
 
+    // textView focus changed listener
+    // code will be added later when checking unique username.
+    // TODO: 1. Add textView focus changed listener
     @Override
     public void onFocusChange(View view, boolean b) {
 
@@ -63,16 +82,29 @@ public class AccountSetupActivity extends BaseActivity implements View.OnFocusCh
 
             case R.id.account_sign_up_btn:
 
+                // get device Id to allow login on one device.
+                // current device Id will be matched with that in databaseand if found different, user will be signed out.
+                // TODO: 2. Match curent device Id with that in database.
                 final String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
-                final String account = mAuth.getCurrentUser().getPhoneNumber();
+                // variable account stores phone/email of the user.
+                // phone in case of Phone auth.
+                // email in case of FB/Google login.
+                if (providerId.equals("facebook.com")) {
 
+                    account = mAuth.getCurrentUser().getEmail();
+                    profileImage = "https://graph.facebook.com/" + mAuth.getCurrentUser().getUid() + "/picture?height=500";
+                } else {
+
+                     account = mAuth.getCurrentUser().getPhoneNumber();
+                     profileImage = "profile";
+                }
                 displayName = mDisplayNameEt.getText().toString();
                 username = mUsernameEt.getText().toString();
 
                 if (displayName != null && username != null) {
 
-                    User user = new User(username, displayName, account, deviceToken, "profile", "thumb");
+                    User user = new User(username, displayName, account, deviceToken, profileImage, "thumb");
 
                     mFirestore.collection(Constants.USERS_REFERENCE).document(mAuth.getCurrentUser().getUid()).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override

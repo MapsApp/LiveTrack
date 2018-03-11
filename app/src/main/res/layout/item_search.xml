@@ -1,0 +1,114 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_layout_friends"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="horizontal">
+
+    <com.sarthak.trackit.trackit.utils.SquareImageView
+        android:id="@+id/image_suggestion"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_small" />
+
+
+    <TextView
+        android:id="@+id/text_suggestion_display_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/image_suggestion"
+        android:layout_toRightOf="@+id/image_suggestion"
+        android:paddingEnd="@dimen/padding_small"
+        android:paddingStart="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="City" />
+
+    <TextView
+        android:id="@+id/text_suggestion_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_suggestion_expand"
+        android:layout_toEndOf="@+id/image_suggestion"
+        android:layout_toRightOf="@+id/image_suggestion"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        android:textSize="14sp"
+        tools:text="filler" />
+
+    <ImageButton
+        android:id="@+id/button_suggestion_expand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/padding_smaller"
+        app:srcCompat="@drawable/ic_expand_more_black"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:id="@+id/suggestions_options_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/image_suggestion"
+        android:background="#f5f5f5"
+        android:visibility="gone"
+        android:weightSum="3">
+
+        <ImageButton
+            android:id="@+id/button_remove_friend"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:longClickable="true"
+            app:srcCompat="@drawable/ic_unfriend"
+            tools:ignore="ContentDescription" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#eeeeee" />
+
+        <ImageButton
+            android:id="@+id/button_create_group"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:longClickable="true"
+            app:srcCompat="@drawable/ic_create_group"
+            tools:ignore="ContentDescription" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#eeeeee" />
+
+        <ImageButton
+            android:id="@+id/button_dummy"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:longClickable="true"
+            app:srcCompat="@drawable/ic_create_group"
+            tools:ignore="ContentDescription" />
+    </LinearLayout>
+</RelativeLayout>

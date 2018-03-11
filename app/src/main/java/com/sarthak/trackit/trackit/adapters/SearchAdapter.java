@@ -111,7 +111,23 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
                 case R.id.button_search_add_friend:
 
-                    sendFriendRequest();
+                    switch (requestType) {
+
+                        case 0:
+
+                            sendFriendRequest();
+                            break;
+
+                        case 1:
+
+                            cancelRequest();
+                            break;
+
+                        case 2:
+
+                            acceptRequest();
+                            break;
+                    }
                     break;
 
                 case R.id.button_search_expand:
@@ -171,6 +187,43 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                     .into(mSearchUserIv);
         }
 
+        private void checkForRequest(final LinearLayout layout) {
+
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Sent").document(userKey).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                    if (task.isSuccessful()) {
+
+                        DocumentSnapshot document = task.getResult();
+
+                        if (document != null && document.exists()) {
+
+                            requestType = 1;
+                            layout.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_green_dark));
+                        }
+                    }
+                }
+            });
+
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Received").document(userKey).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                    if (task.isSuccessful()) {
+
+                        DocumentSnapshot document = task.getResult();
+
+                        if (document != null && document.exists()) {
+
+                            requestType = 2;
+                            layout.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_blue_light));
+                        }
+                    }
+                }
+            });
+        }
+
         private void sendFriendRequest() {
 
             Long time = System.currentTimeMillis()/1000;
@@ -191,6 +244,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
                                 if (task.isSuccessful()) {
 
+                                    requestType = 1;
                                     Toast.makeText(mContext, "Request sent.", Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -200,36 +254,73 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             });
         }
 
-        private void checkForRequest(final LinearLayout layout) {
+        private void acceptRequest() {
 
-            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Sent").document(userKey).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            Long time = System.currentTimeMillis()/1000;
+            final String timestamp = time.toString();
+
+            final Map<String, Object> timeMap = new HashMap<>();
+            timeMap.put("timestamp", timestamp);
+
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends").document(userKey).set(timeMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                public void onComplete(@NonNull Task<Void> task) {
 
                     if (task.isSuccessful()) {
 
-                        DocumentSnapshot document = task.getResult();
+                        mFirestore.collection(Constants.CONTACTS_REFERENCE).document(userKey).collection("Friends").document(mUser.getUid()).set(timeMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
 
-                        if (document != null && document.exists()) {
+                                if (task.isSuccessful()) {
 
-                            layout.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_green_dark));
-                        }
+                                    mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Received").document(userKey).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                            if (task.isSuccessful()) {
+
+                                                mFirestore.collection(Constants.CONTACTS_REFERENCE).document(userKey).collection("Sent").document(mUser.getUid()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                        if (task.isSuccessful()) {
+
+                                                            requestType = 0;
+                                                            Toast.makeText(mContext, "Added as friends.", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
                 }
             });
+        }
 
-            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Received").document(userKey).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        private void cancelRequest() {
+
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Sent").document(userKey).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                public void onComplete(@NonNull Task<Void> task) {
 
                     if (task.isSuccessful()) {
 
-                        DocumentSnapshot document = task.getResult();
+                        mFirestore.collection(Constants.CONTACTS_REFERENCE).document(userKey).collection("Received").document(mUser.getUid()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
 
-                        if (document != null && document.exists()) {
+                                if (task.isSuccessful()) {
 
-                            layout.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_blue_light));
-                        }
+                                    requestType = 0;
+                                    Toast.makeText(mContext, "Request cancelled.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                     }
                 }
             });

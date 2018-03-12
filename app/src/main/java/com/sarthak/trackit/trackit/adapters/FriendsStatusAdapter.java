@@ -1,6 +1,5 @@
 package com.sarthak.trackit.trackit.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -8,15 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.firestore.Query;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class FriendsStatusAdapter extends BaseExpandableListAdapter {
 

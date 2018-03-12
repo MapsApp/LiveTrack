@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.LinearLayout;
 
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
+import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
 
 public class GroupsActivity extends BaseActivity implements View.OnClickListener, GroupFriendsAdapter.setOnGroupFriendClickListener{
 
@@ -38,7 +40,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
         rvGroupMembers.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         rvGroupMembers.setAdapter(new GroupFriendsAdapter(this));
-
+        rvGroupMembers.addItemDecoration(new RecyclerViewDivider(this, ContextCompat.getColor(this,R.color.md_blue_grey_200),0.5f));
 
         //Used to change icon in floating button with states of BottomSheet
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {

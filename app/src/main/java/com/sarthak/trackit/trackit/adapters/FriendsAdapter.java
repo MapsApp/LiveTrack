@@ -1,21 +1,27 @@
 package com.sarthak.trackit.trackit.adapters;
 
+import android.animation.Animator;
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
@@ -45,16 +51,27 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FriendsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final FriendsViewHolder holder, int position) {
 
         //Dummy Data
         String[] names = holder.itemView.getContext().getResources().getStringArray(R.array.names);
         String[] user_names = holder.itemView.getContext().getResources().getStringArray(R.array.user_names);
 
+        holder.progressBar.setVisibility(View.VISIBLE);
         Picasso.with(holder.itemView.getContext())
                 .load("https://www.w3schools.com/css/trolltunga.jpg")
                 .transform(new CircleTransform())
-                .into(holder.imgFriend);
+                .into(holder.imgFriend, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        holder.progressBar.setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onError() {
+                        holder.progressBar.setVisibility(View.INVISIBLE);
+                    }
+                });
 
         for (int i = 0; i <= position; i++) {
             holder.txtFriendName.setText(names[i]);
@@ -74,6 +91,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
         LinearLayout optionsLayout;
         ImageButton btnRemoveFriend, btnCreateGroup, btnExpand, btnDummy;
         RelativeLayout parentLayout;
+        ProgressBar progressBar;
 
         private FriendsViewHolder(View itemView) {
 
@@ -83,6 +101,8 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
             txtFriendName = itemView.findViewById(R.id.text_friend_name);
             txtFriendUserName = itemView.findViewById(R.id.text_friend_username);
             optionsLayout = itemView.findViewById(R.id.options_layout);
+
+            progressBar=itemView.findViewById(android.R.id.progress);
 
             btnRemoveFriend = itemView.findViewById(R.id.button_remove_friend);
             btnCreateGroup = itemView.findViewById(R.id.button_create_group);
@@ -105,9 +125,12 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
 
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onClick(View v) {
 
+            Animator anim;
+            int x, y, startRadius, endRadius;
 
             switch (v.getId()) {
                 case R.id.parent_layout_friends:
@@ -122,21 +145,57 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
 
                         case View.GONE:
 
+                            x = optionsLayout.getRight();
+                            y = optionsLayout.getBottom();
+
+                            startRadius = 0;
+                            endRadius = (int) Math.hypot(optionsLayout.getWidth(), optionsLayout.getHeight());
+
+                            anim = ViewAnimationUtils.createCircularReveal(optionsLayout, x, y, startRadius, endRadius);
+                            anim.start();
+
                             optionsLayout.setVisibility(View.VISIBLE);
 
                             btnExpand.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_forward));
 
-                            btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(),R.anim.rotate_forward));
+                            btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_forward));
 
                             break;
 
                         case View.VISIBLE:
+                            x = optionsLayout.getRight();
+                            y = optionsLayout.getBottom();
 
-                            optionsLayout.setVisibility(View.GONE);
+                            startRadius = Math.max(parentLayout.getWidth(), parentLayout.getHeight());
+                            endRadius = 0;
+
+                            anim = ViewAnimationUtils.createCircularReveal(optionsLayout, x, y, startRadius, endRadius);
+                            anim.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animator) {
+
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animator) {
+                                    optionsLayout.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animator) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animator) {
+
+                                }
+                            });
+                            anim.start();
 
                             btnExpand.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_backward));
 
-                            btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(),R.anim.rotate_backward));
+                            btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_backward));
 
                             break;
                     }

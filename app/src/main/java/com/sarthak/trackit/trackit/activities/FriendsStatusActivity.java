@@ -22,7 +22,8 @@ import com.sarthak.trackit.trackit.utils.Constants;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FriendsStatusActivity extends BaseActivity implements ExpandableListView.OnGroupClickListener
+public class FriendsStatusActivity extends BaseActivity implements
+        ExpandableListView.OnGroupClickListener
         , ExpandableListView.OnGroupExpandListener
         , ExpandableListView.OnGroupCollapseListener
         , ExpandableListView.OnChildClickListener {

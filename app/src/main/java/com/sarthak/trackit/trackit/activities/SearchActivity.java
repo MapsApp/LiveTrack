@@ -6,13 +6,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,13 +25,12 @@ import com.sarthak.trackit.trackit.utils.Constants;
 
 import java.util.ArrayList;
 
-public class SearchActivity extends BaseActivity implements TextWatcher, View.OnClickListener {
+public class SearchActivity extends BaseActivity implements SearchView.OnQueryTextListener {
 
     private ArrayList<String> userKeyList = new ArrayList<>();
     private ArrayList<User> userList = new ArrayList<>();
     Menu menu;
     SearchView searchView;
-    private ImageButton mSearchBtn;
     private EditText mSearchEt;
     private RecyclerView mSearchRecyclerView;
     private SearchCursorAdapter searchCursorAdapter;
@@ -50,7 +45,6 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
 
         mFirestore = FirebaseFirestore.getInstance();
         //searchCursorAdapter = new SearchCursorAdapter(this, , true);
-        mSearchBtn = findViewById(R.id.search_btn);
 
         mToolbar.inflateMenu(R.menu.home);
         menu=mToolbar.getMenu();
@@ -64,27 +58,11 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
         mSearchRecyclerView = findViewById(R.id.result_list);
 
         initRecyclerView();
-
-        mSearchEt.addTextChangedListener(this);
-        mSearchBtn.setOnClickListener(this);
     }
 
     @Override
     protected int getToolbarID() {
         return R.id.search_activity_toolbar;
-    }
-
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()) {
-
-            case R.id.search_btn:
-
-                /*String searchText = mSearchEt.getText().toString();
-                firestoreUserSearch(searchText);*/
-                break;
-        }
     }
 
     @Override
@@ -97,6 +75,8 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
         ImageView closeButton = searchView.findViewById(R.id.search_close_btn);
         closeButton.setImageResource(R.drawable.ic_close);
 
+        searchView.setOnQueryTextListener(this);
+
         //Sets the search icon in the Toolbar
         //Also, its behaviour is defined
         return true;
@@ -108,32 +88,29 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
 
         switch (item.getItemId()) {
             case R.id.action_search:
-                String searchText = mSearchEt.getText().toString();
-                firestoreUserSearch(searchText);
+
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+    public boolean onQueryTextSubmit(String query) {
+        return false;
     }
 
     @Override
-    public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+    public boolean onQueryTextChange(String searchText) {
 
-        if (charSequence.length() != 0) {
+        if (searchText.length() != 0) {
 
-            firestoreUserSearch(charSequence.toString());
+            firestoreUserSearch(searchText);
         } else {
 
             firestoreUserSearch(" ");
         }
-    }
 
-    @Override
-    public void afterTextChanged(Editable s) {
+        return false;
     }
 
     private void initRecyclerView() {

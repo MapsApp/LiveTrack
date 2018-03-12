@@ -2,18 +2,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:background="?selectableItemBackground"
     android:orientation="horizontal"
     android:weightSum="5">
 
-    <com.sarthak.trackit.trackit.utils.SquareImageView
-        android:id="@+id/image_group_friend"
+    <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="@dimen/padding_small" />
+        android:layout_weight="1">
+
+        <com.sarthak.trackit.trackit.utils.SquareImageView
+            android:id="@+id/image_group_friend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_small" />
+
+        <ProgressBar
+            android:id="@android:id/progress"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -42,14 +54,6 @@
             android:paddingStart="@dimen/padding_small"
             android:textSize="14sp"
             tools:text="filler" />
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:paddingStart="@dimen/padding_small"
-            android:layout_height=".5dp"
-            android:background="#d7d7d7"
-            tools:ignore="RtlCompat" />
 
     </RelativeLayout>
 

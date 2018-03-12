@@ -9,20 +9,32 @@
     android:focusable="true"
     android:orientation="horizontal">
 
-    <com.sarthak.trackit.trackit.utils.SquareImageView
-        android:id="@+id/image_search"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_small" />
+    <RelativeLayout
+        android:id="@+id/layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
+        <com.sarthak.trackit.trackit.utils.SquareImageView
+            android:id="@+id/image_search"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_small" />
+
+        <ProgressBar
+            android:id="@android:id/progress"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/text_search_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/image_search"
-        android:layout_toRightOf="@+id/image_search"
+        android:layout_toEndOf="@+id/layout"
+        android:layout_toRightOf="@+id/layout"
         android:paddingEnd="@dimen/padding_small"
         android:paddingStart="@dimen/padding_small"
         android:paddingTop="@dimen/padding_small"
@@ -36,8 +48,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_search_name"
-        android:layout_toEndOf="@+id/image_search"
-        android:layout_toRightOf="@+id/image_search"
+        android:layout_toEndOf="@+id/layout"
+        android:layout_toRightOf="@+id/layout"
         android:paddingEnd="10dp"
         android:paddingStart="10dp"
         android:textSize="14sp"
@@ -60,7 +72,7 @@
         android:id="@+id/search_options_layout"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_below="@+id/image_search"
+        android:layout_below="@+id/layout"
         android:background="#f5f5f5"
         android:visibility="gone"
         android:weightSum="2">
@@ -70,12 +82,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textAllCaps="false"
-            android:text="Add friend"
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            android:longClickable="true" />
+            android:longClickable="true"
+            android:text="Add friend"
+            android:textAllCaps="false" />
 
         <View
             android:layout_width="1dp"
@@ -87,12 +99,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textAllCaps="false"
-            android:text="Cancel"
             android:background="?selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
-            android:longClickable="true" />
+            android:longClickable="true"
+            android:text="Cancel"
+            android:textAllCaps="false" />
 
         <View
             android:layout_width="1dp"

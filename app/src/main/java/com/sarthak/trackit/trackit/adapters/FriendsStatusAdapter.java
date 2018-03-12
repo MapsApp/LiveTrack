@@ -60,9 +60,15 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
     @Override
     public int getChildrenCount(int groupPosition) {
 
-        if (userKeyList.get(listDataHeader.get(groupPosition)) != null) {
-            return userKeyList.get(listDataHeader.get(groupPosition)).size();
+        if (userKeyList != null) {
+
+            if (userKeyList.get(listDataHeader.get(groupPosition)) != null) {
+                return userKeyList.get(listDataHeader.get(groupPosition)).size();
+            } else {
+                return 0;
+            }
         } else {
+
             return 0;
         }
     }

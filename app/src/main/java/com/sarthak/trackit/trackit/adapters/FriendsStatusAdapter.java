@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.Query;
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,9 +22,9 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;
     private ArrayList<String> listDataHeader;
-    private HashMap<String, ArrayList<String>> userKeyList;
+    private HashMap<String, ArrayList<User>> userKeyList;
 
-    public FriendsStatusAdapter(Context mContext, ArrayList<String> listDataHeader, HashMap<String, ArrayList<String>> userKeyList) {
+    public FriendsStatusAdapter(Context mContext, ArrayList<String> listDataHeader, HashMap<String, ArrayList<User>> userKeyList) {
 
         this.mContext = mContext;
         this.listDataHeader = listDataHeader;
@@ -32,7 +34,7 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosititon) {
-        return this.userKeyList.get(this.listDataHeader.get(groupPosition)).get(childPosititon);
+        return userKeyList.get(listDataHeader.get(groupPosition)).get(childPosititon).getDisplayName();
     }
 
     @Override
@@ -43,7 +45,7 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final String childText = (String) getChild(groupPosition, childPosition);
+        String childText = (String) getChild(groupPosition, childPosition);
 
         if (convertView == null) {
 

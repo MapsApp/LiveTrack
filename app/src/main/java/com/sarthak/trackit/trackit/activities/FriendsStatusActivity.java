@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -15,6 +16,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.FriendsStatusAdapter;
+import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 
 import java.util.ArrayList;
@@ -25,13 +27,13 @@ public class FriendsStatusActivity extends BaseActivity implements ExpandableLis
         , ExpandableListView.OnGroupCollapseListener
         , ExpandableListView.OnChildClickListener {
 
-    ArrayList<String> sentUserList = new ArrayList<>();
-    ArrayList<String> receivedUserList = new ArrayList<>();
-    ArrayList<String> friendList = new ArrayList<>();
+    ArrayList<User> sentUserList = new ArrayList<>();
+    ArrayList<User> receivedUserList = new ArrayList<>();
+    ArrayList<User> friendList = new ArrayList<>();
 
     ArrayList<String> contactHeaderList = new ArrayList<>();
 
-    HashMap<String, ArrayList<String>> contactKeyList = new HashMap<>();
+    HashMap<String, ArrayList<User>> contactKeyList = new HashMap<>();
 
     FriendsStatusAdapter listAdapter;
     ExpandableListView expListView;
@@ -87,10 +89,22 @@ public class FriendsStatusActivity extends BaseActivity implements ExpandableLis
 
                     for (DocumentSnapshot document : task.getResult()) {
 
-                        sentUserList.add(document.getId());
-                        contactKeyList.put("Sent", sentUserList);
-                        // If timestamp is needed at some later stage, snapshot.getData will be used.
-                        listAdapter.notifyDataSetChanged();
+                        if (document != null && document.exists()) {
+
+                            mFirestore.collection(Constants.USERS_REFERENCE).document(document.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                    if (task.isSuccessful()) {
+
+                                        sentUserList.add(task.getResult().toObject(User.class));
+                                        contactKeyList.put("Sent", sentUserList);
+                                        // If timestamp is needed at some later stage, snapshot.getData will be used.
+                                        listAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -114,9 +128,21 @@ public class FriendsStatusActivity extends BaseActivity implements ExpandableLis
 
                     for (DocumentSnapshot document : task.getResult()) {
 
-                        receivedUserList.add(document.getId());
-                        contactKeyList.put("Received", receivedUserList);
-                        listAdapter.notifyDataSetChanged();
+                        if (document != null && document.exists()) {
+
+                            mFirestore.collection(Constants.USERS_REFERENCE).document(document.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                    if (task.isSuccessful()) {
+
+                                        receivedUserList.add(task.getResult().toObject(User.class));
+                                        contactKeyList.put("Received", receivedUserList);
+                                        listAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -140,9 +166,21 @@ public class FriendsStatusActivity extends BaseActivity implements ExpandableLis
 
                     for (DocumentSnapshot document : task.getResult()) {
 
-                        friendList.add(document.getId());
-                        contactKeyList.put("Friends", friendList);
-                        listAdapter.notifyDataSetChanged();
+                        if (document != null && document.exists()) {
+
+                            mFirestore.collection(Constants.USERS_REFERENCE).document(document.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                    if (task.isSuccessful()) {
+
+                                        friendList.add(task.getResult().toObject(User.class));
+                                        contactKeyList.put("Friends", friendList);
+                                        listAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
             }

@@ -221,7 +221,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                         if (document != null && document.exists()) {
 
                             requestType = 1;
-                            layout.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_green_dark));
+                            layout.setBackgroundColor(mContext.getResources().getColor(R.color.md_green_100));
                         }
                     }
                 }
@@ -238,7 +238,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                         if (document != null && document.exists()) {
 
                             requestType = 2;
-                            layout.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_blue_light));
+                            layout.setBackgroundColor(mContext.getResources().getColor(R.color.md_blue_100));
                         }
                     }
                 }
@@ -255,7 +255,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                         if (document != null && document.exists()) {
 
                             requestType = 3;
-                            layout.setBackgroundColor(mContext.getResources().getColor(android.R.color.holo_purple));
+                            layout.setBackgroundColor(mContext.getResources().getColor(R.color.md_deep_purple_100));
                         }
                     }
                 }

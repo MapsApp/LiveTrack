@@ -1,35 +1,43 @@
 package com.sarthak.trackit.trackit.activities;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ExpandableListView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.FriendsStatusAdapter;
 import com.sarthak.trackit.trackit.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class FriendsStatusActivity extends BaseActivity implements ExpandableListView.OnGroupClickListener
         , ExpandableListView.OnGroupExpandListener
         , ExpandableListView.OnGroupCollapseListener
         , ExpandableListView.OnChildClickListener {
 
-    private static final String TAG = FriendsStatusActivity.class.getName();
-    private FirebaseUser mUser;
-    private FirebaseFirestore mFirestore;
+    ArrayList<String> sentUserList = new ArrayList<>();
+    ArrayList<String> receivedUserList = new ArrayList<>();
+    ArrayList<String> friendList = new ArrayList<>();
+
+    ArrayList<String> contactHeaderList = new ArrayList<>();
+
+    HashMap<String, ArrayList<String>> contactKeyList = new HashMap<>();
+
     FriendsStatusAdapter listAdapter;
     ExpandableListView expListView;
-    List<String> listDataHeader;
-    //List<Query> queryList;
-    HashMap<String, List<String>> listDataChild;
-    HashMap<String, List<Query>> listData;
+
+    private FirebaseFirestore mFirestore;
+    private FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +51,7 @@ public class FriendsStatusActivity extends BaseActivity implements ExpandableLis
 
         prepareListData();
 
-        listAdapter = new FriendsStatusAdapter(this, listDataHeader, listDataChild);
+        listAdapter = new FriendsStatusAdapter(FriendsStatusActivity.this, contactHeaderList, contactKeyList);
         expListView.setAdapter(listAdapter);
 
         // Listview Group click listener
@@ -60,84 +68,85 @@ public class FriendsStatusActivity extends BaseActivity implements ExpandableLis
     }
 
     private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
-        listData=new HashMap<String,List<Query>>();
 
-        Query mQuery1=mFirestore.collection(Constants.CONTACTS_REFERENCE)
-                .document(mUser.getUid())
-                .collection("Sent");
+        Query sentQuery = mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Sent");
 
-                /*.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
+        sentQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                if (task.isSuccessful()) {
+
+                    sentUserList.clear();
+
+                    if (!contactHeaderList.contains("Sent")) {
+
+                        contactHeaderList.add("Sent");
+                        listAdapter.notifyDataSetChanged();
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
 
+                    for (DocumentSnapshot document : task.getResult()) {
+
+                        sentUserList.add(document.getId());
+                        contactKeyList.put("Sent", sentUserList);
+                        // If timestamp is needed at some later stage, snapshot.getData will be used.
+                        listAdapter.notifyDataSetChanged();
                     }
-                });*/
+                }
+            }
+        });
 
-        Query mQuery2=mFirestore.collection(Constants.CONTACTS_REFERENCE)
-                .document(mUser.getUid())
-                .collection("Received");
-                /*.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
+        Query receivedQuery = mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Received");
+
+        receivedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                if (task.isSuccessful()) {
+
+                    receivedUserList.clear();
+
+                    if (!contactHeaderList.contains("Received")) {
+
+                        contactHeaderList.add("Received");
+                        listAdapter.notifyDataSetChanged();
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
 
+                    for (DocumentSnapshot document : task.getResult()) {
+
+                        receivedUserList.add(document.getId());
+                        contactKeyList.put("Received", receivedUserList);
+                        listAdapter.notifyDataSetChanged();
                     }
-                });*/
+                }
+            }
+        });
 
-        // Adding child data
-        /*queryList.add(mQuery1);
-        queryList.add(mQuery2);*/
+        Query friendQuery = mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends");
 
-        listDataHeader.add("Pending Request");
-        listDataHeader.add("Sent Request");
+        friendQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-        // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
+                if (task.isSuccessful()) {
 
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
+                    friendList.clear();
 
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
+                    if (!contactHeaderList.contains("Friends")) {
+
+                        contactHeaderList.add("Friends");
+                        listAdapter.notifyDataSetChanged();
+                    }
+
+                    for (DocumentSnapshot document : task.getResult()) {
+
+                        friendList.add(document.getId());
+                        contactKeyList.put("Friends", friendList);
+                        listAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
     }
 
     @Override

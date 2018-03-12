@@ -39,8 +39,8 @@ public class FriendsFragment extends Fragment implements View.OnClickListener, F
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvFriends=view.findViewById(R.id.recycler_friends);
-        fabCreateGroup=view.findViewById(R.id.fab_create_group);
+        rvFriends = view.findViewById(R.id.recycler_friends);
+        fabCreateGroup = view.findViewById(R.id.fab_create_group);
 
         rvFriends.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
         rvFriends.setAdapter(new FriendsAdapter(getActivity(), this));
@@ -54,6 +54,7 @@ public class FriendsFragment extends Fragment implements View.OnClickListener, F
         switch (v.getId()){
 
             case R.id.fab_create_group:
+
                 launchSearch();
                 break;
         }

@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/LiveTrack.iml" filepath="$PROJECT_DIR$/LiveTrack.iml" />
+=======
+      <module fileurl="file://D:\sarthak\AndroidProjects\AndroidProjects\TrackIt\LiveTrack.iml" filepath="D:\sarthak\AndroidProjects\AndroidProjects\TrackIt\LiveTrack.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TrackIt.iml" filepath="$PROJECT_DIR$/TrackIt.iml" />
+      <module fileurl="file://E:\AND\live\LiveTrack\TrackIt.iml" filepath="E:\AND\live\LiveTrack\TrackIt.iml" />
+>>>>>>> e573c5a3dccf74f00ad83e0dcbcd329202bce014
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

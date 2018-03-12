@@ -19,7 +19,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 public class FriendsStatusAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;

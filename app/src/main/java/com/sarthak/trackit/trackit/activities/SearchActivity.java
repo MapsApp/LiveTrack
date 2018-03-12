@@ -35,7 +35,6 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
     private ArrayList<User> userList = new ArrayList<>();
     Menu menu;
     SearchView searchView;
-    private ImageButton mSearchBtn;
     private EditText mSearchEt;
     private RecyclerView mSearchRecyclerView;
     private SearchCursorAdapter searchCursorAdapter;
@@ -50,7 +49,6 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
 
         mFirestore = FirebaseFirestore.getInstance();
         //searchCursorAdapter = new SearchCursorAdapter(this, , true);
-        mSearchBtn = findViewById(R.id.search_btn);
 
         mToolbar.inflateMenu(R.menu.home);
         menu=mToolbar.getMenu();
@@ -66,7 +64,6 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
         initRecyclerView();
 
         mSearchEt.addTextChangedListener(this);
-        mSearchBtn.setOnClickListener(this);
     }
 
     @Override
@@ -79,11 +76,6 @@ public class SearchActivity extends BaseActivity implements TextWatcher, View.On
 
         switch (v.getId()) {
 
-            case R.id.search_btn:
-
-                /*String searchText = mSearchEt.getText().toString();
-                firestoreUserSearch(searchText);*/
-                break;
         }
     }
 

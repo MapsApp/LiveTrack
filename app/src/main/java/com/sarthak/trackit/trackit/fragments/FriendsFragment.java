@@ -1,10 +1,12 @@
 package com.sarthak.trackit.trackit.fragments;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.activities.SearchActivity;
 import com.sarthak.trackit.trackit.adapters.FriendsAdapter;
+import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
 
 public class FriendsFragment extends Fragment implements View.OnClickListener, FriendsAdapter.setOnFriendClickListener{
 
@@ -39,8 +42,8 @@ public class FriendsFragment extends Fragment implements View.OnClickListener, F
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvFriends=view.findViewById(R.id.recycler_friends);
-        fabCreateGroup=view.findViewById(R.id.fab_create_group);
+        rvFriends = view.findViewById(R.id.recycler_friends);
+        fabCreateGroup = view.findViewById(R.id.fab_create_group);
 
         rvFriends.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
         rvFriends.setAdapter(new FriendsAdapter(getActivity(), this));
@@ -54,10 +57,12 @@ public class FriendsFragment extends Fragment implements View.OnClickListener, F
         switch (v.getId()){
 
             case R.id.fab_create_group:
+
                 launchSearch();
                 break;
         }
     }
+
 
     @Override
     public void OnFriendItemClicked(View view, int position) {

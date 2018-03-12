@@ -11,6 +11,10 @@
     <ExpandableListView
         android:id="@+id/lvExp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:cacheColorHint="@color/md_grey_700"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="false"
+        android:visibility="visible" />
 
 </LinearLayout>

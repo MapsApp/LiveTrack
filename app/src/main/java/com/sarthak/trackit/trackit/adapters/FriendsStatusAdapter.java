@@ -1,50 +1,40 @@
 package com.sarthak.trackit.trackit.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.firebase.firestore.Query;
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.utils.CircleTransform;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-/**
- * Created by karan on 3/12/2018.
- */
 
 public class FriendsStatusAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;
-    private List<String> listDataHeader; // header titles
-    // child data in format of header title, child title
-    private HashMap<String, List<Query>> listData;
-    Activity activity;
-    private HashMap<String, List<String>> listDataChild;
+    private ArrayList<String> listDataHeader;
+    private HashMap<String, ArrayList<String>> userKeyList;
 
-    public FriendsStatusAdapter(Context context, List<String> listDataHeader, HashMap<String, List<String>> listChildData) {
-        this.mContext = context;
-        this.listDataHeader = listDataHeader;
-        this.listDataChild = listChildData;
-    }
+    public FriendsStatusAdapter(Context mContext, ArrayList<String> listDataHeader, HashMap<String, ArrayList<String>> userKeyList) {
 
-    public FriendsStatusAdapter(Context mContext, List<String> listDataHeader, HashMap<String, List<Query>> listData, Activity activity) {
         this.mContext = mContext;
         this.listDataHeader = listDataHeader;
-        this.listData = listData;
-        this.activity = activity;
+        this.userKeyList = userKeyList;
     }
 
 
     @Override
     public Object getChild(int groupPosition, int childPosititon) {
-        return this.listDataChild.get(this.listDataHeader.get(groupPosition)).get(childPosititon);
+        return this.userKeyList.get(this.listDataHeader.get(groupPosition)).get(childPosititon);
     }
 
     @Override
@@ -56,22 +46,56 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
         final String childText = (String) getChild(groupPosition, childPosition);
+        final String childText1 = (String) getChild(groupPosition, childPosition);
+
 
         if (convertView == null) {
+
             LayoutInflater infalInflater = (LayoutInflater) this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.parent_list_item, null);
+            convertView = infalInflater.inflate(R.layout.item_friend_status, null);
         }
 
-        TextView txtListChild = convertView.findViewById(R.id.lblListItem);
+        TextView txtListChild = convertView.findViewById(R.id.text_person_name);
+        TextView txtListChild1 = convertView.findViewById(R.id.text_person_username);
+        final ProgressBar progressBar=convertView.findViewById(android.R.id.progress);
+
+        ImageView imageFriendStatus = convertView.findViewById(R.id.image_person);
+
+        progressBar.setVisibility(View.VISIBLE);
+        Picasso.with(convertView.getContext())
+                .load("https://www.w3schools.com/css/trolltunga.jpg")
+                .transform(new CircleTransform())
+                .into(imageFriendStatus, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onError() {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                });
 
         txtListChild.setText(childText);
+        txtListChild1.setText(childText1);
         return convertView;
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.listDataChild.get(this.listDataHeader.get(groupPosition))
-                .size();
+
+        if (userKeyList != null) {
+
+            if (userKeyList.get(listDataHeader.get(groupPosition)) != null) {
+                return userKeyList.get(listDataHeader.get(groupPosition)).size();
+            } else {
+                return 0;
+            }
+        } else {
+
+            return 0;
+        }
     }
 
     @Override
@@ -92,14 +116,16 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         String headerTitle = (String) getGroup(groupPosition);
+
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this.mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.item_friend_status, null);
+            convertView = infalInflater.inflate(R.layout.parent_item, null);
         }
 
-        TextView lblListHeader = convertView.findViewById(R.id.lblListHeader);
-        lblListHeader.setTypeface(null, Typeface.BOLD);
-        lblListHeader.setText(headerTitle);
+        TextView mPersonNameTv = convertView.findViewById(R.id.text_parent);
+        mPersonNameTv.setTypeface(null, Typeface.BOLD);
+        mPersonNameTv.setText(headerTitle);
+
 
         return convertView;
     }

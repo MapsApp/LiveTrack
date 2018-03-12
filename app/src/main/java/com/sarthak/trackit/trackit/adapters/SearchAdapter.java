@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
 import com.sarthak.trackit.trackit.utils.Constants;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -81,7 +83,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         private Button mRequestBtn, mCancelBtn;
         private ImageButton mSearchExpandBtn;
         private ImageView mSearchUserIv;
-
+        private ProgressBar progressBar;
         private LinearLayout searchOptionsLayout;
 
         private FirebaseFirestore mFirestore;
@@ -101,6 +103,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             mSearchUserIv = view.findViewById(R.id.image_search);
             mSearchExpandBtn = view.findViewById(R.id.button_search_expand);
             searchOptionsLayout = view.findViewById(R.id.search_options_layout);
+
+            progressBar=view.findViewById(android.R.id.progress);
 
             mSearchExpandBtn.setOnClickListener(this);
             mRequestBtn.setOnClickListener(this);
@@ -202,10 +206,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             mDisplayNameTv.setText(user.getDisplayName());
             mUserNameTv.setText(user.getUsername());
 
+            progressBar.setVisibility(View.VISIBLE);
             Picasso.with(itemView.getContext())
                     .load("https://www.w3schools.com/css/trolltunga.jpg")
                     .transform(new CircleTransform())
-                    .into(mSearchUserIv);
+                    .into(mSearchUserIv, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+
+                        @Override
+                        public void onError() {
+                            progressBar.setVisibility(View.INVISIBLE);
+                        }
+                    });
         }
 
         private void checkForRequest(final LinearLayout layout) {

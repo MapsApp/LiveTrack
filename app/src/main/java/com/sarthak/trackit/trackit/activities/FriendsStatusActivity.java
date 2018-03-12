@@ -15,23 +15,25 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.FriendsStatusAdapter;
+import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FriendsStatusActivity extends BaseActivity implements ExpandableListView.OnGroupClickListener
+public class FriendsStatusActivity extends BaseActivity implements
+        ExpandableListView.OnGroupClickListener
         , ExpandableListView.OnGroupExpandListener
         , ExpandableListView.OnGroupCollapseListener
         , ExpandableListView.OnChildClickListener {
 
-    ArrayList<String> sentUserList = new ArrayList<>();
-    ArrayList<String> receivedUserList = new ArrayList<>();
-    ArrayList<String> friendList = new ArrayList<>();
+    ArrayList<User> sentUserList = new ArrayList<>();
+    ArrayList<User> receivedUserList = new ArrayList<>();
+    ArrayList<User> friendList = new ArrayList<>();
 
     ArrayList<String> contactHeaderList = new ArrayList<>();
 
-    HashMap<String, ArrayList<String>> contactKeyList = new HashMap<>();
+    HashMap<String, ArrayList<User>> contactKeyList = new HashMap<>();
 
     FriendsStatusAdapter listAdapter;
     ExpandableListView expListView;
@@ -69,13 +71,9 @@ public class FriendsStatusActivity extends BaseActivity implements ExpandableLis
 
     private void prepareListData() {
 
-        Query sentQuery = mFirestore
-                .collection(Constants.CONTACTS_REFERENCE)
-                .document(mUser.getUid())
-                .collection("Sent");
+        Query sentQuery = mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Sent");
 
-        sentQuery.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        sentQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
@@ -91,22 +89,30 @@ public class FriendsStatusActivity extends BaseActivity implements ExpandableLis
 
                     for (DocumentSnapshot document : task.getResult()) {
 
-                        sentUserList.add(document.getId());
-                        contactKeyList.put("Sent", sentUserList);
-                        // If timestamp is needed at some later stage, snapshot.getData will be used.
-                        listAdapter.notifyDataSetChanged();
+                        if (document != null && document.exists()) {
+
+                            mFirestore.collection(Constants.USERS_REFERENCE).document(document.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                    if (task.isSuccessful()) {
+
+                                        sentUserList.add(task.getResult().toObject(User.class));
+                                        contactKeyList.put("Sent", sentUserList);
+                                        // If timestamp is needed at some later stage, snapshot.getData will be used.
+                                        listAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
             }
         });
 
-        Query receivedQuery = mFirestore
-                .collection(Constants.CONTACTS_REFERENCE)
-                .document(mUser.getUid())
-                .collection("Received");
+        Query receivedQuery = mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Received");
 
-        receivedQuery.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        receivedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
@@ -122,21 +128,29 @@ public class FriendsStatusActivity extends BaseActivity implements ExpandableLis
 
                     for (DocumentSnapshot document : task.getResult()) {
 
-                        receivedUserList.add(document.getId());
-                        contactKeyList.put("Received", receivedUserList);
-                        listAdapter.notifyDataSetChanged();
+                        if (document != null && document.exists()) {
+
+                            mFirestore.collection(Constants.USERS_REFERENCE).document(document.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                    if (task.isSuccessful()) {
+
+                                        receivedUserList.add(task.getResult().toObject(User.class));
+                                        contactKeyList.put("Received", receivedUserList);
+                                        listAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
             }
         });
 
-        /*Query friendQuery = mFirestore
-                .collection(Constants.CONTACTS_REFERENCE)
-                .document(mUser.getUid())
-                .collection("Friends");
+        Query friendQuery = mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends");
 
-        friendQuery.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        friendQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
@@ -152,13 +166,25 @@ public class FriendsStatusActivity extends BaseActivity implements ExpandableLis
 
                     for (DocumentSnapshot document : task.getResult()) {
 
-                        friendList.add(document.getId());
-                        contactKeyList.put("Friends", friendList);
-                        listAdapter.notifyDataSetChanged();
+                        if (document != null && document.exists()) {
+
+                            mFirestore.collection(Constants.USERS_REFERENCE).document(document.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                    if (task.isSuccessful()) {
+
+                                        friendList.add(task.getResult().toObject(User.class));
+                                        contactKeyList.put("Friends", friendList);
+                                        listAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
             }
-        });*/
+        });
     }
 
     @Override

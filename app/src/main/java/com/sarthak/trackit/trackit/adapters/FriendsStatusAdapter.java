@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -18,13 +19,14 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 public class FriendsStatusAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;
     private ArrayList<String> listDataHeader;
-    private HashMap<String, ArrayList<String>> userKeyList;
+    HashMap<String, ArrayList<User>> userKeyList;
 
-    public FriendsStatusAdapter(Context mContext, ArrayList<String> listDataHeader, HashMap<String, ArrayList<String>> userKeyList) {
+    public FriendsStatusAdapter(Context mContext, ArrayList<String> listDataHeader, HashMap<String, ArrayList<User>> userKeyList) {
 
         this.mContext = mContext;
         this.listDataHeader = listDataHeader;
@@ -34,7 +36,7 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosititon) {
-        return this.userKeyList.get(this.listDataHeader.get(groupPosition)).get(childPosititon);
+        return userKeyList.get(listDataHeader.get(groupPosition)).get(childPosititon);
     }
 
     @Override
@@ -44,10 +46,10 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        User user = (User) getChild(groupPosition, childPosition);
 
-        final String childText = (String) getChild(groupPosition, childPosition);
-        final String childText1 = (String) getChild(groupPosition, childPosition);
-
+        final String childText = user.getDisplayName();
+        final String childText1 = user.getUsername();
 
         if (convertView == null) {
 
@@ -57,7 +59,7 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
 
         TextView txtListChild = convertView.findViewById(R.id.text_person_name);
         TextView txtListChild1 = convertView.findViewById(R.id.text_person_username);
-        final ProgressBar progressBar=convertView.findViewById(android.R.id.progress);
+        final ProgressBar progressBar = convertView.findViewById(android.R.id.progress);
 
         ImageView imageFriendStatus = convertView.findViewById(R.id.image_person);
 
@@ -125,7 +127,6 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
         TextView mPersonNameTv = convertView.findViewById(R.id.text_parent);
         mPersonNameTv.setTypeface(null, Typeface.BOLD);
         mPersonNameTv.setText(headerTitle);
-
 
         return convertView;
     }

@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/LiveTrack.iml" filepath="$PROJECT_DIR$/LiveTrack.iml" />
-      <module fileurl="file://D:\sarthak\AndroidProjects\AndroidProjects\TrackIt\LiveTrack.iml" filepath="D:\sarthak\AndroidProjects\AndroidProjects\TrackIt\LiveTrack.iml" />
-      <module fileurl="file://E:\AND\live\LiveTrack\TrackIt.iml" filepath="E:\AND\live\LiveTrack\TrackIt.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

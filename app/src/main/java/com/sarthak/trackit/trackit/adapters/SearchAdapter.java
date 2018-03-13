@@ -236,7 +236,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                         if (document != null && document.exists()) {
 
                             requestType = 1;
-                            layout.setBackgroundColor(mContext.getResources().getColor(R.color.md_green_100));
+                            mRequestBtn.setText("Cancel Request");
                         }
                     }
                 }
@@ -253,7 +253,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                         if (document != null && document.exists()) {
 
                             requestType = 2;
-                            layout.setBackgroundColor(mContext.getResources().getColor(R.color.md_blue_100));
+                            mRequestBtn.setText("Decline Request");
                         }
                     }
                 }

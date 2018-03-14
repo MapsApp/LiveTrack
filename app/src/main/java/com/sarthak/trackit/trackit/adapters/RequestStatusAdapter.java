@@ -19,13 +19,13 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FriendsStatusAdapter extends BaseExpandableListAdapter {
+public class RequestStatusAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;
     private ArrayList<String> listDataHeader;
-    HashMap<String, ArrayList<User>> userKeyList;
+    private HashMap<String, ArrayList<User>> userKeyList;
 
-    public FriendsStatusAdapter(Context mContext, ArrayList<String> listDataHeader, HashMap<String, ArrayList<User>> userKeyList) {
+    public RequestStatusAdapter(Context mContext, ArrayList<String> listDataHeader, HashMap<String, ArrayList<User>> userKeyList) {
 
         this.mContext = mContext;
         this.listDataHeader = listDataHeader;
@@ -45,6 +45,7 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+
         User user = (User) getChild(groupPosition, childPosition);
 
         final String childText = user.getDisplayName();
@@ -124,7 +125,6 @@ public class FriendsStatusAdapter extends BaseExpandableListAdapter {
         }
 
         TextView mPersonNameTv = convertView.findViewById(R.id.text_parent);
-        mPersonNameTv.setTypeface(null, Typeface.BOLD);
         mPersonNameTv.setText(headerTitle);
 
         return convertView;

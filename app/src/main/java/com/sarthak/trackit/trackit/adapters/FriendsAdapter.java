@@ -1,7 +1,6 @@
 package com.sarthak.trackit.trackit.adapters;
 
 import android.animation.Animator;
-import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -20,20 +19,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
 
     private setOnFriendClickListener mListener;
+    private ArrayList<User> mUserList;
 
-    private Context mContext;
-
-    public FriendsAdapter(Context context, setOnFriendClickListener mListener) {
-
-        this.mContext = context;
+    public FriendsAdapter(setOnFriendClickListener mListener, ArrayList<User> mUserList) {
         this.mListener = mListener;
+        this.mUserList = mUserList;
     }
 
     public interface setOnFriendClickListener {
@@ -54,8 +54,6 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
     public void onBindViewHolder(@NonNull final FriendsViewHolder holder, int position) {
 
         //Dummy Data
-        String[] names = holder.itemView.getContext().getResources().getStringArray(R.array.names);
-        String[] user_names = holder.itemView.getContext().getResources().getStringArray(R.array.user_names);
 
         holder.progressBar.setVisibility(View.VISIBLE);
         Picasso.with(holder.itemView.getContext())
@@ -73,15 +71,15 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                     }
                 });
 
-        for (int i = 0; i <= position; i++) {
-            holder.txtFriendName.setText(names[i]);
-            holder.txtFriendUserName.setText(user_names[i]);
+        for (int i = 0; i < mUserList.size(); i++) {
+            holder.txtFriendName.setText(mUserList.get(position).getDisplayName());
+            holder.txtFriendUserName.setText(mUserList.get(position).getUsername());
         }
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return mUserList.size();
     }
 
     public class FriendsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -102,7 +100,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
             txtFriendUserName = itemView.findViewById(R.id.text_friend_username);
             optionsLayout = itemView.findViewById(R.id.options_layout);
 
-            progressBar=itemView.findViewById(android.R.id.progress);
+            progressBar = itemView.findViewById(android.R.id.progress);
 
             btnRemoveFriend = itemView.findViewById(R.id.button_remove_friend);
             btnCreateGroup = itemView.findViewById(R.id.button_create_group);
@@ -156,7 +154,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
 
                             optionsLayout.setVisibility(View.VISIBLE);
 
-                            btnExpand.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_forward));
+                            btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_forward));
 
                             btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_forward));
 
@@ -193,7 +191,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
                             });
                             anim.start();
 
-                            btnExpand.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_backward));
+                            btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_backward));
 
                             btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_backward));
 

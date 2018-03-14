@@ -33,8 +33,7 @@
 
         <Button
             android:id="@+id/button_phone_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/SmallButton"
             android:layout_margin="@dimen/margin_small"
             android:background="@drawable/button_green"
             android:text="Log In With Phone Number"
@@ -42,8 +41,7 @@
 
         <Button
             android:id="@+id/button_fb_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/SmallButton"
             android:layout_margin="@dimen/margin_small"
             android:background="@drawable/button_blue"
             android:text="Log In With Facebook"
@@ -51,8 +49,7 @@
 
         <Button
             android:id="@+id/button_guest_sign_in"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/SmallButton"
             android:layout_margin="@dimen/margin_small"
             android:background="@drawable/button_red"
             android:text="Log In As Guest"

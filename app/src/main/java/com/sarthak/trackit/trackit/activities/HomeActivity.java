@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -11,37 +12,63 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.TextView;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.sarthak.trackit.trackit.LocationService;
+import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.fragments.FriendsFragment;
 import com.sarthak.trackit.trackit.fragments.GroupsFragment;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
-import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.model.User;
+import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
-public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends BaseActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        View.OnClickListener {
+
+    TextView mNavUserName, mNavDisplayName;
+
+    User user=new User();
 
     BottomNavigationView navigation;
     SearchView searchView;
+
+    FloatingActionButton fab;
+
+    FirebaseAuth mAuth;
+    FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         setUpToolbar(this);
-
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
         startService(new Intent(HomeActivity.this, LocationService.class));
+
 
         /*If the instance state of app onCreate is null,
         MapsFragment is inflated*/
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             fragmentInflate(MapsFragment.newInstance());
         }
+
+
+        fab = findViewById(R.id.fab);
 
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -54,6 +81,42 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+        mNavUserName = header.findViewById(R.id.text_nav_username);
+        mNavDisplayName = header.findViewById(R.id.text_nav_display_name);
+        setUserDetails();
+
+        fab.setOnClickListener(this);
+        registerForContextMenu(fab);
+
+    }
+
+    private void setUserDetails() {
+
+        if(!mUser.isAnonymous()){
+        FirebaseFirestore.getInstance()
+                .collection(Constants.USERS_REFERENCE)
+                .document(mUser.getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    user= task.getResult().toObject(User.class);
+
+                    mNavUserName.setText(user.getUsername());
+                    mNavDisplayName.setText(user.getDisplayName());
+                }
+                else {
+                    mNavUserName.setText(getText(R.string.error_wait_message));
+                    mNavDisplayName.setText(getString(R.string.error_wait_message));
+                }
+            }
+        });}
+        else {
+            mNavUserName.setText(getString(R.string.login_request));
+            mNavDisplayName.setText(getString(R.string.hi));
+        }
+
     }
 
     @Override
@@ -105,7 +168,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     /*Used to pass fragment on item selected*/
     public void fragmentInflate(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.content_frame, fragment);
+        fragmentTransaction.replace(R.id.home_page_container, fragment);
         fragmentTransaction.commit();
     }
 
@@ -138,7 +201,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_settings:
 
                 new UserSharedPreferences(HomeActivity.this).deleteStatus();
@@ -160,12 +223,29 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
 
             case R.id.nav_camera:
-                startActivity(new Intent(this,FriendsStatusActivity.class));
+                startActivity(new Intent(this, RequestStatusActivity.class));
                 break;
+
+            case R.id.nav_gallery:
+                break;
+
         }
         return true;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+
+    }
+
+    @Override
+    public void onClick(View v) {
     }
 }

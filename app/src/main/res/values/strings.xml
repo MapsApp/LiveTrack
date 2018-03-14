@@ -27,5 +27,8 @@
     <!--Facebook Keys-->
     <string name="facebook_app_id">633735216975951</string>
     <string name="fb_login_protocol_scheme">fb633735216975951</string>
+    <string name="login_request">Please Login</string>
+    <string name="hi">Hi User !</string>
+    <string name="error_wait_message">Please wait...</string>
 
 </resources>

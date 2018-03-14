@@ -7,6 +7,16 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="margin_small">10dp</dimen>
     <dimen name="margin_smaller">5dp</dimen>
-    <dimen name="padding_smaller">5dp</dimen>
+    <dimen name="margin_smallest">3dp</dimen>
+
     <dimen name="padding_small">10dp</dimen>
+    <dimen name="padding_smaller">5dp</dimen>
+    <dimen name="padding_smallest">3dp</dimen>
+
+    <dimen name="button_corner_radius">3dp</dimen>
+
+    <dimen name="btn_padding_horizontal">8dp</dimen>
+    <dimen name="btn_padding_vertical">4dp</dimen>
+    <dimen name="control_corner_material">2dp</dimen>
+    <dimen name="btn_inset_padding_vertical">6dp</dimen>
 </resources>

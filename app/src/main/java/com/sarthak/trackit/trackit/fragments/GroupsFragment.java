@@ -3,6 +3,7 @@ package com.sarthak.trackit.trackit.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,6 @@ import com.sarthak.trackit.trackit.activities.GroupsActivity;
 
 public class GroupsFragment extends Fragment implements View.OnClickListener{
     Button btnOpen;
-
     public static GroupsFragment newInstance() {
 
         Bundle args = new Bundle();
@@ -34,8 +34,11 @@ public class GroupsFragment extends Fragment implements View.OnClickListener{
         super.onViewCreated(view, savedInstanceState);
 
         btnOpen=view.findViewById(android.R.id.button1);
+
         btnOpen.setOnClickListener(this);
+
     }
+
 
     @Override
     public void onClick(View v) {

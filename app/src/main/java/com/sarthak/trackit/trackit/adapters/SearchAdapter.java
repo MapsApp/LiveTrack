@@ -225,7 +225,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
         private void checkForRequest(final LinearLayout layout) {
 
-            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Sent").document(userKey).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            mFirestore
+                    .collection(Constants.CONTACTS_REFERENCE)
+                    .document(mUser.getUid())
+                    .collection("Sent")
+                    .document(userKey)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
@@ -242,7 +248,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                 }
             });
 
-            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Received").document(userKey).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            mFirestore
+                    .collection(Constants.CONTACTS_REFERENCE)
+                    .document(mUser.getUid())
+                    .collection("Received")
+                    .document(userKey)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
@@ -259,7 +271,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                 }
             });
 
-            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends").document(userKey).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            mFirestore
+                    .collection(Constants.CONTACTS_REFERENCE)
+                    .document(mUser.getUid())
+                    .collection("Friends")
+                    .document(userKey)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 

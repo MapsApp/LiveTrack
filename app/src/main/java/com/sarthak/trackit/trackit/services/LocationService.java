@@ -1,4 +1,4 @@
-package com.sarthak.trackit.trackit;
+package com.sarthak.trackit.trackit.services;
 
 import android.Manifest;
 import android.app.Service;

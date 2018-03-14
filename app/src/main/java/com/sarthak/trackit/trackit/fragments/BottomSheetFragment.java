@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 
 import com.sarthak.trackit.trackit.R;
 
-
 public class BottomSheetFragment extends BottomSheetDialogFragment {
+
     public BottomSheetFragment() {
         // Required empty public constructor
     }

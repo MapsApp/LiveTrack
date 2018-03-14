@@ -13,8 +13,8 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.sarthak.trackit.trackit.FacebookLoginManager;
-import com.sarthak.trackit.trackit.GuestLogin;
+import com.sarthak.trackit.trackit.loginmanager.FacebookLoginManager;
+import com.sarthak.trackit.trackit.loginmanager.GuestLogin;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 

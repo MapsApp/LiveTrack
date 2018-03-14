@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -13,21 +14,25 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.sarthak.trackit.trackit.LocationService;
+import com.sarthak.trackit.trackit.services.LocationService;
 import com.sarthak.trackit.trackit.fragments.FriendsFragment;
 import com.sarthak.trackit.trackit.fragments.GroupsFragment;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
-public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+
+    int fragmentType = 0;
 
     BottomNavigationView navigation;
     SearchView searchView;
+
+    FloatingActionButton createFriendOrGroupBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +59,21 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        createFriendOrGroupBtn = findViewById(R.id.fab_create_friend_or_group);
+        createFriendOrGroupBtn.setOnClickListener(this);
     }
 
     @Override
     protected int getToolbarID() {
         return R.id.home_activity_toolbar;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        stopService(new Intent(HomeActivity.this, LocationService.class));
     }
 
     @Override
@@ -74,39 +89,16 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onClick(View v) {
 
-        stopService(new Intent(HomeActivity.this, LocationService.class));
-    }
+        switch (v.getId()) {
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+            case R.id.fab_create_friend_or_group:
 
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment selectedFragment = null;
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    selectedFragment = MapsFragment.newInstance();
-                    break;
-                case R.id.navigation_friends:
-                    selectedFragment = FriendsFragment.newInstance();
-                    break;
-                case R.id.navigation_groups:
-                    selectedFragment = GroupsFragment.newInstance();
-                    break;
-            }
-            fragmentInflate(selectedFragment);
-            return true;
+                Intent searchIntent = new Intent(HomeActivity.this, SearchActivity.class);
+                searchIntent.putExtra("fragmentType", fragmentType);
+                startActivity(searchIntent);
         }
-    };
-
-    /*Used to pass fragment on item selected*/
-    public void fragmentInflate(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.content_frame, fragment);
-        fragmentTransaction.commit();
     }
 
     @Override
@@ -167,5 +159,40 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
         }
         return true;
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment selectedFragment = null;
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    fragmentType = 0;
+                    selectedFragment = MapsFragment.newInstance();
+                    createFriendOrGroupBtn.setVisibility(View.GONE);
+                    break;
+                case R.id.navigation_friends:
+                    fragmentType = 1;
+                    selectedFragment = FriendsFragment.newInstance();
+                    createFriendOrGroupBtn.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.navigation_groups:
+                    fragmentType = 2;
+                    selectedFragment = GroupsFragment.newInstance();
+                    createFriendOrGroupBtn.setVisibility(View.VISIBLE);
+                    break;
+            }
+            fragmentInflate(selectedFragment);
+            return true;
+        }
+    };
+
+    /*Used to pass fragment on item selected*/
+    public void fragmentInflate(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.content_frame, fragment);
+        fragmentTransaction.commit();
     }
 }

@@ -65,7 +65,7 @@
         </activity>
 
         <service
-            android:name=".LocationService"
+            android:name=".services.LocationService"
             android:process=":my_service" />
 
         <activity android:name=".activities.AccountSetupActivity" />
@@ -82,7 +82,7 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".activities.FriendsStatusActivity"></activity>
+        <activity android:name=".activities.FriendsStatusActivity" />
     </application>
 
 </manifest>

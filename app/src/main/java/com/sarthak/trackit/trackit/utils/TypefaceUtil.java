@@ -1,12 +1,8 @@
-package com.sarthak.trackit.trackit;
+package com.sarthak.trackit.trackit.utils;
 
 import android.content.Context;
 import android.graphics.Typeface;
 import java.lang.reflect.Field;
-
-/**
- * Created by karan on 3/11/2018.
- */
 
 public class TypefaceUtil {
 
@@ -17,11 +13,15 @@ public class TypefaceUtil {
      * @param defaultFontNameToOverride for example "monospace"
      * @param customFontFileNameInAssets file name of the font from assets
      */
+    @SuppressWarnings("SameParameterValue")
     public static void overrideFont(Context context, String defaultFontNameToOverride, String customFontFileNameInAssets) {
+
         try {
+
             final Typeface customFontTypeface = Typeface.createFromAsset(context.getAssets(), customFontFileNameInAssets);
 
             final Field defaultFontTypefaceField = Typeface.class.getDeclaredField(defaultFontNameToOverride);
+
             defaultFontTypefaceField.setAccessible(true);
             defaultFontTypefaceField.set(null, customFontTypeface);
         } catch (Exception e) {

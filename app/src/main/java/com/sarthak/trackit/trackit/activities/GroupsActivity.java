@@ -16,7 +16,8 @@ import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
 import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
 
-public class GroupsActivity extends BaseActivity implements View.OnClickListener, GroupFriendsAdapter.setOnGroupFriendClickListener{
+public class GroupsActivity extends BaseActivity implements View.OnClickListener
+        , GroupFriendsAdapter.setOnGroupFriendClickListener {
 
     FloatingActionButton fabBottomSheet;
     LinearLayout layoutBottomSheet;
@@ -29,7 +30,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         setContentView(R.layout.activity_groups);
         setUpToolbar(this);
 
-        rvGroupMembers=findViewById(R.id.recycler_group_members);
+        rvGroupMembers = findViewById(R.id.recycler_group_members);
         fabBottomSheet = findViewById(R.id.fab_bottom_sheet);
 
         //addressed the container linear layout of bottom sheet
@@ -38,9 +39,9 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         //sets the behaviour of linear layout to a bottom sheet
         sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
 
-        rvGroupMembers.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        rvGroupMembers.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         rvGroupMembers.setAdapter(new GroupFriendsAdapter(this));
-        rvGroupMembers.addItemDecoration(new RecyclerViewDivider(this, ContextCompat.getColor(this,R.color.md_blue_grey_200),0.5f));
+        rvGroupMembers.addItemDecoration(new RecyclerViewDivider(this, ContextCompat.getColor(this, R.color.md_blue_grey_200), 0.5f));
 
         //Used to change icon in floating button with states of BottomSheet
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -81,9 +82,12 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
+
             case R.id.fab_bottom_sheet:
+
                 if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+
                     sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     fabBottomSheet.setImageResource(R.drawable.ic_expand_less_white);
                 } else {

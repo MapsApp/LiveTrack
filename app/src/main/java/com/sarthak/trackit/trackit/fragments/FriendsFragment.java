@@ -18,10 +18,9 @@ import com.sarthak.trackit.trackit.activities.SearchActivity;
 import com.sarthak.trackit.trackit.adapters.FriendsAdapter;
 import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
 
-public class FriendsFragment extends Fragment implements View.OnClickListener, FriendsAdapter.setOnFriendClickListener{
+public class FriendsFragment extends Fragment implements FriendsAdapter.setOnFriendClickListener{
 
-    RecyclerView rvFriends;
-    FloatingActionButton fabCreateGroup;
+    RecyclerView mFriendsList;
 
     public static FriendsFragment newInstance() {
 
@@ -42,36 +41,14 @@ public class FriendsFragment extends Fragment implements View.OnClickListener, F
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvFriends = view.findViewById(R.id.recycler_friends);
-        fabCreateGroup = view.findViewById(R.id.fab_create_group);
+        mFriendsList = view.findViewById(R.id.recycler_friends);
 
-        rvFriends.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
-        rvFriends.setAdapter(new FriendsAdapter(getActivity(), this));
-
-        fabCreateGroup.setOnClickListener(this);
+        mFriendsList.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
+        mFriendsList.setAdapter(new FriendsAdapter(getActivity(), this));
     }
-
-    @Override
-    public void onClick(View v) {
-
-        switch (v.getId()){
-
-            case R.id.fab_create_group:
-
-                launchSearch();
-                break;
-        }
-    }
-
 
     @Override
     public void OnFriendItemClicked(View view, int position) {
 
-    }
-
-    private void launchSearch(){
-
-        Intent intent = new Intent(getContext(), SearchActivity.class);
-        startActivity(intent);
     }
 }

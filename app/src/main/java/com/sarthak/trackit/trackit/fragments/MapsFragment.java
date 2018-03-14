@@ -49,7 +49,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.sarthak.trackit.trackit.LocationService;
 import com.sarthak.trackit.trackit.R;
 
 import static android.app.Activity.RESULT_OK;

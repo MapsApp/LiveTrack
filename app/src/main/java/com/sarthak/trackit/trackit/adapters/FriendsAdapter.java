@@ -156,7 +156,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
 
                             optionsLayout.setVisibility(View.VISIBLE);
 
-                            btnExpand.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_forward));
+                            btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_forward));
 
                             btnExpand.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_forward));
 

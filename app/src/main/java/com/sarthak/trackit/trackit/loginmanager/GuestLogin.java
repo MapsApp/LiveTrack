@@ -1,4 +1,4 @@
-package com.sarthak.trackit.trackit;
+package com.sarthak.trackit.trackit.loginmanager;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +14,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.sarthak.trackit.trackit.activities.HomeActivity;
-import com.sarthak.trackit.trackit.activities.LoginActivity;
 import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
 import static android.content.ContentValues.TAG;
@@ -22,8 +21,10 @@ import static android.content.ContentValues.TAG;
 public class GuestLogin {
 
     private Context mContext;
-    private FirebaseAuth mAuth;
+
     private ProgressBar mProgressBar;
+
+    private FirebaseAuth mAuth;
 
     public GuestLogin(Context context, ProgressBar progressBar) {
 

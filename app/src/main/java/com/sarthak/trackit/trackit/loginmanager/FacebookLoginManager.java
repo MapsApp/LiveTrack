@@ -1,4 +1,4 @@
-package com.sarthak.trackit.trackit;
+package com.sarthak.trackit.trackit.loginmanager;
 
 import android.app.Activity;
 import android.content.Context;
@@ -37,7 +37,7 @@ public class FacebookLoginManager {
 
         this.mContext = context;
         this.mProgressBar = progressBar;
-        // create an instance auth and get current user
+
         mAuth = FirebaseAuth.getInstance();
         mFirestore = FirebaseFirestore.getInstance();
     }

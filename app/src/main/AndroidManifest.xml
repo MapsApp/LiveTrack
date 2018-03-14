@@ -65,7 +65,7 @@
         </activity>
 
         <service
-            android:name=".LocationService"
+            android:name=".services.LocationService"
             android:process=":my_service" />
 
         <activity android:name=".activities.AccountSetupActivity" />
@@ -84,6 +84,7 @@
         </activity>
         <activity android:name=".activities.RequestStatusActivity" />
         <activity android:name=".activities.CreateGroupActivity"></activity>
+        <activity android:name=".activities.FriendsStatusActivity" />
     </application>
 
 </manifest>

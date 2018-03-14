@@ -11,15 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 
-/**
- * Created by karan on 3/12/2018.
- */
-
 public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
 
     private final Paint mPaint;
-    private final int mLeftInset=0;
-    private final int mRightInset=0;
 
     /**
      * Create a decoration that draws a line in the given color and width between the items in the view.
@@ -28,17 +22,17 @@ public class RecyclerViewDivider extends RecyclerView.ItemDecoration {
      * @param color    the color of the separator to draw.
      * @param heightDp the height of the separator in dp.
      */
-    public RecyclerViewDivider(@NonNull Context context, @ColorInt int color,
-                               @FloatRange(from = 0, fromInclusive = false) float heightDp) {
+    public RecyclerViewDivider(@NonNull Context context, @ColorInt int color, @FloatRange(from = 0, fromInclusive = false) float heightDp) {
+
         mPaint = new Paint();
         mPaint.setColor(color);
-        final float thickness = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                heightDp, context.getResources().getDisplayMetrics());
+        final float thickness = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, heightDp, context.getResources().getDisplayMetrics());
         mPaint.setStrokeWidth(thickness);
     }
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+
         final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) view.getLayoutParams();
 
         // we want to retrieve the position in the list

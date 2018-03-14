@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 public class FriendsFragment extends Fragment implements View.OnClickListener
         , FriendsAdapter.setOnFriendClickListener
-        ,SwipeRefreshLayout.OnRefreshListener{
+        , SwipeRefreshLayout.OnRefreshListener {
 
     ArrayList<User> mUserFriendList = new ArrayList<>();
 
@@ -43,6 +43,8 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
     FirebaseFirestore mFirestore;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
+
+    RecyclerView mFriendsList;
 
     public static FriendsFragment newInstance() {
 
@@ -75,15 +77,16 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
 
         fabCreateGroup = view.findViewById(R.id.fab_create_group);
 
-        mSwipeLayout=view.findViewById(R.id.swipeToRefresh);
+        mFriendsList = view.findViewById(R.id.recycler_friends);
+
+        mFriendsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
+        mSwipeLayout = view.findViewById(R.id.swipeToRefresh);
         mSwipeLayout.setRefreshing(true);
-        mSwipeLayout.setColorSchemeResources(R.color.md_red_400,R.color.md_green_400,R.color.md_yellow_400,R.color.md_blue_400);
-        rvFriends = view.findViewById(R.id.recycler_friends);
-        rvFriends.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mSwipeLayout.setColorSchemeResources(R.color.md_red_400, R.color.md_green_400, R.color.md_yellow_400, R.color.md_blue_400);
         setRecyclerView();
 
-        mFriendsAdapter = new FriendsAdapter(this, mUserFriendList);
-        rvFriends.setAdapter(mFriendsAdapter);
+        mFriendsList.setAdapter(new FriendsAdapter(this, mUserFriendList));
 
         fabCreateGroup.setOnClickListener(this);
 
@@ -157,4 +160,5 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
         mFriendsAdapter.notifyDataSetChanged();
         mSwipeLayout.setRefreshing(false);
     }
+
 }

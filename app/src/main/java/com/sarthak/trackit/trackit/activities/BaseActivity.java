@@ -11,7 +11,7 @@ import android.view.MenuItem;
  * Created by karan on 3/10/2018.
  */
 
-public abstract class BaseActivity extends AppCompatActivity{
+public abstract class BaseActivity extends AppCompatActivity {
 
     Toolbar mToolbar;
 
@@ -34,7 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
 
             case android.R.id.home:
                 onBackPressed();

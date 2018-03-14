@@ -43,6 +43,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     private ArrayList<String> userKeyList = new ArrayList<>();
     private ArrayList<User> userList = new ArrayList<>();
 
+    private User mCurrentUser;
+    private FirebaseUser mUser;
+
     private Context mContext;
 
     public SearchAdapter(Context context, ArrayList<String> userKeyList, ArrayList<User> userList) {
@@ -50,6 +53,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         this.mContext = context;
         this.userKeyList = userKeyList;
         this.userList = userList;
+
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+        getCurrentUserObject();
     }
 
     @NonNull
@@ -75,9 +81,24 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         return userList.size();
     }
 
+    private void getCurrentUserObject() {
+
+        FirebaseFirestore.getInstance().collection(Constants.USERS_REFERENCE).document(mUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if (task.isSuccessful()) {
+
+                    mCurrentUser = task.getResult().toObject(User.class);
+                }
+            }
+        });
+    }
+
     public class SearchViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         String userKey;
+        User user;
 
         private TextView mUserNameTv, mDisplayNameTv;
         private Button mRequestBtn, mCancelBtn;
@@ -202,6 +223,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         void bindView(String userKey, User user) {
 
             this.userKey = userKey;
+            this.user = user;
 
             mDisplayNameTv.setText(user.getDisplayName());
             mUserNameTv.setText(user.getUsername());
@@ -333,13 +355,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             final Map<String, Object> timeMap = new HashMap<>();
             timeMap.put("timestamp", timestamp);
 
-            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends").document(userKey).set(timeMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends").document(userKey).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
 
                     if (task.isSuccessful()) {
 
-                        mFirestore.collection(Constants.CONTACTS_REFERENCE).document(userKey).collection("Friends").document(mUser.getUid()).set(timeMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        mFirestore.collection(Constants.CONTACTS_REFERENCE).document(userKey).collection("Friends").document(mUser.getUid()).set(mCurrentUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
 

@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.sarthak.trackit.trackit.utils.Constants;
 
 import static android.content.Context.MODE_PRIVATE;
 

@@ -3,9 +3,7 @@ package com.sarthak.trackit.trackit;
 import android.annotation.SuppressLint;
 import android.app.Application;
 
-/**
- * Created by karan on 3/11/2018.
- */
+import com.sarthak.trackit.trackit.utils.TypefaceUtil;
 
 public class LiveTrack extends Application {
 

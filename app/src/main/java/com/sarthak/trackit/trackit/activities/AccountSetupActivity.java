@@ -95,8 +95,8 @@ public class AccountSetupActivity extends BaseActivity implements View.OnFocusCh
                     profileImage = "https://graph.facebook.com/" + mAuth.getCurrentUser().getUid() + "/picture?height=500";
                 } else {
 
-                     account = mAuth.getCurrentUser().getPhoneNumber();
-                     profileImage = "profile";
+                    account = mAuth.getCurrentUser().getPhoneNumber();
+                    profileImage = "profile";
                 }
                 displayName = mDisplayNameEt.getText().toString();
                 mUserName = mUsernameEt.getText().toString();

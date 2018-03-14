@@ -26,12 +26,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.sarthak.trackit.trackit.LocationService;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.fragments.FriendsFragment;
 import com.sarthak.trackit.trackit.fragments.GroupsFragment;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.model.User;
+import com.sarthak.trackit.trackit.services.LocationService;
 import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
@@ -41,15 +41,16 @@ public class HomeActivity extends BaseActivity implements
 
     TextView mNavUserName, mNavDisplayName;
 
-    User user=new User();
+    User user = new User();
+
+    int fragmentType = 0;
 
     BottomNavigationView navigation;
     SearchView searchView;
 
-    FloatingActionButton fab;
-
     FirebaseAuth mAuth;
     FirebaseUser mUser;
+    FloatingActionButton createFriendOrGroupBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +69,6 @@ public class HomeActivity extends BaseActivity implements
         }
 
 
-        fab = findViewById(R.id.fab);
-
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -81,47 +80,54 @@ public class HomeActivity extends BaseActivity implements
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         View header = navigationView.getHeaderView(0);
         mNavUserName = header.findViewById(R.id.text_nav_username);
         mNavDisplayName = header.findViewById(R.id.text_nav_display_name);
         setUserDetails();
 
-        fab.setOnClickListener(this);
-        registerForContextMenu(fab);
-
     }
 
     private void setUserDetails() {
 
-        if(!mUser.isAnonymous()){
-        FirebaseFirestore.getInstance()
-                .collection(Constants.USERS_REFERENCE)
-                .document(mUser.getUid())
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    user= task.getResult().toObject(User.class);
+        if (!mUser.isAnonymous()) {
+            FirebaseFirestore.getInstance()
+                    .collection(Constants.USERS_REFERENCE)
+                    .document(mUser.getUid())
+                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        user = task.getResult().toObject(User.class);
 
-                    mNavUserName.setText(user.getUsername());
-                    mNavDisplayName.setText(user.getDisplayName());
+                        mNavUserName.setText(user.getUsername());
+                        mNavDisplayName.setText(user.getDisplayName());
+                    } else {
+                        mNavUserName.setText(getText(R.string.error_wait_message));
+                        mNavDisplayName.setText(getString(R.string.error_wait_message));
+                    }
                 }
-                else {
-                    mNavUserName.setText(getText(R.string.error_wait_message));
-                    mNavDisplayName.setText(getString(R.string.error_wait_message));
-                }
-            }
-        });}
-        else {
+            });
+        } else {
             mNavUserName.setText(getString(R.string.login_request));
             mNavDisplayName.setText(getString(R.string.hi));
         }
 
+
+        createFriendOrGroupBtn = findViewById(R.id.fab_create_friend_or_group);
+        createFriendOrGroupBtn.setOnClickListener(this);
     }
 
     @Override
     protected int getToolbarID() {
         return R.id.home_activity_toolbar;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        stopService(new Intent(HomeActivity.this, LocationService.class));
     }
 
     @Override
@@ -137,33 +143,19 @@ public class HomeActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onClick(View v) {
 
-        stopService(new Intent(HomeActivity.this, LocationService.class));
+        switch (v.getId()) {
+
+            case R.id.fab_create_friend_or_group:
+
+                Intent searchIntent = new Intent(HomeActivity.this, SearchActivity.class);
+                searchIntent.putExtra("fragmentType", fragmentType);
+                startActivity(searchIntent);
+        }
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment selectedFragment = null;
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    selectedFragment = MapsFragment.newInstance();
-                    break;
-                case R.id.navigation_friends:
-                    selectedFragment = FriendsFragment.newInstance();
-                    break;
-                case R.id.navigation_groups:
-                    selectedFragment = GroupsFragment.newInstance();
-                    break;
-            }
-            fragmentInflate(selectedFragment);
-            return true;
-        }
-    };
+    ;
 
     /*Used to pass fragment on item selected*/
     public void fragmentInflate(Fragment fragment) {
@@ -236,6 +228,7 @@ public class HomeActivity extends BaseActivity implements
         return true;
     }
 
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -245,7 +238,31 @@ public class HomeActivity extends BaseActivity implements
 
     }
 
-    @Override
-    public void onClick(View v) {
-    }
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment selectedFragment = null;
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    fragmentType = 0;
+                    selectedFragment = MapsFragment.newInstance();
+                    createFriendOrGroupBtn.setVisibility(View.GONE);
+                    break;
+                case R.id.navigation_friends:
+                    fragmentType = 1;
+                    selectedFragment = FriendsFragment.newInstance();
+                    createFriendOrGroupBtn.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.navigation_groups:
+                    fragmentType = 2;
+                    selectedFragment = GroupsFragment.newInstance();
+                    createFriendOrGroupBtn.setVisibility(View.VISIBLE);
+                    break;
+            }
+            fragmentInflate(selectedFragment);
+            return true;
+        }
+    };
 }

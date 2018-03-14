@@ -3,6 +3,7 @@ package com.sarthak.trackit.trackit.activities;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -99,6 +100,24 @@ public class SearchActivity extends BaseActivity implements
         closeButton.setImageResource(R.drawable.ic_close);
 
         searchView.setOnQueryTextListener(this);
+
+        MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.action_search), new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+
+                userList.clear();
+                userKeyList.clear();
+                mSearchRecyclerView.setAdapter(groupAdapter);
+                getFriendsList();
+                return true;
+            }
+        });
 
         //Sets the search icon in the Toolbar
         //Also, its behaviour is defined

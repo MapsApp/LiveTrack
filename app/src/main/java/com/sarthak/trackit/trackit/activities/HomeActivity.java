@@ -229,14 +229,14 @@ public class HomeActivity extends BaseActivity implements
     }
 
 
-    @Override
+    /*@Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.context_menu, menu);
 
-    }
+    }*/
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {

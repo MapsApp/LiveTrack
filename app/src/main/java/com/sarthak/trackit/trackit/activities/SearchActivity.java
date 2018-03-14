@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.adapters.GroupAdapter;
 import com.sarthak.trackit.trackit.adapters.SearchAdapter;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
@@ -42,6 +43,7 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
     private RecyclerView mSearchRecyclerView;
 
     private SearchAdapter searchAdapter;
+    private GroupAdapter groupAdapter;
 
     private FirebaseFirestore mFirestore;
     private FirebaseUser mUser;
@@ -69,6 +71,8 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
         mSearchRecyclerView = findViewById(R.id.result_list);
 
         initRecyclerView();
+
+        getFriendsList();
     }
 
     @Override
@@ -84,6 +88,7 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
 
         searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.isSubmitButtonEnabled();
+
         ImageView closeButton = searchView.findViewById(R.id.search_close_btn);
         closeButton.setImageResource(R.drawable.ic_close);
 
@@ -94,7 +99,6 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -102,6 +106,8 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
 
             case R.id.action_search:
 
+                userList.clear();
+                mSearchRecyclerView.setAdapter(searchAdapter);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -146,10 +152,10 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
     private void initRecyclerView() {
 
         searchAdapter = new SearchAdapter(SearchActivity.this, userKeyList, userList);
+        groupAdapter = new GroupAdapter(userList);
 
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSearchRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mSearchRecyclerView.setAdapter(searchAdapter);
     }
 
     private void firestoreUserSearch(final String userSearch) {
@@ -224,6 +230,27 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
                 }
             }
         });
+    }
 
+    private void getFriendsList() {
+
+        mSearchRecyclerView.setAdapter(groupAdapter);
+
+        mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                if (task.isSuccessful()) {
+
+                    userList.clear();
+
+                    for (DocumentSnapshot snapshot : task.getResult()) {
+
+                        userList.add(snapshot.toObject(User.class));
+                        groupAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
     }
 }

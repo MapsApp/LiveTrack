@@ -49,6 +49,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:
+                        layoutBottomSheet.setAlpha(0.0f);
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED: {
                         fabBottomSheet.setImageResource(R.drawable.ic_expand_more_white);

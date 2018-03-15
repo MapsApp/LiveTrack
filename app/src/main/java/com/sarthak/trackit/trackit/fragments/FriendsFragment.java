@@ -36,7 +36,6 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
     ArrayList<User> mUserFriendList = new ArrayList<>();
 
     FloatingActionButton fabCreateGroup;
-    RecyclerView rvFriends;
     SwipeRefreshLayout mSwipeLayout;
 
     FriendsAdapter mFriendsAdapter;
@@ -75,7 +74,7 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        fabCreateGroup = view.findViewById(R.id.fab_create_group);
+        fabCreateGroup = view.findViewById(R.id.fab_create);
 
         mFriendsList = view.findViewById(R.id.recycler_friends);
 
@@ -85,9 +84,8 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
         mSwipeLayout.setRefreshing(true);
         mSwipeLayout.setColorSchemeResources(R.color.md_red_400, R.color.md_green_400, R.color.md_yellow_400, R.color.md_blue_400);
         setRecyclerView();
-
-        mFriendsList.setAdapter(new FriendsAdapter(this, mUserFriendList));
-
+        mFriendsAdapter=new FriendsAdapter(this, mUserFriendList);
+        mFriendsList.setAdapter(mFriendsAdapter);
         fabCreateGroup.setOnClickListener(this);
 
         mSwipeLayout.setOnRefreshListener(this);
@@ -121,6 +119,9 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
                                         mFriendsAdapter.notifyDataSetChanged();
                                         mSwipeLayout.setRefreshing(false);
                                     }
+                                    else {
+                                        mSwipeLayout.setRefreshing(false);
+                                    }
                                 }
                             });
                         }
@@ -136,7 +137,7 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
 
         switch (v.getId()) {
 
-            case R.id.fab_create_group:
+            case R.id.fab_create:
 
                 launchSearch();
                 break;

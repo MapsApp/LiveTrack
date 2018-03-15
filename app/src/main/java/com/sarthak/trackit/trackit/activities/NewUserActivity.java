@@ -22,9 +22,7 @@ import java.util.Arrays;
 
 public class NewUserActivity extends BaseActivity implements View.OnClickListener, FacebookCallback<LoginResult> {
 
-    private Button btnPhoneLogin;
-    private Button btnFbLogin;
-    private Button btnGuestLogin;
+    private Button btnPhoneLogin,btnFbLogin,btnGuestLogin;
 
     private ProgressBar progressNewUser;
 

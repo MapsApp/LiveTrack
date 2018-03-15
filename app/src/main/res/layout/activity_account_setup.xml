@@ -34,7 +34,7 @@
         android:id="@+id/button_account_sign_up"
         style="@style/SmallButton"
         android:layout_margin="@dimen/activity_vertical_margin"
-        android:background="@drawable/button_selector_states"
+        android:background="@drawable/btn_selector_fb"
         android:padding="@dimen/padding_small"
         android:text="SET UP ACCOUNT"
         android:textColor="@android:color/white" />

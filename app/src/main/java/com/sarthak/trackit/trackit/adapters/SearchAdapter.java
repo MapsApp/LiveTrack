@@ -55,6 +55,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         this.userList = userList;
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (!mUser.isAnonymous())
         getCurrentUserObject();
     }
 
@@ -83,16 +84,16 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
     private void getCurrentUserObject() {
 
-        FirebaseFirestore.getInstance().collection(Constants.USERS_REFERENCE).document(mUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            FirebaseFirestore.getInstance().collection(Constants.USERS_REFERENCE).document(mUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                if (task.isSuccessful()) {
+                    if (task.isSuccessful()) {
 
-                    mCurrentUser = task.getResult().toObject(User.class);
+                        mCurrentUser = task.getResult().toObject(User.class);
+                    }
                 }
-            }
-        });
+            });
     }
 
     public class SearchViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -125,7 +126,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             mSearchExpandBtn = view.findViewById(R.id.button_search_expand);
             searchOptionsLayout = view.findViewById(R.id.search_options_layout);
 
-            progressBar=view.findViewById(android.R.id.progress);
+            progressBar = view.findViewById(android.R.id.progress);
 
             mSearchExpandBtn.setOnClickListener(this);
             mRequestBtn.setOnClickListener(this);
@@ -254,21 +255,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                     .document(userKey)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                    if (task.isSuccessful()) {
+                            if (task.isSuccessful()) {
 
-                        DocumentSnapshot document = task.getResult();
+                                DocumentSnapshot document = task.getResult();
 
-                        if (document != null && document.exists()) {
+                                if (document != null && document.exists()) {
 
-                            requestType = 1;
-                            mRequestBtn.setText("Cancel Request");
+                                    requestType = 1;
+                                    mRequestBtn.setText("Cancel Request");
+                                }
+                            }
                         }
-                    }
-                }
-            });
+                    });
 
             mFirestore
                     .collection(Constants.CONTACTS_REFERENCE)
@@ -277,21 +278,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                     .document(userKey)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                    if (task.isSuccessful()) {
+                            if (task.isSuccessful()) {
 
-                        DocumentSnapshot document = task.getResult();
+                                DocumentSnapshot document = task.getResult();
 
-                        if (document != null && document.exists()) {
+                                if (document != null && document.exists()) {
 
-                            requestType = 2;
-                            mRequestBtn.setText("Decline Request");
+                                    requestType = 2;
+                                    mRequestBtn.setText("Decline Request");
+                                }
+                            }
                         }
-                    }
-                }
-            });
+                    });
 
             mFirestore
                     .collection(Constants.CONTACTS_REFERENCE)
@@ -300,21 +301,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                     .document(userKey)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                    if (task.isSuccessful()) {
+                            if (task.isSuccessful()) {
 
-                        DocumentSnapshot document = task.getResult();
+                                DocumentSnapshot document = task.getResult();
 
-                        if (document != null && document.exists()) {
+                                if (document != null && document.exists()) {
 
-                            requestType = 3;
-                            layout.setBackgroundColor(mContext.getResources().getColor(R.color.md_deep_purple_100));
+                                    requestType = 3;
+                                    layout.setBackgroundColor(mContext.getResources().getColor(R.color.md_deep_purple_100));
+                                }
+                            }
                         }
-                    }
-                }
-            });
+                    });
         }
 
         private void sendFriendRequest() {

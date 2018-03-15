@@ -2,7 +2,6 @@ package com.sarthak.trackit.trackit.activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -57,9 +56,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         // initialise phone auth callback
         initPhoneAuthCallback();
 
-        mPhoneEt = findViewById(R.id.login_phone_et);
-        mCodeEt = findViewById(R.id.login_verification_et);
-        mLoginBtn = findViewById(R.id.login_login_btn);
+        mPhoneEt = findViewById(R.id.et_login_phone);
+        mCodeEt = findViewById(R.id.et_login_verification);
+        mLoginBtn = findViewById(R.id.btn_login_login);
 
         mLoginBtn.setOnClickListener(this);
     }
@@ -74,7 +73,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         switch (view.getId()) {
 
-            case R.id.login_login_btn:
+            case R.id.btn_login_login:
 
                 if (btnType == 0) {
 

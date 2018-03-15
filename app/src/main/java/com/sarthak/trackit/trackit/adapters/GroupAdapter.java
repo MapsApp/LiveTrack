@@ -53,8 +53,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
             super(itemView);
 
-            mDisplayNameTv = itemView.findViewById(R.id.item_group_display_name);
-            mUsernameTv = itemView.findViewById(R.id.item_group_username);
+            mDisplayNameTv = itemView.findViewById(R.id.text_group_display_name);
+            mUsernameTv = itemView.findViewById(R.id.text_group_username);
         }
 
         void bindView(User user) {

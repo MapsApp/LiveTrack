@@ -13,4 +13,14 @@
         <item name="android:typeface">serif</item>
     </style>
 
+    <style name="SmallButton" parent="Widget.AppCompat.Button.Small">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_margin">@dimen/margin_small</item>
+        <item name="android:drawablePadding">@dimen/padding_small</item>
+        <item name="android:padding">@dimen/padding_small</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
 </resources>

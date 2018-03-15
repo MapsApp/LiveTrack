@@ -27,33 +27,41 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
-
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/button_phone_login"
             style="@style/SmallButton"
-            android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/button_green"
+            android:layout_gravity="start"
+            android:background="@drawable/btn_selector_green"
+            android:drawableStart="@drawable/ic_phone"
             android:text="Log In With Phone Number"
-            android:textColor="@android:color/white" />
+            android:textAlignment="textStart"
+            android:textColor="@android:color/white"
+            tools:ignore="RtlCompat" />
 
         <Button
             android:id="@+id/button_fb_login"
             style="@style/SmallButton"
-            android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/button_blue"
+            android:layout_gravity="start"
+            android:background="@drawable/btn_selector_fb"
+            android:drawableStart="@drawable/ic_facebook"
             android:text="Log In With Facebook"
-            android:textColor="@android:color/white" />
+            android:textAlignment="textStart"
+            android:textColor="@android:color/white"
+            tools:ignore="RtlCompat" />
 
         <Button
             android:id="@+id/button_guest_sign_in"
             style="@style/SmallButton"
-            android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/button_red"
+            android:layout_gravity="start"
+            android:background="@drawable/btn_selector_grey"
+            android:drawableStart="@drawable/ic_guest"
             android:text="Log In As Guest"
-            android:textColor="@android:color/white" />
+            android:textAlignment="textStart"
+            android:textColor="@android:color/white"
+            tools:ignore="RtlCompat" />
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

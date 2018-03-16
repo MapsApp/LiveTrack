@@ -41,6 +41,7 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapte
                 .load("https://www.w3schools.com/css/trolltunga.jpg")
                 .transform(new CircleTransform())
                 .into(holder.mGroupMemberImage);
+        for(int i=0;i<mGroupList.size();i++)
         holder.mGroupMemberName.setText(mGroupList.get(position).getDisplayName());
     }
 

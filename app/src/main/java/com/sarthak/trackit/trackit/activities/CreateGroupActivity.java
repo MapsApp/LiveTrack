@@ -2,7 +2,6 @@ package com.sarthak.trackit.trackit.activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
@@ -32,7 +31,7 @@ public class CreateGroupActivity extends BaseActivity implements
     ArrayList<User> mFriendsList = new ArrayList<>();
     ArrayList<User> mFriendsGroupList = new ArrayList<>();
 
-    GroupMembersAdapter mGroupFriendsAdapter;
+    GroupMembersAdapter mGroupFriendsAdapter = null;
     FriendsAdapter mFriendsAdapter;
 
     LinearLayout mGroupFriendsLayout;
@@ -48,22 +47,22 @@ public class CreateGroupActivity extends BaseActivity implements
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         mGroupFriendsLayout = findViewById(R.id.groupFriendsLayout);
-        mGroupFriendsLayout.setVisibility(View.GONE);
 
         mFriendsRecycler = findViewById(R.id.recycler_friends_new_group);
         mGroupRecycler = findViewById(R.id.recycler_group_members);
 
         mFriendsRecycler.setLayoutManager(new LinearLayoutManager(this));
-        mGroupRecycler.setLayoutManager(new GridLayoutManager(this, 2));
+        mGroupRecycler.setLayoutManager(new LinearLayoutManager(this));
 
+        mGroupFriendsAdapter = new GroupMembersAdapter(mFriendsGroupList);
         setFriendsRecyclerView();
 
         mFriendsAdapter = new FriendsAdapter(this, mFriendsList);
         mFriendsRecycler.setAdapter(mFriendsAdapter);
-        mGroupFriendsAdapter = new GroupMembersAdapter(mFriendsGroupList);
 
-        if (!mFriendsGroupList.isEmpty())
-            mGroupRecycler.setAdapter(mGroupFriendsAdapter);
+        mGroupFriendsAdapter.notifyDataSetChanged();
+
+        mGroupRecycler.setAdapter(mGroupFriendsAdapter);
 
     }
 
@@ -129,12 +128,9 @@ public class CreateGroupActivity extends BaseActivity implements
 
         if (!mFriendsGroupList.contains(mFriendsList.get(position))) {
             mFriendsGroupList.add(mFriendsList.get(position));
-            Toast.makeText(this,  mFriendsList.get(position).getDisplayName() + "  Added "+mFriendsGroupList.size(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, mFriendsGroupList.get(position).getDisplayName() + "  Added " + mFriendsGroupList.size(), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, mFriendsList.get(position).getDisplayName() + " Already Present "+mFriendsGroupList.size(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, mFriendsGroupList.get(position).getDisplayName() + " Already Present " + mFriendsGroupList.size(), Toast.LENGTH_SHORT).show();
         }
-
-        mGroupFriendsLayout.setVisibility(View.VISIBLE);
-        mGroupFriendsAdapter.notifyDataSetChanged();
     }
 }

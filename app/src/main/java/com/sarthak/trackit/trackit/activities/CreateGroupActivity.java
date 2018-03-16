@@ -56,15 +56,13 @@ public class CreateGroupActivity extends BaseActivity implements
         mFriendsRecycler.setLayoutManager(new LinearLayoutManager(this));
         mGroupRecycler.setLayoutManager(new GridLayoutManager(this, 2));
 
-        setFriendsRecyclerView();
-
         mFriendsAdapter = new FriendsAdapter(this, mFriendsList);
         mFriendsRecycler.setAdapter(mFriendsAdapter);
+
         mGroupFriendsAdapter = new GroupMembersAdapter(mFriendsGroupList);
+        mGroupRecycler.setAdapter(mGroupFriendsAdapter);
 
-        if (!mFriendsGroupList.isEmpty())
-            mGroupRecycler.setAdapter(mGroupFriendsAdapter);
-
+        setFriendsRecyclerView();
     }
 
     @Override
@@ -129,12 +127,12 @@ public class CreateGroupActivity extends BaseActivity implements
 
         if (!mFriendsGroupList.contains(mFriendsList.get(position))) {
             mFriendsGroupList.add(mFriendsList.get(position));
+            mGroupFriendsAdapter.notifyDataSetChanged();
             Toast.makeText(this,  mFriendsList.get(position).getDisplayName() + "  Added "+mFriendsGroupList.size(), Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, mFriendsList.get(position).getDisplayName() + " Already Present "+mFriendsGroupList.size(), Toast.LENGTH_SHORT).show();
         }
 
         mGroupFriendsLayout.setVisibility(View.VISIBLE);
-        mGroupFriendsAdapter.notifyDataSetChanged();
     }
 }

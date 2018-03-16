@@ -36,8 +36,6 @@ import java.util.ArrayList;
 public class SearchActivity extends BaseActivity implements
         SearchView.OnQueryTextListener {
 
-    int fragmentType;
-
     private ArrayList<String> userKeyList = new ArrayList<>();
     private ArrayList<User> userList = new ArrayList<>();
 
@@ -62,8 +60,6 @@ public class SearchActivity extends BaseActivity implements
 
         mFirestore = FirebaseFirestore.getInstance();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        fragmentType = getIntent().getIntExtra("fragmentType", 0);
 
         mToolbar.inflateMenu(R.menu.home);
         menu = mToolbar.getMenu();
@@ -147,29 +143,12 @@ public class SearchActivity extends BaseActivity implements
     @Override
     public boolean onQueryTextChange(String searchText) {
 
-        switch (fragmentType) {
+        if (searchText.length() != 0) {
 
-            case 2:
+            fireStoreUserSearch(searchText);
+        } else {
 
-                if (searchText.length() != 0) {
-
-                    fireStoreUserSearch(searchText);
-                } else {
-
-                    fireStoreUserSearch(" ");
-                }
-                break;
-
-            case 1:
-
-            if (searchText.length() != 0) {
-
-                fireStoreUserSearch(searchText);
-            } else {
-
-                fireStoreUserSearch(" ");
-            }
-            break;
+            fireStoreUserSearch(" ");
         }
 
         return false;
@@ -207,7 +186,7 @@ public class SearchActivity extends BaseActivity implements
 
                             userKeyList.add(documentSnapshot.getId());
                             userList.add(documentSnapshot.toObject(User.class));
-                            mErrorText.setVisibility(View.INVISIBLE);
+                            mErrorText.setVisibility(View.GONE);
                         } else {
 
                             break;

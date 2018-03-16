@@ -69,7 +69,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if(v==mCreateGroupFab){
-            startActivity(new Intent(getContext(), CreateGroupActivity.class));
+            //startActivity(new Intent(getContext(), CreateGroupActivity.class));
         }
         if (v==mBtn){
             startActivity(new Intent(getContext(), GroupsActivity.class));

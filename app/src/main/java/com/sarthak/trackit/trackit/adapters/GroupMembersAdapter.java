@@ -15,13 +15,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-/**
- * Created by karan on 3/16/2018.
- */
-
 public class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapter.GroupMembersHolder> {
 
-    ArrayList<User> mGroupList;
+    ArrayList<User> mGroupList = new ArrayList<>();
 
     public GroupMembersAdapter(ArrayList<User> mGroupList) {
         this.mGroupList = mGroupList;
@@ -31,6 +27,7 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapte
     @Override
     public GroupMembersHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_new_group_member, parent,false);
+
         return new GroupMembersAdapter.GroupMembersHolder(itemView);
     }
 
@@ -41,6 +38,7 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapte
                 .load("https://www.w3schools.com/css/trolltunga.jpg")
                 .transform(new CircleTransform())
                 .into(holder.mGroupMemberImage);
+
         holder.mGroupMemberName.setText(mGroupList.get(position).getDisplayName());
     }
 
@@ -57,9 +55,8 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapte
         public GroupMembersHolder(View itemView) {
             super(itemView);
 
-            mGroupMemberName = itemView.findViewById(R.id.text_group_friend_name);
+            mGroupMemberName = itemView.findViewById(R.id.text_group_member_name);
             mGroupMemberImage = itemView.findViewById(R.id.image_group_member);
-
         }
     }
 }

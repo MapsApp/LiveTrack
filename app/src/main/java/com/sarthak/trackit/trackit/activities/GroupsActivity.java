@@ -19,7 +19,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
@@ -66,7 +65,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         getFriends();
         //mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
         populateSearch();
-        mGroupNameTv.setText(getIntent().getStringExtra(Constants.GROUP_NAME));
+        mGroupNameTv.setText(mGroupName);
 
         adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, MEMBERS);
@@ -163,19 +162,19 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                                             .document(mGroupName)
                                             .get()
                                             .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                                            if (task.isSuccessful()) {
+                                                    if (task.isSuccessful()) {
 
-                                                mGroupMembersList.add(task.getResult()
-                                                        .toObject(User.class));
-                                                mGroupFriendsAdapter.notifyDataSetChanged();
-                                            } else {
+                                                        mGroupMembersList.add(task.getResult()
+                                                                .toObject(User.class));
+                                                        mGroupFriendsAdapter.notifyDataSetChanged();
+                                                    } else {
 
-                                            }
-                                        }
-                                    });
+                                                    }
+                                                }
+                                            });
                                 }
                             }
                         }

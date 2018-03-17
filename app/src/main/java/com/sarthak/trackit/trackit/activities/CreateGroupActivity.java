@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -66,10 +67,25 @@ public class CreateGroupActivity extends BaseActivity implements
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_create_group, menu);
+
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getItemId() == android.R.id.home) {
-            mFriendsGroupList.clear();
+        switch (item.getItemId()) {
+
+            case android.R.id.home:
+
+                mFriendsGroupList.clear();
+                break;
+
+            case R.id.done:
+
+                Toast.makeText(this, "OK.", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -114,7 +130,6 @@ public class CreateGroupActivity extends BaseActivity implements
                 }
             }
         });
-
     }
 
     @Override
@@ -126,6 +141,7 @@ public class CreateGroupActivity extends BaseActivity implements
     public void OnFriendItemClicked(View view, int position) {
 
         if (!mFriendsGroupList.contains(mFriendsList.get(position))) {
+
             mFriendsGroupList.add(mFriendsList.get(position));
             mGroupFriendsAdapter.notifyDataSetChanged();
             Toast.makeText(this,  mFriendsList.get(position).getDisplayName() + "  Added "+mFriendsGroupList.size(), Toast.LENGTH_SHORT).show();

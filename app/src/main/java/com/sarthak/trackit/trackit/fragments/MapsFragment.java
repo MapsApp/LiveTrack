@@ -642,6 +642,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 lineOptions.width(12);
                 lineOptions.color(Color.CYAN);
                 lineOptions.geodesic(true);
+
             }
 
             // Drawing polyline in the Google Map for the i-th route
@@ -684,5 +685,4 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
         return data;
     }
-
 }

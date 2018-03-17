@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,27 +15,20 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapter.GroupMembersHolder> {
+public class GroupSetupMembersAdapter extends RecyclerView.Adapter<GroupSetupMembersAdapter.GroupMembersHolder> {
 
     private ArrayList<User> mGroupList = new ArrayList<>();
-    private setOnGroupMemberClicked mSetGroupMemberClicked;
 
-    public GroupMembersAdapter(ArrayList<User> mGroupList, setOnGroupMemberClicked mSetGroupMemberClicked) {
+    public GroupSetupMembersAdapter(ArrayList<User> mGroupList) {
         this.mGroupList = mGroupList;
-        this.mSetGroupMemberClicked = mSetGroupMemberClicked;
-    }
-
-
-    public interface setOnGroupMemberClicked {
-        void onGroupMemberClicked(View v, int position);
     }
 
     @NonNull
     @Override
     public GroupMembersHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_new_group_member, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group_setup_member, parent, false);
 
-        return new GroupMembersAdapter.GroupMembersHolder(itemView);
+        return new GroupSetupMembersAdapter.GroupMembersHolder(itemView);
     }
 
     @Override
@@ -52,29 +44,20 @@ public class GroupMembersAdapter extends RecyclerView.Adapter<GroupMembersAdapte
 
     @Override
     public int getItemCount() {
-        return mGroupList.size();
+        return mGroupList.size()-1;
     }
 
-    public class GroupMembersHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class GroupMembersHolder extends RecyclerView.ViewHolder {
 
         TextView mGroupMemberName;
         ImageView mGroupMemberImage;
-        ImageButton mDeleteMemberBtn;
 
         public GroupMembersHolder(View itemView) {
             super(itemView);
 
             mGroupMemberName = itemView.findViewById(R.id.text_group_member_name);
             mGroupMemberImage = itemView.findViewById(R.id.image_group_member);
-            mDeleteMemberBtn = itemView.findViewById(R.id.button_delete_member);
 
-            mDeleteMemberBtn.setOnClickListener(this);
-
-        }
-
-        @Override
-        public void onClick(View v) {
-            mSetGroupMemberClicked.onGroupMemberClicked(v, getAdapterPosition());
         }
     }
 }

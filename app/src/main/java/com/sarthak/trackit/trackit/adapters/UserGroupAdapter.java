@@ -12,26 +12,26 @@ import com.sarthak.trackit.trackit.model.User;
 
 import java.util.ArrayList;
 
-public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHolder> {
+public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.UserGroupViewHolder> {
 
-    private ArrayList<User> userList = new ArrayList<>();
+    private ArrayList<String> userList = new ArrayList<>();
 
-    public GroupAdapter(ArrayList<User> userList) {
+    public UserGroupAdapter(ArrayList<String> userList) {
 
         this.userList = userList;
     }
 
     @NonNull
     @Override
-    public GroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public UserGroupAdapter.UserGroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group_fragment_list, parent, false);
 
-        return new GroupAdapter.GroupViewHolder(itemView);
+        return new UserGroupAdapter.UserGroupViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GroupViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull UserGroupAdapter.UserGroupViewHolder holder, int position) {
 
         holder.bindView(userList.get(holder.getAdapterPosition()));
     }
@@ -41,11 +41,11 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
         return userList.size();
     }
 
-    class GroupViewHolder extends RecyclerView.ViewHolder {
+    class UserGroupViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mDisplayNameTv, mUsernameTv;
 
-        public GroupViewHolder(View itemView) {
+        public UserGroupViewHolder(View itemView) {
 
             super(itemView);
 
@@ -53,10 +53,10 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             mUsernameTv = itemView.findViewById(R.id.text_group_username);
         }
 
-        void bindView(User user) {
+        void bindView(String name) {
 
-            mDisplayNameTv.setText(user.getDisplayName());
-            mUsernameTv.setText(user.getUsername());
+            mDisplayNameTv.setText(name);
+            //mUsernameTv.setText(user.getUsername());
         }
     }
 }

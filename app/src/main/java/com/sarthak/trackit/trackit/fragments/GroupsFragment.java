@@ -2,6 +2,7 @@ package com.sarthak.trackit.trackit.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -12,24 +13,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.activities.AllContactsActivity;
 import com.sarthak.trackit.trackit.activities.CreateGroupActivity;
 import com.sarthak.trackit.trackit.activities.GroupsActivity;
 import com.sarthak.trackit.trackit.adapters.GroupAdapter;
+import com.sarthak.trackit.trackit.adapters.UserGroupAdapter;
 import com.sarthak.trackit.trackit.model.User;
+import com.sarthak.trackit.trackit.utils.Constants;
 
 import java.util.ArrayList;
 
 public class GroupsFragment extends Fragment implements View.OnClickListener {
 
-    private ArrayList<User> userList = new ArrayList<>();
-    Button mBtn;
+    private ArrayList<String> groupList = new ArrayList<>();
     FloatingActionButton mCreateGroupFab;
+
     RecyclerView mFriendsList;
+    UserGroupAdapter adapter;
 
     FirebaseFirestore mFirestore;
     FirebaseUser mUser;
@@ -50,15 +58,16 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         mFirestore = FirebaseFirestore.getInstance();
 
-        mBtn=view.findViewById(android.R.id.button1);
-        mCreateGroupFab=view.findViewById(R.id.fab_create);
+        mCreateGroupFab=view.findViewById(R.id.fab_create_group);
         mFriendsList = view.findViewById(R.id.recycler_groups);
 
+        adapter = new UserGroupAdapter(groupList);
         mFriendsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mFriendsList.setAdapter(new GroupAdapter(userList));
+        mFriendsList.setAdapter(adapter);
 
         mCreateGroupFab.setOnClickListener(this);
-        mBtn.setOnClickListener(this);
+
+        getUserGroups();
     }
 
     @Override
@@ -69,10 +78,31 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if(v==mCreateGroupFab){
-            //startActivity(new Intent(getContext(), CreateGroupActivity.class));
+            startActivity(new Intent(getContext(), CreateGroupActivity.class));
         }
-        if (v==mBtn){
-            startActivity(new Intent(getContext(), GroupsActivity.class));
-        }
+    }
+
+    private void getUserGroups() {
+
+        mFirestore.collection(Constants.USER_GROUPS_REFERENCE).document(mUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if (task.isSuccessful()) {
+
+                    DocumentSnapshot document = task.getResult();
+
+                    if (document != null && document.exists()) {
+
+                        for (String group : document.getData().keySet()) {
+
+                            String groupName = group.substring(0, group.indexOf("+"));
+                            groupList.add(groupName);
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+            }
+        });
     }
 }

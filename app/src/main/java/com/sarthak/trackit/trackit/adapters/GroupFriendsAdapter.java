@@ -10,9 +10,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 /**
  * Created by karan on 3/9/2018.
@@ -20,11 +23,14 @@ import com.squareup.picasso.Picasso;
 
 public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapter.GroupFriendsViewHolder> {
 
-    private setOnGroupFriendClickListener mListener;
-
-    public GroupFriendsAdapter(setOnGroupFriendClickListener mListener) {
+    public GroupFriendsAdapter(ArrayList<User> mGroupMembersList, setOnGroupFriendClickListener mListener) {
+        this.mGroupMembersList = mGroupMembersList;
         this.mListener = mListener;
     }
+
+    private ArrayList<User> mGroupMembersList;
+    private setOnGroupFriendClickListener mListener;
+
 
     public interface setOnGroupFriendClickListener {
         void OnGroupFriendItemClicked(View view, int position);
@@ -58,14 +64,14 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
         holder.txtGroupFriendStatus.setText("Active");
 
-        for (int i = 0; i <= position; i++) {
-            holder.txtGroupFriendName.setText(names[i]);
+        for (int i = 0; i < mGroupMembersList.size(); i++) {
+            holder.txtGroupFriendName.setText(mGroupMembersList.get(position).getDisplayName());
         }
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return mGroupMembersList.size();
     }
 
     public class GroupFriendsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

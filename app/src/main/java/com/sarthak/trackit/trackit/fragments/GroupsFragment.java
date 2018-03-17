@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,10 +29,11 @@ import com.sarthak.trackit.trackit.adapters.GroupAdapter;
 import com.sarthak.trackit.trackit.adapters.UserGroupAdapter;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
+import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 
 import java.util.ArrayList;
 
-public class GroupsFragment extends Fragment implements View.OnClickListener {
+public class GroupsFragment extends Fragment implements View.OnClickListener, RecyclerViewItemClickedListener {
 
     private ArrayList<String> groupList = new ArrayList<>();
     FloatingActionButton mCreateGroupFab;
@@ -62,6 +64,8 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
         mFriendsList = view.findViewById(R.id.recycler_groups);
 
         adapter = new UserGroupAdapter(groupList);
+        adapter.setOnItemClickListener(this);
+
         mFriendsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mFriendsList.setAdapter(adapter);
 
@@ -82,6 +86,13 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onItemClicked(View view, int position) {
+
+        String groupName = groupList.get(position).substring(0, groupList.get(position).indexOf("+"));
+        Toast.makeText(getActivity(), groupName, Toast.LENGTH_SHORT).show();
+    }
+
     private void getUserGroups() {
 
         mFirestore.collection(Constants.USER_GROUPS_REFERENCE).document(mUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -96,8 +107,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
 
                         for (String group : document.getData().keySet()) {
 
-                            String groupName = group.substring(0, group.indexOf("+"));
-                            groupList.add(groupName);
+                            groupList.add(group);
                             adapter.notifyDataSetChanged();
                         }
                     }

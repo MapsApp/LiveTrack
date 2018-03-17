@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.model.User;
+import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 
 import java.util.ArrayList;
 
@@ -16,9 +17,16 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
 
     private ArrayList<String> userList = new ArrayList<>();
 
+    private RecyclerViewItemClickedListener mListener;
+
     public UserGroupAdapter(ArrayList<String> userList) {
 
         this.userList = userList;
+    }
+
+    public void setOnItemClickListener(RecyclerViewItemClickedListener recyclerViewItemClickedListener) {
+
+        this.mListener = recyclerViewItemClickedListener;
     }
 
     @NonNull
@@ -31,9 +39,17 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserGroupAdapter.UserGroupViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final UserGroupAdapter.UserGroupViewHolder holder, int position) {
 
         holder.bindView(userList.get(holder.getAdapterPosition()));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                mListener.onItemClicked(view, holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -55,7 +71,7 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
 
         void bindView(String name) {
 
-            mDisplayNameTv.setText(name);
+            mDisplayNameTv.setText(name.substring(0, name.indexOf("+")));
             //mUsernameTv.setText(user.getUsername());
         }
     }

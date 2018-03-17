@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sarthak.trackit.trackit.R;
-import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 
 import java.util.ArrayList;
@@ -43,13 +42,6 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
 
         holder.bindView(userList.get(holder.getAdapterPosition()));
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                mListener.onItemClicked(view, holder.getAdapterPosition());
-            }
-        });
     }
 
     @Override
@@ -57,7 +49,8 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
         return userList.size();
     }
 
-    class UserGroupViewHolder extends RecyclerView.ViewHolder {
+    class UserGroupViewHolder extends RecyclerView.ViewHolder implements
+    View.OnClickListener{
 
         private TextView mDisplayNameTv, mUsernameTv;
 
@@ -67,12 +60,19 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
 
             mDisplayNameTv = itemView.findViewById(R.id.text_group_display_name);
             mUsernameTv = itemView.findViewById(R.id.text_group_username);
+
+            itemView.setOnClickListener(this);
         }
 
         void bindView(String name) {
 
             mDisplayNameTv.setText(name.substring(0, name.indexOf("+")));
             //mUsernameTv.setText(user.getUsername());
+        }
+
+        @Override
+        public void onClick(View v) {
+            mListener.onItemClicked(v, getAdapterPosition());
         }
     }
 }

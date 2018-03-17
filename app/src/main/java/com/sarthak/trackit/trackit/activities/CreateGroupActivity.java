@@ -8,9 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -169,13 +169,15 @@ public class CreateGroupActivity extends BaseActivity implements
                 mFriendsGroupList.clear();
                 break;
             case R.id.action_done:
-                mFriendsGroupList.add(mCurrentUser);
-                groupMemberMap.put(mUser.getUid(), "true");
-                Intent groupSetupIntent = new Intent(this, GroupSetupActivity.class);
-                groupSetupIntent.putExtra("userKey", groupMemberMap);
-                groupSetupIntent.putParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST, mFriendsGroupList);
-                startActivity(groupSetupIntent);
-                finish();
+                if (!mFriendsGroupList.isEmpty()) {
+                    mFriendsGroupList.add(mCurrentUser);
+                    groupMemberMap.put(mUser.getUid(), "true");
+                    Intent groupSetupIntent = new Intent(this, GroupSetupActivity.class);
+                    groupSetupIntent.putExtra("userKey", groupMemberMap);
+                    groupSetupIntent.putParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST, mFriendsGroupList);
+                    startActivity(groupSetupIntent);
+                    finish();
+                } else Toast.makeText(this, "Add at least one member", Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);

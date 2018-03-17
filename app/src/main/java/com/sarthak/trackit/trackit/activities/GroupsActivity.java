@@ -13,6 +13,14 @@ import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
 import com.sarthak.trackit.trackit.model.User;
@@ -24,9 +32,11 @@ import java.util.ArrayList;
 public class GroupsActivity extends BaseActivity implements View.OnClickListener
         , GroupFriendsAdapter.setOnGroupFriendClickListener {
 
-    String[] MEMBERS ;
+    String mGroupName;
+    String[] MEMBERS;
     ArrayList<User> mGroupMembersList = new ArrayList<>();
     ArrayAdapter<String> adapter;
+    GroupFriendsAdapter mGroupFriendsAdapter;
 
     AutoCompleteTextView mGroupMembersSearchAtv;
     TextView mGroupNameTv;
@@ -35,11 +45,17 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     BottomSheetBehavior sheetBehavior;
     RecyclerView rvGroupMembers;
 
+    FirebaseFirestore mFirestore;
+    FirebaseUser mUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
         setUpToolbar(this);
+        mFirestore = FirebaseFirestore.getInstance();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+        mGroupName = getIntent().getStringExtra(Constants.GROUP);
 
         mGroupMembersSearchAtv = mToolbar.findViewById(R.id.autocomplete_search);
 
@@ -47,7 +63,8 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         rvGroupMembers = findViewById(R.id.recycler_group_members);
         fabBottomSheet = findViewById(R.id.fab_bottom_sheet);
 
-        mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
+        getFriends();
+        //mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
         populateSearch();
         mGroupNameTv.setText(getIntent().getStringExtra(Constants.GROUP_NAME));
 
@@ -56,12 +73,11 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         mGroupMembersSearchAtv.setAdapter(adapter);
         //addressed the container linear layout of bottom sheet
         layoutBottomSheet = findViewById(R.id.bottom_sheet_layout);
-
         //sets the behaviour of linear layout to a bottom sheet
         sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
-
+        mGroupFriendsAdapter = new GroupFriendsAdapter(mGroupMembersList, this);
         rvGroupMembers.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        rvGroupMembers.setAdapter(new GroupFriendsAdapter(mGroupMembersList, this));
+        rvGroupMembers.setAdapter(mGroupFriendsAdapter);
         rvGroupMembers.addItemDecoration(new RecyclerViewDivider(this,
                 ContextCompat.getColor(this, R.color.md_blue_grey_200), 0.5f));
 
@@ -126,9 +142,51 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     }
 
+    private void getFriends() {
+
+        mFirestore.
+                collection(Constants.GROUP)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        if (task.isSuccessful()) {
+
+                            mGroupMembersList.clear();
+
+                            for (DocumentSnapshot document : task.getResult()) {
+
+                                if (document != null && document.exists()) {
+
+                                    mFirestore.collection(Constants.GROUP)
+                                            .document(mGroupName)
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                            if (task.isSuccessful()) {
+
+                                                mGroupMembersList.add(task.getResult()
+                                                        .toObject(User.class));
+                                                mGroupFriendsAdapter.notifyDataSetChanged();
+                                            } else {
+
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
+
     private void populateSearch() {
 
-        MEMBERS= new String[mGroupMembersList.size()];
+        MEMBERS = new String[mGroupMembersList.size()];
 
         for (int i = 0; i < MEMBERS.length; i++) {
             MEMBERS[i] = mGroupMembersList.get(i).getDisplayName();

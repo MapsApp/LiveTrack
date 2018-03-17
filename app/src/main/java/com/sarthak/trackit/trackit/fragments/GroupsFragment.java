@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,14 +19,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
-import com.sarthak.trackit.trackit.activities.AllContactsActivity;
 import com.sarthak.trackit.trackit.activities.CreateGroupActivity;
 import com.sarthak.trackit.trackit.activities.GroupsActivity;
-import com.sarthak.trackit.trackit.adapters.GroupAdapter;
 import com.sarthak.trackit.trackit.adapters.UserGroupAdapter;
-import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 
@@ -38,7 +33,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener, Re
     private ArrayList<String> groupList = new ArrayList<>();
     FloatingActionButton mCreateGroupFab;
 
-    RecyclerView mFriendsList;
+    RecyclerView mFriendsListRv;
     UserGroupAdapter adapter;
 
     FirebaseFirestore mFirestore;
@@ -60,14 +55,14 @@ public class GroupsFragment extends Fragment implements View.OnClickListener, Re
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         mFirestore = FirebaseFirestore.getInstance();
 
-        mCreateGroupFab=view.findViewById(R.id.fab_create_group);
-        mFriendsList = view.findViewById(R.id.recycler_groups);
+        mCreateGroupFab = view.findViewById(R.id.fab_create_group);
+        mFriendsListRv = view.findViewById(R.id.recycler_groups);
 
         adapter = new UserGroupAdapter(groupList);
         adapter.setOnItemClickListener(this);
 
-        mFriendsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mFriendsList.setAdapter(adapter);
+        mFriendsListRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mFriendsListRv.setAdapter(adapter);
 
         mCreateGroupFab.setOnClickListener(this);
 
@@ -81,7 +76,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener, Re
 
     @Override
     public void onClick(View v) {
-        if(v==mCreateGroupFab){
+        if (v == mCreateGroupFab) {
             startActivity(new Intent(getContext(), CreateGroupActivity.class));
         }
     }
@@ -89,30 +84,37 @@ public class GroupsFragment extends Fragment implements View.OnClickListener, Re
     @Override
     public void onItemClicked(View view, int position) {
 
-        String groupName = groupList.get(position).substring(0, groupList.get(position).indexOf("+"));
-        Toast.makeText(getActivity(), groupName, Toast.LENGTH_SHORT).show();
+        String groupName = groupList.get(position);
+        Toast.makeText(getActivity(), groupList.get(position).substring(0, groupList.get(position).indexOf("+")), Toast.LENGTH_SHORT).show();
+
+        startActivity(new Intent(getContext(), GroupsActivity.class)
+                .putExtra(Constants.GROUP, groupName));
     }
 
     private void getUserGroups() {
 
-        mFirestore.collection(Constants.USER_GROUPS_REFERENCE).document(mUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        mFirestore
+                .collection(Constants.USER_GROUPS_REFERENCE)
+                .document(mUser.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                if (task.isSuccessful()) {
+                        if (task.isSuccessful()) {
 
-                    DocumentSnapshot document = task.getResult();
+                            DocumentSnapshot document = task.getResult();
 
-                    if (document != null && document.exists()) {
+                            if (document != null && document.exists()) {
 
-                        for (String group : document.getData().keySet()) {
+                                for (String group : document.getData().keySet()) {
 
-                            groupList.add(group);
-                            adapter.notifyDataSetChanged();
+                                    groupList.add(group);
+                                    adapter.notifyDataSetChanged();
+                                }
+                            }
                         }
                     }
-                }
-            }
-        });
+                });
     }
 }

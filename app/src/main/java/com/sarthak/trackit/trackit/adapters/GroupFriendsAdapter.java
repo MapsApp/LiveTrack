@@ -45,7 +45,6 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull final GroupFriendsViewHolder holder, int position) {
-        String[] names = holder.itemView.getContext().getResources().getStringArray(R.array.names);
         holder.progressBar.setVisibility(View.VISIBLE);
         Picasso.with(holder.itemView.getContext())
                 .load("https://www.w3schools.com/css/trolltunga.jpg")
@@ -63,10 +62,7 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
                 });
 
         holder.txtGroupFriendStatus.setText("Active");
-
-        for (int i = 0; i < mGroupMembersList.size(); i++) {
-            holder.txtGroupFriendName.setText(mGroupMembersList.get(position).getDisplayName());
-        }
+        holder.txtGroupFriendName.setText(mGroupMembersList.get(position).getDisplayName());
     }
 
     @Override

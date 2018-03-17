@@ -210,7 +210,11 @@ public class SearchActivity extends BaseActivity implements
 
         mSearchRecyclerView.setAdapter(groupAdapter);
 
-        mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mFirestore.collection(Constants.CONTACTS_REFERENCE)
+                .document(mUser.getUid())
+                .collection("Friends")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 

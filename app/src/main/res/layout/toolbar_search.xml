@@ -15,7 +15,8 @@
         android:weightSum="10">
 
 
-        <EditText
+        <AutoCompleteTextView
+            android:id="@+id/autocomplete_search"
             style="@style/Widget.AppCompat.EditText"
             android:layout_width="0dp"
             android:layout_height="match_parent"

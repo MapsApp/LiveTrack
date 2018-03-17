@@ -598,7 +598,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
         // Parsing the data in non-ui thread
@@ -621,13 +620,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList points = null;
-            PolylineOptions lineOptions = null;
+            ArrayList<LatLng> points = new ArrayList<>();
+            PolylineOptions lineOptions = new PolylineOptions();
             MarkerOptions markerOptions = new MarkerOptions();
 
             for (int i = 0; i < result.size(); i++) {
-                points = new ArrayList();
-                lineOptions = new PolylineOptions();
 
                 List<HashMap<String, String>> path = result.get(i);
 
@@ -645,10 +642,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 lineOptions.width(12);
                 lineOptions.color(Color.CYAN);
                 lineOptions.geodesic(true);
-
             }
 
-// Drawing polyline in the Google Map for the i-th route
+            // Drawing polyline in the Google Map for the i-th route
             mMap.addPolyline(lineOptions);
         }
     }

@@ -11,8 +11,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+
     <application
         android:name=".LiveTrack"
         android:allowBackup="true"
@@ -84,8 +85,9 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".activities.RequestStatusActivity" />
-        <activity android:name=".activities.CreateGroupActivity"/>
-        <activity android:name=".activities.AllContactsActivity"/>
+        <activity android:name=".activities.CreateGroupActivity" />
+        <activity android:name=".activities.AllContactsActivity" />
+        <activity android:name=".activities.GroupSetupActivity"></activity>
     </application>
 
 </manifest>

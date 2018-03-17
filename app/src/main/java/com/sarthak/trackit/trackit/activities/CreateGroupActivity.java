@@ -1,13 +1,16 @@
 package com.sarthak.trackit.trackit.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,7 +29,9 @@ import com.sarthak.trackit.trackit.utils.Constants;
 import java.util.ArrayList;
 
 public class CreateGroupActivity extends BaseActivity implements
-        FriendsAdapter.setOnFriendClickListener {
+        FriendsAdapter.setOnFriendClickListener
+        , GroupMembersAdapter.setOnGroupMemberClicked
+        , View.OnClickListener {
 
     ArrayList<User> mFriendsList = new ArrayList<>();
     ArrayList<User> mFriendsGroupList = new ArrayList<>();
@@ -34,6 +39,7 @@ public class CreateGroupActivity extends BaseActivity implements
     GroupMembersAdapter mGroupFriendsAdapter = null;
     FriendsAdapter mFriendsAdapter;
 
+    TextView mGroupCountTv;
     LinearLayout mGroupFriendsLayout;
     RecyclerView mFriendsRecycler, mGroupRecycler;
 
@@ -46,33 +52,26 @@ public class CreateGroupActivity extends BaseActivity implements
         setUpToolbar(this);
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+        mGroupCountTv = findViewById(R.id.text_member_count);
+
+
         mGroupFriendsLayout = findViewById(R.id.groupFriendsLayout);
+        mGroupFriendsLayout.setVisibility(View.VISIBLE);
 
         mFriendsRecycler = findViewById(R.id.recycler_friends_new_group);
         mGroupRecycler = findViewById(R.id.recycler_group_members);
 
         mFriendsRecycler.setLayoutManager(new LinearLayoutManager(this));
-        mGroupRecycler.setLayoutManager(new LinearLayoutManager(this));
-
-        mGroupFriendsAdapter = new GroupMembersAdapter(mFriendsGroupList);
-        setFriendsRecyclerView();
-
+        mGroupRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mFriendsAdapter = new FriendsAdapter(this, mFriendsList);
         mFriendsRecycler.setAdapter(mFriendsAdapter);
 
-        mGroupFriendsAdapter.notifyDataSetChanged();
-
+        mGroupFriendsAdapter = new GroupMembersAdapter(mFriendsGroupList, this);
         mGroupRecycler.setAdapter(mGroupFriendsAdapter);
 
-    }
+        setFriendsRecyclerView();
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (item.getItemId() == android.R.id.home) {
-            mFriendsGroupList.clear();
-        }
-        return super.onOptionsItemSelected(item);
+        mGroupFriendsLayout.setOnClickListener(this);
     }
 
     private void setFriendsRecyclerView() {
@@ -128,9 +127,53 @@ public class CreateGroupActivity extends BaseActivity implements
 
         if (!mFriendsGroupList.contains(mFriendsList.get(position))) {
             mFriendsGroupList.add(mFriendsList.get(position));
-            Toast.makeText(this, mFriendsGroupList.get(position).getDisplayName() + "  Added " + mFriendsGroupList.size(), Toast.LENGTH_SHORT).show();
+            mGroupFriendsAdapter.notifyDataSetChanged();
+            mGroupCountTv.setText(String.valueOf(mFriendsGroupList.size()) + " Members");
+
         } else {
-            Toast.makeText(this, mFriendsGroupList.get(position).getDisplayName() + " Already Present " + mFriendsGroupList.size(), Toast.LENGTH_SHORT).show();
+
+        }
+
+        mGroupFriendsLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onGroupMemberClicked(View v, int position) {
+        if (!mFriendsGroupList.isEmpty()) {
+            mFriendsGroupList.remove(mFriendsGroupList.get(position));
+            mGroupFriendsAdapter.notifyDataSetChanged();
+            mGroupCountTv.setText(String.valueOf(mFriendsGroupList.size()) + " Members");
+
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.create_group_activity, menu);
+
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mFriendsGroupList.clear();
+                break;
+            case R.id.action_done:
+                startActivity(new Intent(this,
+                        GroupSetupActivity.class)
+                .putParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST,mFriendsGroupList));
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v == mGroupFriendsLayout) {
         }
     }
 }

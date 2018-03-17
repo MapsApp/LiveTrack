@@ -27,7 +27,6 @@ import java.util.ArrayList;
 public class GroupsFragment extends Fragment implements View.OnClickListener {
 
     private ArrayList<User> userList = new ArrayList<>();
-    Button mBtn;
     FloatingActionButton mCreateGroupFab;
     RecyclerView mFriendsList;
 
@@ -50,15 +49,14 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         mFirestore = FirebaseFirestore.getInstance();
 
-        mBtn=view.findViewById(android.R.id.button1);
-        mCreateGroupFab=view.findViewById(R.id.fab_create);
+        mCreateGroupFab=view.findViewById(R.id.fab_create_group);
         mFriendsList = view.findViewById(R.id.recycler_groups);
 
         mFriendsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mFriendsList.setAdapter(new GroupAdapter(userList));
 
         mCreateGroupFab.setOnClickListener(this);
-        mBtn.setOnClickListener(this);
+
     }
 
     @Override
@@ -70,9 +68,6 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         if(v==mCreateGroupFab){
             startActivity(new Intent(getContext(), CreateGroupActivity.class));
-        }
-        if (v==mBtn){
-            startActivity(new Intent(getContext(), GroupsActivity.class));
         }
     }
 }

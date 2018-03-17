@@ -8,17 +8,28 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
+import com.sarthak.trackit.trackit.model.User;
+import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
+
+import java.util.ArrayList;
 
 public class GroupsActivity extends BaseActivity implements View.OnClickListener
         , GroupFriendsAdapter.setOnGroupFriendClickListener {
 
+    String[] MEMBERS ;
+    ArrayList<User> mGroupMembersList = new ArrayList<>();
+    ArrayAdapter<String> adapter;
+
+    AutoCompleteTextView mGroupMembersSearchAtv;
+    TextView mGroupNameTv;
     FloatingActionButton fabBottomSheet;
     LinearLayout layoutBottomSheet;
     BottomSheetBehavior sheetBehavior;
@@ -30,9 +41,19 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         setContentView(R.layout.activity_groups);
         setUpToolbar(this);
 
+        mGroupMembersSearchAtv = mToolbar.findViewById(R.id.autocomplete_search);
+
+        mGroupNameTv = findViewById(R.id.text_group_name);
         rvGroupMembers = findViewById(R.id.recycler_group_members);
         fabBottomSheet = findViewById(R.id.fab_bottom_sheet);
 
+        mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
+        populateSearch();
+        mGroupNameTv.setText(getIntent().getStringExtra(Constants.GROUP_NAME));
+
+        adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, MEMBERS);
+        mGroupMembersSearchAtv.setAdapter(adapter);
         //addressed the container linear layout of bottom sheet
         layoutBottomSheet = findViewById(R.id.bottom_sheet_layout);
 
@@ -40,8 +61,9 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
 
         rvGroupMembers.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        rvGroupMembers.setAdapter(new GroupFriendsAdapter(this));
-        rvGroupMembers.addItemDecoration(new RecyclerViewDivider(this, ContextCompat.getColor(this, R.color.md_blue_grey_200), 0.5f));
+        rvGroupMembers.setAdapter(new GroupFriendsAdapter(mGroupMembersList, this));
+        rvGroupMembers.addItemDecoration(new RecyclerViewDivider(this,
+                ContextCompat.getColor(this, R.color.md_blue_grey_200), 0.5f));
 
         //Used to change icon in floating button with states of BottomSheet
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -49,7 +71,6 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch (newState) {
                     case BottomSheetBehavior.STATE_HIDDEN:
-                        layoutBottomSheet.setAlpha(0.0f);
                         break;
                     case BottomSheetBehavior.STATE_EXPANDED: {
                         fabBottomSheet.setImageResource(R.drawable.ic_expand_more_white);
@@ -99,8 +120,18 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
+
     @Override
     public void OnGroupFriendItemClicked(View view, int position) {
 
+    }
+
+    private void populateSearch() {
+
+        MEMBERS= new String[mGroupMembersList.size()];
+
+        for (int i = 0; i < MEMBERS.length; i++) {
+            MEMBERS[i] = mGroupMembersList.get(i).getDisplayName();
+        }
     }
 }

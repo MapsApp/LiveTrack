@@ -149,9 +149,19 @@ public class HomeActivity extends BaseActivity implements
 
             case R.id.fab_create_friend_or_group:
 
-                Intent searchIntent = new Intent(HomeActivity.this, SearchActivity.class);
-                searchIntent.putExtra("fragmentType", fragmentType);
-                startActivity(searchIntent);
+                switch (fragmentType) {
+
+                    case 1:
+
+                        startActivity(new Intent(HomeActivity.this, CreateGroupActivity.class));
+                        break;
+
+                    case 2:
+
+                        Intent searchIntent = new Intent(HomeActivity.this, SearchActivity.class);
+                        startActivity(searchIntent);
+                        break;
+                }
         }
     }
 
@@ -228,14 +238,12 @@ public class HomeActivity extends BaseActivity implements
         return true;
     }
 
-
     /*@Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.context_menu, menu);
-
     }*/
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -250,14 +258,14 @@ public class HomeActivity extends BaseActivity implements
                     selectedFragment = MapsFragment.newInstance();
                     createFriendOrGroupBtn.setVisibility(View.GONE);
                     break;
-                case R.id.navigation_friends:
+                case R.id.navigation_groups:
                     fragmentType = 1;
-                    selectedFragment = FriendsFragment.newInstance();
+                    selectedFragment = GroupsFragment.newInstance();
                     createFriendOrGroupBtn.setVisibility(View.VISIBLE);
                     break;
-                case R.id.navigation_groups:
+                case R.id.navigation_friends:
                     fragmentType = 2;
-                    selectedFragment = GroupsFragment.newInstance();
+                    selectedFragment = FriendsFragment.newInstance();
                     createFriendOrGroupBtn.setVisibility(View.VISIBLE);
                     break;
             }

@@ -93,8 +93,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener, Re
 
     private void getUserGroups() {
 
-        mFirestore
-                .collection(Constants.USER_GROUPS_REFERENCE)
+        mFirestore.collection(Constants.USER_GROUPS_REFERENCE)
                 .document(mUser.getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

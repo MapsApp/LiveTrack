@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -65,7 +66,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         getFriends();
         //mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
         populateSearch();
-        mGroupNameTv.setText(mGroupName);
+        mGroupNameTv.setText(mGroupName.substring(0, mGroupName.indexOf("+")));
 
         adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, MEMBERS);
@@ -144,22 +145,23 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     private void getFriends() {
 
         mFirestore.
-                collection(Constants.GROUP)
+                collection(Constants.GROUPS_REFERENCE)
+                .document(mGroupName)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
                         if (task.isSuccessful()) {
 
-                            mGroupMembersList.clear();
+                            final DocumentSnapshot document = task.getResult();
 
-                            for (DocumentSnapshot document : task.getResult()) {
+                            if (document != null && document.exists()) {
 
-                                if (document != null && document.exists()) {
+                                for (String member : document.getData().keySet()) {
 
-                                    mFirestore.collection(Constants.GROUP)
-                                            .document(mGroupName)
+                                    mFirestore.collection(Constants.USERS_REFERENCE)
+                                            .document(member)
                                             .get()
                                             .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
@@ -167,11 +169,13 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
                                                     if (task.isSuccessful()) {
 
-                                                        mGroupMembersList.add(task.getResult()
-                                                                .toObject(User.class));
-                                                        mGroupFriendsAdapter.notifyDataSetChanged();
-                                                    } else {
+                                                        DocumentSnapshot snapshot = task.getResult();
 
+                                                        if (snapshot != null && snapshot.exists()) {
+
+                                                            mGroupMembersList.add(snapshot.toObject(User.class));
+                                                            mGroupFriendsAdapter.notifyDataSetChanged();
+                                                        }
                                                     }
                                                 }
                                             });
@@ -181,7 +185,6 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                     }
                 });
     }
-
 
     private void populateSearch() {
 

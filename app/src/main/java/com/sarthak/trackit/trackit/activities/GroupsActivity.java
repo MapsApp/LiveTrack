@@ -31,6 +31,9 @@ import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 
 public class GroupsActivity extends BaseActivity implements View.OnClickListener
         , GroupFriendsAdapter.setOnGroupFriendClickListener {
@@ -158,13 +161,16 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
                         if (task.isSuccessful()) {
 
+                            HashMap<String, String> memberMap;
+
                             final DocumentSnapshot document = task.getResult();
 
                             if (document != null && document.exists()) {
 
                                 for (final String member : document.getData().keySet()) {
 
-                                    if (document.getData().get(member).equals("admin")) {
+                                    memberMap = (HashMap<String, String>) document.getData().get(member);
+                                    if (memberMap.get("admin").equals("true")) {
 
                                         adminStatusList.add("true");
                                     } else {

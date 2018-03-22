@@ -30,7 +30,8 @@ import java.util.HashMap;
 
 public class GroupSetupActivity extends BaseActivity implements View.OnClickListener {
 
-    HashMap<String, String> groupMembersMap = new HashMap<>();
+    HashMap<String, HashMap<String, String>> groupMembersMap = new HashMap<>();
+    HashMap<String, String> memberMap = new HashMap<>();
     ArrayList<User> mGroupMembersList = new ArrayList<>();
 
     EditText mGroupNameEt;
@@ -59,7 +60,7 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
         getCurrentUserObject();
 
         mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
-        groupMembersMap = (HashMap<String, String>) getIntent().getSerializableExtra("userKey");
+        groupMembersMap = (HashMap<String, HashMap<String, String>>) getIntent().getSerializableExtra("userKey");
 
         mToolbar.setTitle("New Group");
         mToolbar.setSubtitle(mGroupMembersList.size() + " Participants");
@@ -89,7 +90,10 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
                 if (!mGroupNameEt.getText().toString().isEmpty()) {
 
                     mGroupMembersList.add(mCurrentUser);
-                    groupMembersMap.put(mUser.getUid(), "admin");
+                    memberMap.put("admin", "true");
+                    memberMap.put("location", "true");
+                    memberMap.put("displayName", mCurrentUser.getDisplayName());
+                    groupMembersMap.put(mUser.getUid(), memberMap);
 
                     mFirestore.collection(Constants.GROUPS_REFERENCE)
                             .document(groupName)

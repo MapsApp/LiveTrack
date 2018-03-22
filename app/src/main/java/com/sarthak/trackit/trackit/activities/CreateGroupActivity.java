@@ -38,7 +38,8 @@ public class CreateGroupActivity extends BaseActivity implements
     ArrayList<User> mFriendsGroupList = new ArrayList<>();
 
     ArrayList<String> friendKeyList = new ArrayList<>();
-    HashMap<String, String> groupMemberMap = new HashMap<>();
+    HashMap<String, HashMap<String, String>> groupMemberMap = new HashMap<>();
+    HashMap<String, String> memberMap = new HashMap<>();
 
     GroupMembersAdapter mGroupFriendsAdapter = null;
     FriendsAdapter mFriendsAdapter;
@@ -132,7 +133,10 @@ public class CreateGroupActivity extends BaseActivity implements
         if (!mFriendsGroupList.contains(mFriendsList.get(position))) {
 
             mFriendsGroupList.add(mFriendsList.get(position));
-            groupMemberMap.put(friendKeyList.get(position), "false");
+            memberMap.put("admin", "false");
+            memberMap.put("location", "false");
+            memberMap.put("displayName", mFriendsList.get(position).getDisplayName());
+            groupMemberMap.put(friendKeyList.get(position), memberMap);
             mGroupFriendsAdapter.notifyDataSetChanged();
             mGroupCountTv.setText(String.valueOf(mFriendsGroupList.size()) + " Members");
         } else {

@@ -11,10 +11,7 @@
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/mapActivity"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <FrameLayout android:id="@+id/map_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="?actionBarSize" />

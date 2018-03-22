@@ -87,7 +87,7 @@
         <activity android:name=".activities.RequestStatusActivity" />
         <activity android:name=".activities.CreateGroupActivity" />
         <activity android:name=".activities.AllContactsActivity" />
-        <activity android:name=".activities.GroupSetupActivity"></activity>
+        <activity android:name=".activities.GroupSetupActivity" />
     </application>
 
 </manifest>

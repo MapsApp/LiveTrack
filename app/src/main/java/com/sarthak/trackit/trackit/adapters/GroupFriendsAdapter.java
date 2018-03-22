@@ -2,6 +2,7 @@ package com.sarthak.trackit.trackit.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,20 +18,18 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-/**
- * Created by karan on 3/9/2018.
- */
-
 public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapter.GroupFriendsViewHolder> {
 
-    public GroupFriendsAdapter(ArrayList<User> mGroupMembersList, setOnGroupFriendClickListener mListener) {
-        this.mGroupMembersList = mGroupMembersList;
-        this.mListener = mListener;
-    }
+    private ArrayList<String> adminStatusList = new ArrayList<>();
+    private ArrayList<User> mGroupMembersList = new ArrayList<>();
 
-    private ArrayList<User> mGroupMembersList;
     private setOnGroupFriendClickListener mListener;
 
+    public GroupFriendsAdapter(ArrayList<User> mGroupMembersList, ArrayList<String> adminStatusList, setOnGroupFriendClickListener mListener) {
+        this.mGroupMembersList = mGroupMembersList;
+        this.adminStatusList = adminStatusList;
+        this.mListener = mListener;
+    }
 
     public interface setOnGroupFriendClickListener {
         void OnGroupFriendItemClicked(View view, int position);
@@ -63,6 +62,12 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
         holder.txtGroupFriendStatus.setText("Active");
         holder.txtGroupFriendName.setText(mGroupMembersList.get(position).getDisplayName());
+
+        if (adminStatusList.get(holder.getAdapterPosition()).equals("true")) {
+            holder.mAdminTv.setVisibility(View.VISIBLE);
+        } else {
+            holder.mAdminTv.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -71,7 +76,9 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
     }
 
     public class GroupFriendsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         TextView txtGroupFriendName, txtGroupFriendStatus;
+        TextView mAdminTv;
         ImageView imgGroupFriend;
         ProgressBar progressBar;
 
@@ -80,6 +87,8 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
             txtGroupFriendName = itemView.findViewById(R.id.text_group_friend_name);
             txtGroupFriendStatus = itemView.findViewById(R.id.text_group_friend_username);
+            mAdminTv = itemView.findViewById(R.id.admin_tv);
+
             progressBar = itemView.findViewById(android.R.id.progress);
 
             imgGroupFriend = itemView.findViewById(R.id.image_group_friend);

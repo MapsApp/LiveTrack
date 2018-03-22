@@ -48,7 +48,6 @@ public class CreateGroupActivity extends BaseActivity implements
     RecyclerView mFriendsRecycler, mGroupRecycler;
 
     FirebaseUser mUser;
-    User mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +73,6 @@ public class CreateGroupActivity extends BaseActivity implements
         mGroupRecycler.setAdapter(mGroupFriendsAdapter);
 
         setFriendsRecyclerView();
-        getCurrentUserObject();
 
         mGroupFriendsLayout.setOnClickListener(this);
     }
@@ -170,8 +168,6 @@ public class CreateGroupActivity extends BaseActivity implements
                 break;
             case R.id.action_done:
                 if (!mFriendsGroupList.isEmpty()) {
-                    mFriendsGroupList.add(mCurrentUser);
-                    groupMemberMap.put(mUser.getUid(), "true");
                     Intent groupSetupIntent = new Intent(this, GroupSetupActivity.class);
                     groupSetupIntent.putExtra("userKey", groupMemberMap);
                     groupSetupIntent.putParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST, mFriendsGroupList);
@@ -187,19 +183,5 @@ public class CreateGroupActivity extends BaseActivity implements
     public void onClick(View v) {
         if (v == mGroupFriendsLayout) {
         }
-    }
-
-    private void getCurrentUserObject() {
-
-        FirebaseFirestore.getInstance().collection(Constants.USERS_REFERENCE).document(mUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-
-                if (task.isSuccessful()) {
-
-                    mCurrentUser = task.getResult().toObject(User.class);
-                }
-            }
-        });
     }
 }

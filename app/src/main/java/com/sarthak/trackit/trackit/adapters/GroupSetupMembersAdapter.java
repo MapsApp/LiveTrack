@@ -44,7 +44,7 @@ public class GroupSetupMembersAdapter extends RecyclerView.Adapter<GroupSetupMem
 
     @Override
     public int getItemCount() {
-        return mGroupList.size()-1;
+        return mGroupList.size();
     }
 
     public class GroupMembersHolder extends RecyclerView.ViewHolder {

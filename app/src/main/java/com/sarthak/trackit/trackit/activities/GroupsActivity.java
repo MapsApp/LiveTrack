@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
+import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
@@ -34,6 +37,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     String mGroupName;
     String[] MEMBERS;
+    ArrayList<String> adminStatusList = new ArrayList<>();
     ArrayList<User> mGroupMembersList = new ArrayList<>();
     ArrayAdapter<String> adapter;
     GroupFriendsAdapter mGroupFriendsAdapter;
@@ -55,7 +59,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         setUpToolbar(this);
         mFirestore = FirebaseFirestore.getInstance();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
-        mGroupName = getIntent().getStringExtra(Constants.GROUP);
+        mGroupName = getIntent().getStringExtra(Constants.GROUP_NAME);
 
         mGroupMembersSearchAtv = mToolbar.findViewById(R.id.autocomplete_search);
 
@@ -66,6 +70,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         getFriends();
         //mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
         populateSearch();
+        fragmentInflate(MapsFragment.newInstance());
         mGroupNameTv.setText(mGroupName.substring(0, mGroupName.indexOf("+")));
 
         adapter = new ArrayAdapter<>(this,
@@ -75,7 +80,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         layoutBottomSheet = findViewById(R.id.bottom_sheet_layout);
         //sets the behaviour of linear layout to a bottom sheet
         sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
-        mGroupFriendsAdapter = new GroupFriendsAdapter(mGroupMembersList, this);
+        mGroupFriendsAdapter = new GroupFriendsAdapter(mGroupMembersList, adminStatusList, this);
         rvGroupMembers.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         rvGroupMembers.setAdapter(mGroupFriendsAdapter);
         rvGroupMembers.addItemDecoration(new RecyclerViewDivider(this,
@@ -144,8 +149,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     private void getFriends() {
 
-        mFirestore.
-                collection(Constants.GROUPS_REFERENCE)
+        mFirestore.collection(Constants.GROUPS_REFERENCE)
                 .document(mGroupName)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -158,7 +162,15 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
                             if (document != null && document.exists()) {
 
-                                for (String member : document.getData().keySet()) {
+                                for (final String member : document.getData().keySet()) {
+
+                                    if (document.getData().get(member).equals("admin")) {
+
+                                        adminStatusList.add("true");
+                                    } else {
+
+                                        adminStatusList.add("false");
+                                    }
 
                                     mFirestore.collection(Constants.USERS_REFERENCE)
                                             .document(member)
@@ -193,5 +205,12 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         for (int i = 0; i < MEMBERS.length; i++) {
             MEMBERS[i] = mGroupMembersList.get(i).getDisplayName();
         }
+    }
+
+    /*Used to pass fragment on item selected*/
+    public void fragmentInflate(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.map_container, fragment);
+        fragmentTransaction.commit();
     }
 }

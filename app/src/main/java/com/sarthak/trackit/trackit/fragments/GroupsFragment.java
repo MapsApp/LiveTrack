@@ -88,7 +88,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener, Re
         Toast.makeText(getActivity(), groupList.get(position).substring(0, groupList.get(position).indexOf("+")), Toast.LENGTH_SHORT).show();
 
         startActivity(new Intent(getContext(), GroupsActivity.class)
-                .putExtra(Constants.GROUP, groupName));
+                .putExtra(Constants.GROUP_NAME, groupName));
     }
 
     private void getUserGroups() {

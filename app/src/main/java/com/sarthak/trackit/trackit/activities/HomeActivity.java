@@ -61,13 +61,11 @@ public class HomeActivity extends BaseActivity implements
         mUser = mAuth.getCurrentUser();
         startService(new Intent(HomeActivity.this, LocationService.class));
 
-
         /*If the instance state of app onCreate is null,
         MapsFragment is inflated*/
         if (savedInstanceState == null) {
             fragmentInflate(MapsFragment.newInstance());
         }
-
 
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

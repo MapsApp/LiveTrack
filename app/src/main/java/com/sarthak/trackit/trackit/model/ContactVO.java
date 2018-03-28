@@ -1,9 +1,5 @@
 package com.sarthak.trackit.trackit.model;
 
-/**
- * Created by karan on 3/15/2018.
- */
-
 public class ContactVO {
     private String ContactImage;
     private String ContactName;

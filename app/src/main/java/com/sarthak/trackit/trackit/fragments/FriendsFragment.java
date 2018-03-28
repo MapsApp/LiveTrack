@@ -61,7 +61,6 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
         mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-
     }
 
     @Nullable

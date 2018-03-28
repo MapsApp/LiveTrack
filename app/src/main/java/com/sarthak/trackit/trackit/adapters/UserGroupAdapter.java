@@ -5,10 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.utils.CircleTransform;
 import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -41,7 +44,6 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
     public void onBindViewHolder(@NonNull final UserGroupAdapter.UserGroupViewHolder holder, int position) {
 
         holder.bindView(userList.get(holder.getAdapterPosition()));
-
     }
 
     @Override
@@ -53,14 +55,15 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
     View.OnClickListener{
 
         private TextView mDisplayNameTv, mUsernameTv;
+        private ImageView mGroupDpIv;
 
         public UserGroupViewHolder(View itemView) {
 
             super(itemView);
 
-            mDisplayNameTv = itemView.findViewById(R.id.text_group_display_name);
+            mDisplayNameTv = itemView.findViewById(R.id.text_group_name);
             mUsernameTv = itemView.findViewById(R.id.text_group_username);
-
+            mGroupDpIv=itemView.findViewById(R.id.image_group_dp);
             itemView.setOnClickListener(this);
         }
 
@@ -68,6 +71,10 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
 
             mDisplayNameTv.setText(name.substring(0, name.indexOf("+")));
             //mUsernameTv.setText(user.getUsername());
+            Picasso.with(itemView.getContext())
+                    .load("https://www.w3schools.com/css/trolltunga.jpg")
+                    .transform(new CircleTransform())
+                    .into(mGroupDpIv);
         }
 
         @Override

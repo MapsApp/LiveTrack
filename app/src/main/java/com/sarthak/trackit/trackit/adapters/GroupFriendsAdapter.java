@@ -2,7 +2,6 @@ package com.sarthak.trackit.trackit.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,7 +86,7 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
             txtGroupFriendName = itemView.findViewById(R.id.text_group_friend_name);
             txtGroupFriendStatus = itemView.findViewById(R.id.text_group_friend_username);
-            mAdminTv = itemView.findViewById(R.id.admin_tv);
+            mAdminTv = itemView.findViewById(R.id.text_admin);
 
             progressBar = itemView.findViewById(android.R.id.progress);
 

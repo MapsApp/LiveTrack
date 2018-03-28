@@ -8,27 +8,67 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
+import com.sarthak.trackit.trackit.model.LatLong;
+import com.sarthak.trackit.trackit.utils.Constants;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LocationService extends Service {
 
     public static final String BROADCAST_ACTION = "Hello World";
+    public static final long UPLOAD_INTERVAL = 10 * 1000; // 10 seconds
     private static final int TWO_MINUTES = 1000 * 60 * 2;
+
+    public LatLong mLatLong = new LatLong();
+
+    // run on another Thread to avoid crash
+    private Handler mHandler = new Handler();
+    // timer handling
+    private Timer mTimer = new Timer();
+
+    Intent intent;
+
     public LocationManager locationManager;
     public MyLocationListener listener;
     public Location previousBestLocation = null;
 
-    Intent intent;
+    public FirebaseFirestore mFirestore;
+    public FirebaseUser mUser;
 
     @Override
     public void onCreate() {
         super.onCreate();
         intent = new Intent(BROADCAST_ACTION);
+
+        FirebaseApp.initializeApp(LocationService.this);
+
+        mFirestore = FirebaseFirestore.getInstance();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+        // cancel if already existed
+        /*if(mTimer != null) {
+            mTimer.cancel();
+        } else {
+            // recreate new
+            mTimer = new Timer();
+        }*/
+
+        // schedule task
+        mTimer.schedule(new UploadDataTimerTask(), 0,  UPLOAD_INTERVAL);
     }
 
     @Override
@@ -109,7 +149,6 @@ public class LocationService extends Service {
 
     @Override
     public void onDestroy() {
-        // handler.removeCallbacks(sendUpdatesToUI);
         super.onDestroy();
         Log.v("STOP_SERVICE", "DONE");
         locationManager.removeUpdates(listener);
@@ -138,6 +177,9 @@ public class LocationService extends Service {
             if(isBetterLocation(loc, previousBestLocation)) {
                 loc.getLatitude();
                 loc.getLongitude();
+
+                mLatLong = new LatLong(String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()));
+
                 new MapsFragment().getDeviceLocation();
                 intent.putExtra("Latitude", loc.getLatitude());
                 intent.putExtra("Longitude", loc.getLongitude());
@@ -159,6 +201,33 @@ public class LocationService extends Service {
         public void onStatusChanged(String provider, int status, Bundle extras)
         {
 
+        }
+    }
+
+    class UploadDataTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            // run on another thread
+            mHandler.post(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    Log.d("TAG", "pul");
+                    Log.d("TAG", String.valueOf(mLatLong));
+
+                    mFirestore.collection(Constants.LOCATION_REFERENCE).document(mUser.getUid()).set(mLatLong).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            if (task.isSuccessful()) {
+                                Log.d("TAG", "Upload successful.");
+                            }
+                        }
+                    });
+                }
+            });
         }
     }
 }

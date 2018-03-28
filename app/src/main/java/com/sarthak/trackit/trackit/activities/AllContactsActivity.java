@@ -14,10 +14,6 @@ import com.sarthak.trackit.trackit.model.ContactVO;
 
 import java.util.ArrayList;
 
-/**
- * Created by karan on 3/15/2018.
- */
-
 public class AllContactsActivity extends AppCompatActivity {
     RecyclerView rvContacts;
 

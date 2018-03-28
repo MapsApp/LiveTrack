@@ -26,8 +26,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
+import com.sarthak.trackit.trackit.model.LatLong;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
+import com.sarthak.trackit.trackit.utils.LocationSentListener;
 import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
 
 import java.util.ArrayList;
@@ -40,8 +42,11 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     String mGroupName;
     String[] MEMBERS;
+
     ArrayList<String> adminStatusList = new ArrayList<>();
     ArrayList<User> mGroupMembersList = new ArrayList<>();
+    ArrayList<LatLong> mLatLongList = new ArrayList<>();
+
     ArrayAdapter<String> adapter;
     GroupFriendsAdapter mGroupFriendsAdapter;
 
@@ -54,6 +59,8 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     FirebaseFirestore mFirestore;
     FirebaseUser mUser;
+
+    public LocationSentListener mListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,10 +151,13 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
-
     @Override
     public void OnGroupFriendItemClicked(View view, int position) {
 
+    }
+
+    public void sendLocation(LocationSentListener listener) {
+        this.mListener = listener;
     }
 
     private void getFriends() {
@@ -177,6 +187,29 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
                                         adminStatusList.add("false");
                                     }
+
+                                    mFirestore.collection(Constants.LOCATION_REFERENCE)
+                                            .document(member)
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                                    if (task.isSuccessful()) {
+
+                                                        DocumentSnapshot snapshot = task.getResult();
+
+                                                        if (snapshot != null && snapshot.exists()) {
+
+                                                            mLatLongList.add(snapshot.toObject(LatLong.class));
+                                                            Log.d("opli", String.valueOf(snapshot.toObject(LatLong.class)));
+                                                            if (mListener != null) {
+                                                                mListener.passLocationToFragment(mLatLongList);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            });
 
                                     mFirestore.collection(Constants.USERS_REFERENCE)
                                             .document(member)
@@ -215,6 +248,9 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     /*Used to pass fragment on item selected*/
     public void fragmentInflate(Fragment fragment) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("activityType", 2);
+        fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.map_container, fragment);
         fragmentTransaction.commit();

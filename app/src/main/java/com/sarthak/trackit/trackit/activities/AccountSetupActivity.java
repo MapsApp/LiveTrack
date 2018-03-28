@@ -83,7 +83,7 @@ public class AccountSetupActivity extends BaseActivity implements View.OnFocusCh
 
                 // get device Id to allow login on one device.
                 // current device Id will be matched with that in databaseand if found different, user will be signed out.
-                // TODO: 2. Match curent device Id with that in database.
+                // TODO: 2. Match current device Id with that in database.
                 final String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
                 // variable account stores phone/email of the user.

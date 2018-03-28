@@ -23,7 +23,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.model.LatLong;
+<<<<<<< HEAD
 import com.sarthak.trackit.trackit.utils.Constants;
+=======
+>>>>>>> c714b061e3347db877e77988722773d1698f4edf
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -47,18 +50,24 @@ public class LocationService extends Service {
     public MyLocationListener listener;
     public Location previousBestLocation = null;
 
+<<<<<<< HEAD
     public FirebaseFirestore mFirestore;
     public FirebaseUser mUser;
 
+=======
+>>>>>>> c714b061e3347db877e77988722773d1698f4edf
     @Override
     public void onCreate() {
         super.onCreate();
         intent = new Intent(BROADCAST_ACTION);
+<<<<<<< HEAD
 
         FirebaseApp.initializeApp(LocationService.this);
 
         mFirestore = FirebaseFirestore.getInstance();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+=======
+>>>>>>> c714b061e3347db877e77988722773d1698f4edf
         // cancel if already existed
         /*if(mTimer != null) {
             mTimer.cancel();
@@ -72,7 +81,7 @@ public class LocationService extends Service {
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
+    public int onStartCommand(Intent intent, int f,  int startId) {
 
         Toast.makeText(this, "Service started.", Toast.LENGTH_SHORT).show();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -85,10 +94,12 @@ public class LocationService extends Service {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+            return START_NOT_STICKY;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+
+        return START_STICKY;
     }
 
     @Override
@@ -214,6 +225,7 @@ public class LocationService extends Service {
                 @Override
                 public void run() {
 
+<<<<<<< HEAD
                     Log.d("TAG", "pul");
                     Log.d("TAG", String.valueOf(mLatLong));
 
@@ -226,6 +238,14 @@ public class LocationService extends Service {
                             }
                         }
                     });
+=======
+                    Log.d("TAG", String.valueOf(mLatLong));
+
+                    Intent intent = new Intent();
+                    intent.setAction(BROADCAST_ACTION);
+                    intent.putExtra("LatLong", mLatLong);
+                    sendBroadcast(intent);
+>>>>>>> c714b061e3347db877e77988722773d1698f4edf
                 }
             });
         }

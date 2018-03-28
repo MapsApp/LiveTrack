@@ -1,6 +1,9 @@
 package com.sarthak.trackit.trackit.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -12,9 +15,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
-import android.view.ContextMenu;
+import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -30,6 +32,7 @@ import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.fragments.FriendsFragment;
 import com.sarthak.trackit.trackit.fragments.GroupsFragment;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
+import com.sarthak.trackit.trackit.model.LatLong;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.services.LocationService;
 import com.sarthak.trackit.trackit.utils.Constants;
@@ -48,19 +51,36 @@ public class HomeActivity extends BaseActivity implements
     BottomNavigationView navigation;
     SearchView searchView;
 
-    FirebaseAuth mAuth;
-    FirebaseUser mUser;
     FloatingActionButton createFriendOrGroupBtn;
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore mFirestore;
+    private FirebaseUser mUser;
+
+    private LocationReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         setUpToolbar(this);
+
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
+
+<<<<<<< HEAD
+=======
+        mFirestore = FirebaseFirestore.getInstance();
+
+        //Register BroadcastReceiver
+        //to receive event from our service
+        mReceiver = new LocationReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(LocationService.BROADCAST_ACTION);
+        registerReceiver(mReceiver, intentFilter);
         startService(new Intent(HomeActivity.this, LocationService.class));
 
+>>>>>>> c714b061e3347db877e77988722773d1698f4edf
         /*If the instance state of app onCreate is null,
         MapsFragment is inflated*/
         if (savedInstanceState == null) {
@@ -125,6 +145,7 @@ public class HomeActivity extends BaseActivity implements
     protected void onDestroy() {
         super.onDestroy();
 
+        unregisterReceiver(mReceiver);
         stopService(new Intent(HomeActivity.this, LocationService.class));
     }
 
@@ -163,10 +184,11 @@ public class HomeActivity extends BaseActivity implements
         }
     }
 
-    ;
-
     /*Used to pass fragment on item selected*/
     public void fragmentInflate(Fragment fragment) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("activityType", 1);
+        fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.home_page_container, fragment);
         fragmentTransaction.commit();
@@ -271,4 +293,27 @@ public class HomeActivity extends BaseActivity implements
             return true;
         }
     };
+
+    private class LocationReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
+
+            LatLong latLong = arg1.getParcelableExtra("LatLong");
+
+            if (latLong != null) {
+
+                mFirestore.collection(Constants.LOCATION_REFERENCE).document(mUser.getUid()).set(latLong).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if (task.isSuccessful()) {
+
+                            Log.d("TAG", "Upload successful.");
+                        }
+                    }
+                });
+            }
+        }
+    }
 }

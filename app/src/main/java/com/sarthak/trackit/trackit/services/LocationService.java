@@ -10,20 +10,12 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.model.LatLong;
-import com.sarthak.trackit.trackit.utils.Constants;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -47,18 +39,10 @@ public class LocationService extends Service {
     public MyLocationListener listener;
     public Location previousBestLocation = null;
 
-    public FirebaseFirestore mFirestore;
-    public FirebaseUser mUser;
-
     @Override
     public void onCreate() {
         super.onCreate();
         intent = new Intent(BROADCAST_ACTION);
-
-        FirebaseApp.initializeApp(LocationService.this);
-
-        mFirestore = FirebaseFirestore.getInstance();
-        mUser = FirebaseAuth.getInstance().getCurrentUser();
         // cancel if already existed
         /*if(mTimer != null) {
             mTimer.cancel();
@@ -72,7 +56,7 @@ public class LocationService extends Service {
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
+    public int onStartCommand(Intent intent, int f,  int startId) {
 
         Toast.makeText(this, "Service started.", Toast.LENGTH_SHORT).show();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -85,10 +69,12 @@ public class LocationService extends Service {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+            return START_NOT_STICKY;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
+
+        return START_STICKY;
     }
 
     @Override
@@ -214,18 +200,12 @@ public class LocationService extends Service {
                 @Override
                 public void run() {
 
-                    Log.d("TAG", "pul");
                     Log.d("TAG", String.valueOf(mLatLong));
 
-                    mFirestore.collection(Constants.LOCATION_REFERENCE).document(mUser.getUid()).set(mLatLong).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-
-                            if (task.isSuccessful()) {
-                                Log.d("TAG", "Upload successful.");
-                            }
-                        }
-                    });
+                    Intent intent = new Intent();
+                    intent.setAction(BROADCAST_ACTION);
+                    intent.putExtra("LatLong", mLatLong);
+                    sendBroadcast(intent);
                 }
             });
         }

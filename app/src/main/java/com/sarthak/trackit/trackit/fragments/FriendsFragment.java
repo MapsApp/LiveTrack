@@ -61,7 +61,6 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
         mFirestore = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-
     }
 
     @Nullable
@@ -109,7 +108,9 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
 
                         if (document != null && document.exists()) {
 
-                            mFirestore.collection(Constants.USERS_REFERENCE).document(document.getId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            mFirestore.collection(Constants.USERS_REFERENCE)
+                                    .document(document.getId())
+                                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 

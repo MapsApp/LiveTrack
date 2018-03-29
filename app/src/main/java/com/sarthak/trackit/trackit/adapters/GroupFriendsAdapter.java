@@ -2,6 +2,7 @@ package com.sarthak.trackit.trackit.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,19 +11,23 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sarthak.trackit.trackit.R;
+import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-/**
- * Created by karan on 3/9/2018.
- */
+import java.util.ArrayList;
 
 public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapter.GroupFriendsViewHolder> {
 
+    private ArrayList<String> adminStatusList = new ArrayList<>();
+    private ArrayList<User> mGroupMembersList = new ArrayList<>();
+
     private setOnGroupFriendClickListener mListener;
 
-    public GroupFriendsAdapter(setOnGroupFriendClickListener mListener) {
+    public GroupFriendsAdapter(ArrayList<User> mGroupMembersList, ArrayList<String> adminStatusList, setOnGroupFriendClickListener mListener) {
+        this.mGroupMembersList = mGroupMembersList;
+        this.adminStatusList = adminStatusList;
         this.mListener = mListener;
     }
 
@@ -39,7 +44,6 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull final GroupFriendsViewHolder holder, int position) {
-        String[] names = holder.itemView.getContext().getResources().getStringArray(R.array.names);
         holder.progressBar.setVisibility(View.VISIBLE);
         Picasso.with(holder.itemView.getContext())
                 .load("https://www.w3schools.com/css/trolltunga.jpg")
@@ -57,19 +61,24 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
                 });
 
         holder.txtGroupFriendStatus.setText("Active");
+        holder.txtGroupFriendName.setText(mGroupMembersList.get(position).getDisplayName());
 
-        for (int i = 0; i <= position; i++) {
-            holder.txtGroupFriendName.setText(names[i]);
+        if (adminStatusList.get(holder.getAdapterPosition()).equals("true")) {
+            holder.mAdminTv.setVisibility(View.VISIBLE);
+        } else {
+            holder.mAdminTv.setVisibility(View.GONE);
         }
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return mGroupMembersList.size();
     }
 
     public class GroupFriendsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         TextView txtGroupFriendName, txtGroupFriendStatus;
+        TextView mAdminTv;
         ImageView imgGroupFriend;
         ProgressBar progressBar;
 
@@ -78,6 +87,8 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
             txtGroupFriendName = itemView.findViewById(R.id.text_group_friend_name);
             txtGroupFriendStatus = itemView.findViewById(R.id.text_group_friend_username);
+            mAdminTv = itemView.findViewById(R.id.admin_tv);
+
             progressBar = itemView.findViewById(android.R.id.progress);
 
             imgGroupFriend = itemView.findViewById(R.id.image_group_friend);

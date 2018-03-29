@@ -1,6 +1,9 @@
 package com.sarthak.trackit.trackit.model;
 
-public class User {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class User implements Parcelable {
 
     private String username;
     private String displayName;
@@ -22,6 +25,27 @@ public class User {
         this.profileImage = profileImage;
         this.thumbImage = thumbImage;
     }
+
+    protected User(Parcel in) {
+        username = in.readString();
+        displayName = in.readString();
+        account = in.readString();
+        deviceToken = in.readString();
+        profileImage = in.readString();
+        thumbImage = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getUsername() {
         return username;
@@ -69,5 +93,20 @@ public class User {
 
     public void setThumbImage(String thumbImage) {
         this.thumbImage = thumbImage;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(username);
+        dest.writeString(displayName);
+        dest.writeString(account);
+        dest.writeString(deviceToken);
+        dest.writeString(profileImage);
+        dest.writeString(thumbImage);
     }
 }

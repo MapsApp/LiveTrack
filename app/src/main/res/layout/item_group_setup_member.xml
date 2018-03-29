@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/margin_smaller"
     android:background="?selectableItemBackgroundBorderless"
@@ -13,32 +12,17 @@
         android:id="@+id/image_group_member"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/text_group_member_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/image_group_member"
+        android:layout_centerHorizontal="true"
         android:padding="@dimen/padding_smallest"
         android:text="@string/app_name"
         android:textColor="@color/md_grey_700"
         android:textSize="12sp" />
-
-    <ImageButton
-        android:id="@+id/button_delete_member"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_toEndOf="@id/image_group_member"
-        android:layout_marginStart="-10dp"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:background="@drawable/circle_bg"
-        android:clickable="true"
-        android:focusable="true"
-        android:padding="@dimen/padding_smallest"
-        android:scaleType="fitXY"
-        app:srcCompat="@drawable/ic_close"
-        tools:ignore="ContentDescription,RtlCompat" />
 </RelativeLayout>

@@ -2,6 +2,7 @@ package com.sarthak.trackit.trackit.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -10,26 +11,30 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sarthak.trackit.trackit.R;
-import com.sarthak.trackit.trackit.activities.AllContactsActivity;
 import com.sarthak.trackit.trackit.activities.CreateGroupActivity;
 import com.sarthak.trackit.trackit.activities.GroupsActivity;
-import com.sarthak.trackit.trackit.adapters.GroupAdapter;
-import com.sarthak.trackit.trackit.model.User;
+import com.sarthak.trackit.trackit.adapters.UserGroupAdapter;
+import com.sarthak.trackit.trackit.utils.Constants;
+import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 
 import java.util.ArrayList;
 
-public class GroupsFragment extends Fragment implements View.OnClickListener {
+public class GroupsFragment extends Fragment implements View.OnClickListener, RecyclerViewItemClickedListener {
 
-    private ArrayList<User> userList = new ArrayList<>();
-    Button mBtn;
+    private ArrayList<String> groupList = new ArrayList<>();
     FloatingActionButton mCreateGroupFab;
-    RecyclerView mFriendsList;
+
+    RecyclerView mFriendsListRv;
+    UserGroupAdapter adapter;
 
     FirebaseFirestore mFirestore;
     FirebaseUser mUser;
@@ -50,15 +55,18 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         mFirestore = FirebaseFirestore.getInstance();
 
-        mBtn=view.findViewById(android.R.id.button1);
-        mCreateGroupFab=view.findViewById(R.id.fab_create);
-        mFriendsList = view.findViewById(R.id.recycler_groups);
+        mCreateGroupFab = view.findViewById(R.id.fab_create_group);
+        mFriendsListRv = view.findViewById(R.id.recycler_groups);
 
-        mFriendsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        mFriendsList.setAdapter(new GroupAdapter(userList));
+        adapter = new UserGroupAdapter(groupList);
+        adapter.setOnItemClickListener(this);
+
+        mFriendsListRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        mFriendsListRv.setAdapter(adapter);
 
         mCreateGroupFab.setOnClickListener(this);
-        mBtn.setOnClickListener(this);
+
+        getUserGroups();
     }
 
     @Override
@@ -68,11 +76,44 @@ public class GroupsFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(v==mCreateGroupFab){
-            //startActivity(new Intent(getContext(), CreateGroupActivity.class));
+        if (v == mCreateGroupFab) {
+            startActivity(new Intent(getContext(), CreateGroupActivity.class));
         }
-        if (v==mBtn){
-            startActivity(new Intent(getContext(), GroupsActivity.class));
-        }
+    }
+
+    @Override
+    public void onItemClicked(View view, int position) {
+
+        String groupName = groupList.get(position);
+        Toast.makeText(getActivity(), groupList.get(position).substring(0, groupList.get(position).indexOf("+")), Toast.LENGTH_SHORT).show();
+
+        startActivity(new Intent(getContext(), GroupsActivity.class)
+                .putExtra(Constants.GROUP_NAME, groupName));
+    }
+
+    private void getUserGroups() {
+
+        mFirestore.collection(Constants.USER_GROUPS_REFERENCE)
+                .document(mUser.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                        if (task.isSuccessful()) {
+
+                            DocumentSnapshot document = task.getResult();
+
+                            if (document != null && document.exists()) {
+
+                                for (String group : document.getData().keySet()) {
+
+                                    groupList.add(group);
+                                    adapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
+                    }
+                });
     }
 }

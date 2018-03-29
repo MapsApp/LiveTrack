@@ -12,10 +12,6 @@ import com.sarthak.trackit.trackit.model.User;
 
 import java.util.ArrayList;
 
-/**
- * Created by karan on 3/15/2018.
- */
-
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHolder> {
 
     private ArrayList<User> userList = new ArrayList<>();

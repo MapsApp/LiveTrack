@@ -1,5 +1,6 @@
 package com.sarthak.trackit.trackit.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -56,7 +57,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.sarthak.trackit.trackit.R;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.sarthak.trackit.trackit.activities.GroupsActivity;
+import com.sarthak.trackit.trackit.activities.HomeActivity;
+import com.sarthak.trackit.trackit.model.LatLong;
 import com.sarthak.trackit.trackit.utils.DirectionsJSONParser;
+import com.sarthak.trackit.trackit.utils.LocationSentListener;
 
 
 import org.json.JSONObject;
@@ -73,7 +78,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback {
+public class MapsFragment extends Fragment implements OnMapReadyCallback, LocationSentListener {
 
     private static final String TAG = MapsFragment.class.getSimpleName();
     private static final int REQUEST_CHECK_SETTINGS = 100;
@@ -127,6 +132,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         if (savedInstanceState != null) {
             mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
+        }
+
+
+        Log.d("opl", "" + this.getArguments().getInt("activityType", 0));
+        if (this.getArguments().getInt("activityType", 0) == 2) {
+            ((GroupsActivity) getActivity()).sendLocation(this);
         }
 
         // Construct a GeoDataClient.
@@ -577,6 +588,17 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         return url;
     }
 
+    @Override
+    public void passLocationToFragment(ArrayList<LatLong> list) {
+
+        for (int i = 0; i < list.size(); i++) {
+
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(Double.parseDouble(list.get(i).getLatitude()),
+                            Double.parseDouble(list.get(i).getLongitude()))));
+        }
+    }
+
     private class DownloadTask extends AsyncTask<String,String,String> {
 
         @Override
@@ -648,6 +670,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 lineOptions.width(12);
                 lineOptions.color(Color.CYAN);
                 lineOptions.geodesic(true);
+
             }
 
             // Drawing polyline in the Google Map for the i-th route
@@ -690,5 +713,4 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         }
         return data;
     }
-
 }

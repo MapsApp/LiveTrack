@@ -36,6 +36,18 @@
             android:id="@+id/recycler_group_members"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/text_member_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/md_grey_200"
+            android:padding="@dimen/padding_small"
+            android:text="No Members"
+            android:textAlignment="center"
+            android:textColor="@color/md_teal_400"
+            android:textSize="12sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <TextView
@@ -43,7 +55,7 @@
         android:layout_height="wrap_content"
         android:background="@color/md_grey_200"
         android:padding="@dimen/padding_small"
-        android:text="Friends"
+        android:text="Friends (Tap on friend to add)"
         android:textColor="@color/md_teal_400"
         android:textStyle="bold" />
 

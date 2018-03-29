@@ -2,7 +2,6 @@ package com.sarthak.trackit.trackit.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
-import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -26,11 +24,6 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
     private ItemClickListener mListener;
 
-    public GroupFriendsAdapter(ItemClickListener listener) {
-        this.mListener = listener;
-        Log.d("yayy", "");
-    }
-
     public GroupFriendsAdapter(ArrayList<User> mGroupMembersList, ArrayList<String> adminStatusList) {
 
         this.mGroupMembersList = mGroupMembersList;
@@ -39,7 +32,7 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
     public void setOnRecyclerViewItemClickListener(ItemClickListener listener) {
         this.mListener = listener;
-        Log.d("yayy", "");
+        System.out.print("yayy");
     }
 
     @NonNull

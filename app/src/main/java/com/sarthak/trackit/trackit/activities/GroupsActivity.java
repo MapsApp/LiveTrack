@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -57,7 +56,8 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     FirebaseFirestore mFirestore;
     FirebaseUser mUser;
 
-    public LocationSentListener mListener;
+    public LocationSentListener mLocationSentListener;
+    public LocationReceivedListener mLocationReceivedListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,11 +151,16 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void itemClicked(View v, int pos) {
-        Log.d("piii", "");
+
+        mLocationReceivedListener.onLocationReceived(pos);
     }
 
     public void sendLocation(LocationSentListener listener) {
-        this.mListener = listener;
+        this.mLocationSentListener = listener;
+    }
+
+    public void receiveLocation(LocationReceivedListener listener) {
+        this.mLocationReceivedListener = listener;
     }
 
     private void getFriends() {
@@ -200,9 +205,9 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                                                         if (snapshot != null && snapshot.exists()) {
 
                                                             mParcelableGeoPointList.add(snapshot.toObject(ParcelableGeoPoint.class));
-                                                            Log.d("opli", String.valueOf(snapshot.toObject(ParcelableGeoPoint.class)));
-                                                            if (mListener != null) {
-                                                                mListener.passLocationToFragment(mParcelableGeoPointList);
+
+                                                            if (mLocationSentListener != null) {
+                                                                mLocationSentListener.passLocationToFragment(mParcelableGeoPointList);
                                                             }
                                                         }
                                                     }
@@ -252,5 +257,10 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.map_container, fragment);
         fragmentTransaction.commit();
+    }
+
+    public interface LocationReceivedListener {
+
+        void onLocationReceived(int pos);
     }
 }

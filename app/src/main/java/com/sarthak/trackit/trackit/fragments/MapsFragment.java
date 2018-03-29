@@ -77,7 +77,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback, LocationSentListener, RecyclerViewItemClickedListener {
+public class MapsFragment extends Fragment implements OnMapReadyCallback, LocationSentListener, GroupsActivity.LocationReceivedListener {
 
     private static final String TAG = MapsFragment.class.getSimpleName();
     private static final int REQUEST_CHECK_SETTINGS = 100;
@@ -136,9 +136,9 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
 
-        Log.d("oila", this.getArguments().getInt("activityType", 0) +"");
         if (this.getArguments().getInt("activityType", 0) == 2) {
             ((GroupsActivity) getActivity()).sendLocation(this);
+            ((GroupsActivity) getActivity()).receiveLocation(this);
         }
 
         // Construct a GeoDataClient.
@@ -303,12 +303,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     }
 
     @Override
-    public void onItemClicked(View view, int position) {
+    public void onLocationReceived(int position) {
 
-        Log.d("pii", ""+position);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(mParcelableGeoPointList.get(position).getGeoPoint().getLatitude(),
-                mParcelableGeoPointList.get(position).getGeoPoint().getLongitude()), DEFAULT_ZOOM));
+                        mParcelableGeoPointList.get(position).getGeoPoint().getLongitude()), DEFAULT_ZOOM));
     }
 
     @Override

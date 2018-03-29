@@ -22,30 +22,27 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
-import com.sarthak.trackit.trackit.model.LatLong;
+import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.LocationSentListener;
 import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
+import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
-public class GroupsActivity extends BaseActivity implements View.OnClickListener
-        , GroupFriendsAdapter.setOnGroupFriendClickListener {
+public class GroupsActivity extends BaseActivity implements View.OnClickListener, GroupFriendsAdapter.ItemClickListener {
 
     String mGroupName;
     String[] MEMBERS;
 
     ArrayList<String> adminStatusList = new ArrayList<>();
     ArrayList<User> mGroupMembersList = new ArrayList<>();
-    ArrayList<LatLong> mLatLongList = new ArrayList<>();
+    ArrayList<ParcelableGeoPoint> mParcelableGeoPointList = new ArrayList<>();
 
     ArrayAdapter<String> adapter;
     GroupFriendsAdapter mGroupFriendsAdapter;
@@ -90,7 +87,8 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         layoutBottomSheet = findViewById(R.id.bottom_sheet_layout);
         //sets the behaviour of linear layout to a bottom sheet
         sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
-        mGroupFriendsAdapter = new GroupFriendsAdapter(mGroupMembersList, adminStatusList, this);
+        mGroupFriendsAdapter = new GroupFriendsAdapter(mGroupMembersList, adminStatusList);
+        mGroupFriendsAdapter.setOnRecyclerViewItemClickListener(GroupsActivity.this);
         rvGroupMembers.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         rvGroupMembers.setAdapter(mGroupFriendsAdapter);
         rvGroupMembers.addItemDecoration(new RecyclerViewDivider(this,
@@ -152,8 +150,8 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    public void OnGroupFriendItemClicked(View view, int position) {
-
+    public void itemClicked(View v, int pos) {
+        Log.d("piii", "");
     }
 
     public void sendLocation(LocationSentListener listener) {
@@ -201,10 +199,10 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
                                                         if (snapshot != null && snapshot.exists()) {
 
-                                                            mLatLongList.add(snapshot.toObject(LatLong.class));
-                                                            Log.d("opli", String.valueOf(snapshot.toObject(LatLong.class)));
+                                                            mParcelableGeoPointList.add(snapshot.toObject(ParcelableGeoPoint.class));
+                                                            Log.d("opli", String.valueOf(snapshot.toObject(ParcelableGeoPoint.class)));
                                                             if (mListener != null) {
-                                                                mListener.passLocationToFragment(mLatLongList);
+                                                                mListener.passLocationToFragment(mParcelableGeoPointList);
                                                             }
                                                         }
                                                     }

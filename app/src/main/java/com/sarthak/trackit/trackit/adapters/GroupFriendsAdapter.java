@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
+import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -23,16 +24,22 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
     private ArrayList<String> adminStatusList = new ArrayList<>();
     private ArrayList<User> mGroupMembersList = new ArrayList<>();
 
-    private setOnGroupFriendClickListener mListener;
+    private ItemClickListener mListener;
 
-    public GroupFriendsAdapter(ArrayList<User> mGroupMembersList, ArrayList<String> adminStatusList, setOnGroupFriendClickListener mListener) {
-        this.mGroupMembersList = mGroupMembersList;
-        this.adminStatusList = adminStatusList;
-        this.mListener = mListener;
+    public GroupFriendsAdapter(ItemClickListener listener) {
+        this.mListener = listener;
+        Log.d("yayy", "");
     }
 
-    public interface setOnGroupFriendClickListener {
-        void OnGroupFriendItemClicked(View view, int position);
+    public GroupFriendsAdapter(ArrayList<User> mGroupMembersList, ArrayList<String> adminStatusList) {
+
+        this.mGroupMembersList = mGroupMembersList;
+        this.adminStatusList = adminStatusList;
+    }
+
+    public void setOnRecyclerViewItemClickListener(ItemClickListener listener) {
+        this.mListener = listener;
+        Log.d("yayy", "");
     }
 
     @NonNull
@@ -93,12 +100,19 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
             imgGroupFriend = itemView.findViewById(R.id.image_group_friend);
 
+            itemView.setClickable(true);
+            itemView.setFocusable(true);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            mListener.OnGroupFriendItemClicked(v, getAdapterPosition());
+            mListener.itemClicked(v, getAdapterPosition());
         }
+    }
+
+    public interface ItemClickListener {
+
+        void itemClicked(View v, int pos);
     }
 }

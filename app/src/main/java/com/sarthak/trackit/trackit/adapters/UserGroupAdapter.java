@@ -41,7 +41,6 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
     public void onBindViewHolder(@NonNull final UserGroupAdapter.UserGroupViewHolder holder, int position) {
 
         holder.bindView(userList.get(holder.getAdapterPosition()));
-
     }
 
     @Override
@@ -49,8 +48,7 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
         return userList.size();
     }
 
-    class UserGroupViewHolder extends RecyclerView.ViewHolder implements
-    View.OnClickListener{
+    class UserGroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private TextView mDisplayNameTv, mUsernameTv;
 

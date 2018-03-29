@@ -32,7 +32,7 @@ import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.fragments.FriendsFragment;
 import com.sarthak.trackit.trackit.fragments.GroupsFragment;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
-import com.sarthak.trackit.trackit.model.LatLong;
+import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.services.LocationService;
 import com.sarthak.trackit.trackit.utils.Constants;
@@ -296,11 +296,11 @@ public class HomeActivity extends BaseActivity implements
         @Override
         public void onReceive(Context arg0, Intent arg1) {
 
-            LatLong latLong = arg1.getParcelableExtra("LatLong");
+            ParcelableGeoPoint parcelableGeoPoint = arg1.getParcelableExtra("ParcelableGeoPoint");
 
-            if (latLong != null) {
+            if (parcelableGeoPoint != null) {
 
-                mFirestore.collection(Constants.LOCATION_REFERENCE).document(mUser.getUid()).set(latLong).addOnCompleteListener(new OnCompleteListener<Void>() {
+                mFirestore.collection(Constants.LOCATION_REFERENCE).document(mUser.getUid()).set(parcelableGeoPoint).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
 

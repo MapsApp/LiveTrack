@@ -4,7 +4,15 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/LiveTrack.iml" filepath="$PROJECT_DIR$/LiveTrack.iml" />
       <module fileurl="file://D:\sarthak\AndroidProjects\AndroidProjects\TrackIt\LiveTrack.iml" filepath="D:\sarthak\AndroidProjects\AndroidProjects\TrackIt\LiveTrack.iml" />
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+      <module fileurl="file://C:\Users\hp\Documents\Android_studio\LiveTrack\TrackIt.iml" filepath="C:\Users\hp\Documents\Android_studio\LiveTrack\TrackIt.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/TrackIt.iml" filepath="$PROJECT_DIR$/TrackIt.iml" />
+>>>>>>> 502ced961d79a81ce351bb5743bbf81d0ef8d81a
       <module fileurl="file://E:\AND\live\LiveTrack\TrackIt.iml" filepath="E:\AND\live\LiveTrack\TrackIt.iml" />
+>>>>>>> c714b061e3347db877e77988722773d1698f4edf
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

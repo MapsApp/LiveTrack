@@ -1,13 +1,9 @@
 package com.sarthak.trackit.trackit.model;
 
-<<<<<<< HEAD
-public class LatLong {
-=======
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class LatLong implements Parcelable {
->>>>>>> c714b061e3347db877e77988722773d1698f4edf
 
     private String latitude;
     private String longitude;
@@ -21,8 +17,6 @@ public class LatLong implements Parcelable {
         this.longitude = longitude;
     }
 
-<<<<<<< HEAD
-=======
     protected LatLong(Parcel in) {
 
         this.latitude = in.readString();
@@ -41,7 +35,6 @@ public class LatLong implements Parcelable {
         }
     };
 
->>>>>>> c714b061e3347db877e77988722773d1698f4edf
     public String getLatitude() {
         return latitude;
     }
@@ -57,8 +50,6 @@ public class LatLong implements Parcelable {
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
-<<<<<<< HEAD
-=======
 
     @Override
     public int describeContents() {
@@ -70,5 +61,4 @@ public class LatLong implements Parcelable {
         dest.writeString(latitude);
         dest.writeString(longitude);
     }
->>>>>>> c714b061e3347db877e77988722773d1698f4edf
 }

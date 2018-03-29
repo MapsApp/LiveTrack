@@ -23,10 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.model.LatLong;
-<<<<<<< HEAD
 import com.sarthak.trackit.trackit.utils.Constants;
-=======
->>>>>>> c714b061e3347db877e77988722773d1698f4edf
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,24 +47,18 @@ public class LocationService extends Service {
     public MyLocationListener listener;
     public Location previousBestLocation = null;
 
-<<<<<<< HEAD
     public FirebaseFirestore mFirestore;
     public FirebaseUser mUser;
 
-=======
->>>>>>> c714b061e3347db877e77988722773d1698f4edf
     @Override
     public void onCreate() {
         super.onCreate();
         intent = new Intent(BROADCAST_ACTION);
-<<<<<<< HEAD
 
         FirebaseApp.initializeApp(LocationService.this);
 
         mFirestore = FirebaseFirestore.getInstance();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
-=======
->>>>>>> c714b061e3347db877e77988722773d1698f4edf
         // cancel if already existed
         /*if(mTimer != null) {
             mTimer.cancel();
@@ -77,11 +68,11 @@ public class LocationService extends Service {
         }*/
 
         // schedule task
-        mTimer.schedule(new UploadDataTimerTask(), 0,  UPLOAD_INTERVAL);
+        mTimer.schedule(new UploadDataTimerTask(), 0, UPLOAD_INTERVAL);
     }
 
     @Override
-    public int onStartCommand(Intent intent, int f,  int startId) {
+    public int onStartCommand(Intent intent, int f, int startId) {
 
         Toast.makeText(this, "Service started.", Toast.LENGTH_SHORT).show();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -103,8 +94,7 @@ public class LocationService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent)
-    {
+    public IBinder onBind(Intent intent) {
         return null;
     }
 
@@ -150,7 +140,9 @@ public class LocationService extends Service {
         return false;
     }
 
-    /** Checks whether two providers are the same */
+    /**
+     * Checks whether two providers are the same
+     */
     private boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
             return provider2 == null;
@@ -182,10 +174,9 @@ public class LocationService extends Service {
 
     public class MyLocationListener implements android.location.LocationListener {
 
-        public void onLocationChanged(final Location loc)
-        {
+        public void onLocationChanged(final Location loc) {
             Log.i("**********************", "Location changed");
-            if(isBetterLocation(loc, previousBestLocation)) {
+            if (isBetterLocation(loc, previousBestLocation)) {
                 loc.getLatitude();
                 loc.getLongitude();
 
@@ -199,18 +190,15 @@ public class LocationService extends Service {
             }
         }
 
-        public void onProviderDisabled(String provider)
-        {
-            Toast.makeText( getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT ).show();
+        public void onProviderDisabled(String provider) {
+            Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
         }
 
-        public void onProviderEnabled(String provider)
-        {
-            Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
+        public void onProviderEnabled(String provider) {
+            Toast.makeText(getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
         }
 
-        public void onStatusChanged(String provider, int status, Bundle extras)
-        {
+        public void onStatusChanged(String provider, int status, Bundle extras) {
 
         }
     }
@@ -225,7 +213,6 @@ public class LocationService extends Service {
                 @Override
                 public void run() {
 
-<<<<<<< HEAD
                     Log.d("TAG", "pul");
                     Log.d("TAG", String.valueOf(mLatLong));
 
@@ -238,14 +225,12 @@ public class LocationService extends Service {
                             }
                         }
                     });
-=======
                     Log.d("TAG", String.valueOf(mLatLong));
 
                     Intent intent = new Intent();
                     intent.setAction(BROADCAST_ACTION);
                     intent.putExtra("LatLong", mLatLong);
                     sendBroadcast(intent);
->>>>>>> c714b061e3347db877e77988722773d1698f4edf
                 }
             });
         }

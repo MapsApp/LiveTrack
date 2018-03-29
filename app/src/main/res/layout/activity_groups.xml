@@ -11,11 +11,6 @@
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <FrameLayout android:id="@+id/map_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="?actionBarSize" />
-
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,15 +19,24 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_scrollFlags="scroll|enterAlways">
 
+            <fragment
+                android:id="@+id/place_autocomplete_fragment"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+
             <include
                 android:id="@+id/groups_activity_toolbar"
                 layout="@layout/toolbar_search"
-                app:layout_scrollFlags="scroll|enterAlways"/>
+                app:layout_scrollFlags="scroll|enterAlways" />
 
         </android.support.design.widget.AppBarLayout>
 
     </RelativeLayout>
-
+    <FrameLayout android:id="@+id/map_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="?actionBarSize" />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_bottom_sheet"
         android:layout_width="wrap_content"

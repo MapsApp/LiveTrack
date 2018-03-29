@@ -68,8 +68,6 @@ public class HomeActivity extends BaseActivity implements
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
 
-<<<<<<< HEAD
-=======
         mFirestore = FirebaseFirestore.getInstance();
 
         //Register BroadcastReceiver
@@ -80,7 +78,6 @@ public class HomeActivity extends BaseActivity implements
         registerReceiver(mReceiver, intentFilter);
         startService(new Intent(HomeActivity.this, LocationService.class));
 
->>>>>>> c714b061e3347db877e77988722773d1698f4edf
         /*If the instance state of app onCreate is null,
         MapsFragment is inflated*/
         if (savedInstanceState == null) {

@@ -27,7 +27,7 @@
             <include
                 android:id="@+id/groups_activity_toolbar"
                 layout="@layout/toolbar_search"
-                app:layout_scrollFlags="scroll|enterAlways"/>
+                app:layout_scrollFlags="scroll|enterAlways" />
 
         </android.support.design.widget.AppBarLayout>
 

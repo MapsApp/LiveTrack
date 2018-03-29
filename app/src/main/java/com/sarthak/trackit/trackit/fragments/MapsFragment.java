@@ -53,14 +53,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.GeoPoint;
 import com.sarthak.trackit.trackit.R;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.sarthak.trackit.trackit.activities.GroupsActivity;
-import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
 import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 import com.sarthak.trackit.trackit.utils.DirectionsJSONParser;
 import com.sarthak.trackit.trackit.utils.LocationSentListener;
-import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 
 
 import org.json.JSONObject;
@@ -74,6 +73,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -82,7 +82,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     private static final String TAG = MapsFragment.class.getSimpleName();
     private static final int REQUEST_CHECK_SETTINGS = 100;
 
-    private ArrayList<ParcelableGeoPoint> mParcelableGeoPointList = new ArrayList<>();
+    private HashMap<String, ParcelableGeoPoint> mParcelableGeoPointList = new HashMap<>();
 
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
@@ -240,6 +240,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         mMap = googleMap;
 
+        mMap.getUiSettings().setRotateGesturesEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setTiltGesturesEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+        mMap.getUiSettings().setScrollGesturesEnabled(true);
+
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
@@ -303,25 +310,27 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     }
 
     @Override
-    public void onLocationReceived(int position) {
+    public void onLocationReceived(String key) {
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                new LatLng(mParcelableGeoPointList.get(position).getGeoPoint().getLatitude(),
-                        mParcelableGeoPointList.get(position).getGeoPoint().getLongitude()), DEFAULT_ZOOM));
+        if (mParcelableGeoPointList != null && mParcelableGeoPointList.get(key) != null) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(mParcelableGeoPointList.get(key).getGeoPoint().getLatitude(),
+                            mParcelableGeoPointList.get(key).getGeoPoint().getLongitude()), DEFAULT_ZOOM));
+        }
     }
 
     @Override
-    public void passLocationToFragment(ArrayList<ParcelableGeoPoint> list) {
+    public void passLocationToFragment(HashMap<String, ParcelableGeoPoint> map) {
 
-        mParcelableGeoPointList = list;
+        mParcelableGeoPointList = map;
 
-        for (int i = 0; i < list.size(); i++) {
+        for (Map.Entry<String, ParcelableGeoPoint> hMap : map.entrySet()) {
 
-            if (list.get(i).getGeoPoint() != null) {
+            if (hMap.getValue() != null) {
 
                 mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(list.get(i).getGeoPoint().getLatitude(),
-                                list.get(i).getGeoPoint().getLongitude())));
+                        .position(new LatLng(hMap.getValue().getGeoPoint().getLatitude(),
+                                hMap.getValue().getGeoPoint().getLongitude())));
             }
         }
     }

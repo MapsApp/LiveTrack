@@ -29,7 +29,6 @@ import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.LocationSentListener;
 import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
-import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,8 +39,10 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     String[] MEMBERS;
 
     ArrayList<String> adminStatusList = new ArrayList<>();
+    ArrayList<String> userKeyList = new ArrayList<>();
     ArrayList<User> mGroupMembersList = new ArrayList<>();
-    ArrayList<ParcelableGeoPoint> mParcelableGeoPointList = new ArrayList<>();
+
+    HashMap<String, ParcelableGeoPoint> mParcelableGeoPointList = new HashMap<>();
 
     ArrayAdapter<String> adapter;
     GroupFriendsAdapter mGroupFriendsAdapter;
@@ -152,7 +153,9 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void itemClicked(View v, int pos) {
 
-        mLocationReceivedListener.onLocationReceived(pos);
+        if (userKeyList != null) {
+            mLocationReceivedListener.onLocationReceived(userKeyList.get(pos));
+        }
     }
 
     public void sendLocation(LocationSentListener listener) {
@@ -204,7 +207,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
                                                         if (snapshot != null && snapshot.exists()) {
 
-                                                            mParcelableGeoPointList.add(snapshot.toObject(ParcelableGeoPoint.class));
+                                                            mParcelableGeoPointList.put(member, snapshot.toObject(ParcelableGeoPoint.class));
 
                                                             if (mLocationSentListener != null) {
                                                                 mLocationSentListener.passLocationToFragment(mParcelableGeoPointList);
@@ -227,6 +230,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
                                                         if (snapshot != null && snapshot.exists()) {
 
+                                                            userKeyList.add(member);
                                                             mGroupMembersList.add(snapshot.toObject(User.class));
                                                             mGroupFriendsAdapter.notifyDataSetChanged();
                                                         }
@@ -261,6 +265,6 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     public interface LocationReceivedListener {
 
-        void onLocationReceived(int pos);
+        void onLocationReceived(String key);
     }
 }

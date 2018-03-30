@@ -334,7 +334,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         for (Map.Entry<String, ParcelableGeoPoint> hMap : map.entrySet()) {
 
-            if (hMap.getValue() != null) {
+            if (hMap.getValue() != null && hMap.getValue().getGeoPoint() != null) {
 
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(hMap.getValue().getGeoPoint().getLatitude(),

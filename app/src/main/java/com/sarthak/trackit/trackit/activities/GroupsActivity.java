@@ -45,14 +45,18 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     HashMap<String, ParcelableGeoPoint> mParcelableGeoPointList = new HashMap<>();
 
     ArrayAdapter<String> adapter;
-    GroupFriendsAdapter mGroupFriendsAdapter;
 
     AutoCompleteTextView mGroupMembersSearchAtv;
+
     TextView mGroupNameTv;
+
     FloatingActionButton fabBottomSheet;
     LinearLayout layoutBottomSheet;
     BottomSheetBehavior sheetBehavior;
-    RecyclerView rvGroupMembers;
+
+    RecyclerView groupMembersRecyclerView;
+
+    GroupFriendsAdapter mGroupFriendsAdapter;
 
     FirebaseFirestore mFirestore;
     FirebaseUser mUser;
@@ -65,51 +69,33 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
         setUpToolbar(this);
-        mFirestore = FirebaseFirestore.getInstance();
-        mUser = FirebaseAuth.getInstance().getCurrentUser();
         mGroupName = getIntent().getStringExtra(Constants.GROUP_NAME);
+        //mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
 
-        mGroupMembersSearchAtv = mToolbar.findViewById(R.id.autocomplete_search);
+        initFirebase();
+        
+        setUpView();
 
-        mGroupNameTv = findViewById(R.id.text_group_name);
-        rvGroupMembers = findViewById(R.id.recycler_group_members);
-        fabBottomSheet = findViewById(R.id.fab_bottom_sheet);
+        fragmentInflate(MapsFragment.newInstance());
 
         getFriends();
-        //mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
-        populateSearch();
-        fragmentInflate(MapsFragment.newInstance());
-        mGroupNameTv.setText(mGroupName.substring(0, mGroupName.indexOf("+")));
 
-        adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_dropdown_item_1line, MEMBERS);
-        mGroupMembersSearchAtv.setAdapter(adapter);
-        //addressed the container linear layout of bottom sheet
-        layoutBottomSheet = findViewById(R.id.bottom_sheet_layout);
-        //sets the behaviour of linear layout to a bottom sheet
-        sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
-        mGroupFriendsAdapter = new GroupFriendsAdapter(mGroupMembersList, adminStatusList);
-        mGroupFriendsAdapter.setOnRecyclerViewItemClickListener(GroupsActivity.this);
-        rvGroupMembers.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        rvGroupMembers.setAdapter(mGroupFriendsAdapter);
-        rvGroupMembers.addItemDecoration(new RecyclerViewDivider(this,
-                ContextCompat.getColor(this, R.color.md_blue_grey_200), 0.5f));
+        populateSearch();
 
         //Used to change icon in floating button with states of BottomSheet
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch (newState) {
+
                     case BottomSheetBehavior.STATE_HIDDEN:
                         break;
-                    case BottomSheetBehavior.STATE_EXPANDED: {
+                    case BottomSheetBehavior.STATE_EXPANDED:
                         fabBottomSheet.setImageResource(R.drawable.ic_expand_more_white);
-                    }
-                    break;
-                    case BottomSheetBehavior.STATE_COLLAPSED: {
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
                         fabBottomSheet.setImageResource(R.drawable.ic_expand_less_white);
-                    }
-                    break;
+                        break;
                     case BottomSheetBehavior.STATE_DRAGGING:
                         //fabBottomSheet.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward));
                         break;
@@ -124,6 +110,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
             }
         });
+
         fabBottomSheet.setOnClickListener(this);
     }
 
@@ -156,6 +143,47 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         if (userKeyList != null) {
             mLocationReceivedListener.onLocationReceived(userKeyList.get(pos));
         }
+    }
+
+    private void initFirebase() {
+
+        mFirestore = FirebaseFirestore.getInstance();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    private void setUpView() {
+
+        mGroupMembersSearchAtv = mToolbar.findViewById(R.id.autocomplete_search);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, MEMBERS);
+        mGroupMembersSearchAtv.setAdapter(adapter);
+
+        mGroupNameTv = findViewById(R.id.text_group_name);
+        mGroupNameTv.setText(mGroupName.substring(0, mGroupName.indexOf("+")));
+
+        setUpRecyclerView();
+
+        setUpBottomSheet();
+    }
+
+    private void setUpRecyclerView() {
+
+        groupMembersRecyclerView = findViewById(R.id.recycler_group_members);
+        groupMembersRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        groupMembersRecyclerView.addItemDecoration(new RecyclerViewDivider(this,
+                ContextCompat.getColor(this, R.color.md_blue_grey_200), 0.5f));
+
+        mGroupFriendsAdapter = new GroupFriendsAdapter(mGroupMembersList, adminStatusList);
+        mGroupFriendsAdapter.setOnRecyclerViewItemClickListener(GroupsActivity.this);
+        groupMembersRecyclerView.setAdapter(mGroupFriendsAdapter);
+    }
+
+    private void setUpBottomSheet() {
+
+        fabBottomSheet = findViewById(R.id.fab_bottom_sheet);
+        //addressed the container linear layout of bottom sheet
+        layoutBottomSheet = findViewById(R.id.bottom_sheet_layout);
+        //sets the behaviour of linear layout to a bottom sheet
+        sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
     }
 
     public void sendLocation(LocationSentListener listener) {
@@ -255,6 +283,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     /*Used to pass fragment on item selected*/
     public void fragmentInflate(Fragment fragment) {
+    
         Bundle bundle = new Bundle();
         bundle.putInt("activityType", 2);
         fragment.setArguments(bundle);

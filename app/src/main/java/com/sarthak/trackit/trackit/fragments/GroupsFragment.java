@@ -102,6 +102,8 @@ public class GroupsFragment extends Fragment implements View.OnClickListener, Re
 
                         if (task.isSuccessful()) {
 
+                            groupList.clear();
+
                             DocumentSnapshot document = task.getResult();
 
                             if (document != null && document.exists()) {

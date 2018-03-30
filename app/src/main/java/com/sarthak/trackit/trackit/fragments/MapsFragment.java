@@ -82,6 +82,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     private static final String TAG = MapsFragment.class.getSimpleName();
     private static final int REQUEST_CHECK_SETTINGS = 100;
 
+    private int fragmentState = 0;
+
     private HashMap<String, ParcelableGeoPoint> mParcelableGeoPointList = new HashMap<>();
 
     private GoogleMap mMap;
@@ -108,6 +110,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     // Keys for storing activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
+    private static final String FRAGMENT_STATE = "state";
 
     // Used for selecting the current place.
     private static final int M_MAX_ENTRIES = 5;
@@ -132,6 +135,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
+            fragmentState = savedInstanceState.getInt(FRAGMENT_STATE);
             mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
@@ -164,6 +168,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         if (mMap != null) {
 
+            outState.putInt(FRAGMENT_STATE, fragmentState);
             outState.putParcelable(KEY_CAMERA_POSITION, mMap.getCameraPosition());
             outState.putParcelable(KEY_LOCATION, mLastKnownLocation);
             super.onSaveInstanceState(outState);
@@ -294,7 +299,10 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         updateLocationUI();
 
         // Get the current location of the device and set the position of the map.
-        getDeviceLocation();
+        if (fragmentState == 0) {
+            getDeviceLocation();
+            fragmentState = 1;
+        }
 
         LatLng targetAddress = new LatLng(28.629113,77.103865);
 

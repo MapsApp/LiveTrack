@@ -53,9 +53,9 @@ public class RequestStatusActivity extends BaseActivity implements
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         expListView = findViewById(R.id.lvExp);
-        mSwipeLayout=findViewById(R.id.requestStatusRefreshLayout);
+        mSwipeLayout = findViewById(R.id.requestStatusRefreshLayout);
         mSwipeLayout.setRefreshing(true);
-        mSwipeLayout.setColorSchemeResources(R.color.md_red_400,R.color.md_green_400,R.color.md_yellow_400,R.color.md_blue_400);
+        mSwipeLayout.setColorSchemeResources(R.color.md_red_400, R.color.md_green_400, R.color.md_yellow_400, R.color.md_blue_400);
         prepareListData();
 
         mRequestListAdapter = new RequestStatusAdapter(RequestStatusActivity.this, mContactHeaderList, mContactKeyList);

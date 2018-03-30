@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -22,30 +21,28 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
-import com.sarthak.trackit.trackit.model.LatLong;
+import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.LocationSentListener;
 import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
-public class GroupsActivity extends BaseActivity implements View.OnClickListener
-        , GroupFriendsAdapter.setOnGroupFriendClickListener {
+public class GroupsActivity extends BaseActivity implements View.OnClickListener, GroupFriendsAdapter.ItemClickListener {
 
     String mGroupName;
     String[] MEMBERS;
 
     ArrayList<String> adminStatusList = new ArrayList<>();
+    ArrayList<String> userKeyList = new ArrayList<>();
     ArrayList<User> mGroupMembersList = new ArrayList<>();
-    ArrayList<LatLong> mLatLongList = new ArrayList<>();
+
+    HashMap<String, ParcelableGeoPoint> mParcelableGeoPointList = new HashMap<>();
 
     ArrayAdapter<String> adapter;
     GroupFriendsAdapter mGroupFriendsAdapter;
@@ -60,7 +57,8 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     FirebaseFirestore mFirestore;
     FirebaseUser mUser;
 
-    public LocationSentListener mListener;
+    public LocationSentListener mLocationSentListener;
+    public LocationReceivedListener mLocationReceivedListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +88,8 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         layoutBottomSheet = findViewById(R.id.bottom_sheet_layout);
         //sets the behaviour of linear layout to a bottom sheet
         sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
-        mGroupFriendsAdapter = new GroupFriendsAdapter(mGroupMembersList, adminStatusList, this);
+        mGroupFriendsAdapter = new GroupFriendsAdapter(mGroupMembersList, adminStatusList);
+        mGroupFriendsAdapter.setOnRecyclerViewItemClickListener(GroupsActivity.this);
         rvGroupMembers.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         rvGroupMembers.setAdapter(mGroupFriendsAdapter);
         rvGroupMembers.addItemDecoration(new RecyclerViewDivider(this,
@@ -152,12 +151,19 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    public void OnGroupFriendItemClicked(View view, int position) {
+    public void itemClicked(View v, int pos) {
 
+        if (userKeyList != null) {
+            mLocationReceivedListener.onLocationReceived(userKeyList.get(pos));
+        }
     }
 
     public void sendLocation(LocationSentListener listener) {
-        this.mListener = listener;
+        this.mLocationSentListener = listener;
+    }
+
+    public void receiveLocation(LocationReceivedListener listener) {
+        this.mLocationReceivedListener = listener;
     }
 
     private void getFriends() {
@@ -201,10 +207,10 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
                                                         if (snapshot != null && snapshot.exists()) {
 
-                                                            mLatLongList.add(snapshot.toObject(LatLong.class));
-                                                            Log.d("opli", String.valueOf(snapshot.toObject(LatLong.class)));
-                                                            if (mListener != null) {
-                                                                mListener.passLocationToFragment(mLatLongList);
+                                                            mParcelableGeoPointList.put(member, snapshot.toObject(ParcelableGeoPoint.class));
+
+                                                            if (mLocationSentListener != null) {
+                                                                mLocationSentListener.passLocationToFragment(mParcelableGeoPointList);
                                                             }
                                                         }
                                                     }
@@ -224,6 +230,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
                                                         if (snapshot != null && snapshot.exists()) {
 
+                                                            userKeyList.add(member);
                                                             mGroupMembersList.add(snapshot.toObject(User.class));
                                                             mGroupFriendsAdapter.notifyDataSetChanged();
                                                         }
@@ -254,5 +261,10 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.map_container, fragment);
         fragmentTransaction.commit();
+    }
+
+    public interface LocationReceivedListener {
+
+        void onLocationReceived(String key);
     }
 }

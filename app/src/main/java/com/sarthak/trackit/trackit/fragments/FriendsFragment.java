@@ -80,13 +80,15 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
         mFriendsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         mSwipeLayout = view.findViewById(R.id.swipeToRefresh);
-        mSwipeLayout.setRefreshing(true);
         mSwipeLayout.setColorSchemeResources(R.color.md_red_400, R.color.md_green_400, R.color.md_yellow_400, R.color.md_blue_400);
         setRecyclerView();
         mFriendsAdapter=new FriendsAdapter(this, mUserFriendList);
         mFriendsList.setAdapter(mFriendsAdapter);
         fabCreateGroup.setOnClickListener(this);
 
+        if (mUserFriendList.isEmpty()) {
+            mSwipeLayout.setRefreshing(true);
+        }
         mSwipeLayout.setOnRefreshListener(this);
     }
 

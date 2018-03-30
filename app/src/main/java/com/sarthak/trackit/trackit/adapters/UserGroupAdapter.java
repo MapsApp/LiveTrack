@@ -51,8 +51,7 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
         return userList.size();
     }
 
-    class UserGroupViewHolder extends RecyclerView.ViewHolder implements
-    View.OnClickListener{
+    class UserGroupViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         private TextView mDisplayNameTv, mUsernameTv;
         private ImageView mGroupDpIv;

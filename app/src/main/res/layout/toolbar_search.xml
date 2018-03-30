@@ -37,4 +37,5 @@
             app:srcCompat="@drawable/ic_menu_search_dark"
             tools:ignore="ContentDescription" />
     </LinearLayout>
+
 </android.support.v7.widget.Toolbar>

@@ -1,6 +1,5 @@
 package com.sarthak.trackit.trackit.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -46,7 +45,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -55,11 +53,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.GeoPoint;
 import com.sarthak.trackit.trackit.R;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.sarthak.trackit.trackit.activities.GroupsActivity;
-import com.sarthak.trackit.trackit.activities.HomeActivity;
-import com.sarthak.trackit.trackit.model.LatLong;
+import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 import com.sarthak.trackit.trackit.utils.DirectionsJSONParser;
 import com.sarthak.trackit.trackit.utils.LocationSentListener;
 
@@ -75,13 +73,19 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
-public class MapsFragment extends Fragment implements OnMapReadyCallback, LocationSentListener {
+public class MapsFragment extends Fragment implements OnMapReadyCallback, LocationSentListener, GroupsActivity.LocationReceivedListener {
 
     private static final String TAG = MapsFragment.class.getSimpleName();
     private static final int REQUEST_CHECK_SETTINGS = 100;
+
+    private int fragmentState = 0;
+
+    private HashMap<String, ParcelableGeoPoint> mParcelableGeoPointList = new HashMap<>();
+
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
 
@@ -106,6 +110,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     // Keys for storing activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
+    private static final String FRAGMENT_STATE = "state";
 
     // Used for selecting the current place.
     private static final int M_MAX_ENTRIES = 5;
@@ -130,14 +135,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
+            fragmentState = savedInstanceState.getInt(FRAGMENT_STATE);
             mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
 
-
-        Log.d("opl", "" + this.getArguments().getInt("activityType", 0));
         if (this.getArguments().getInt("activityType", 0) == 2) {
             ((GroupsActivity) getActivity()).sendLocation(this);
+            ((GroupsActivity) getActivity()).receiveLocation(this);
         }
 
         // Construct a GeoDataClient.
@@ -163,6 +168,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         if (mMap != null) {
 
+            outState.putInt(FRAGMENT_STATE, fragmentState);
             outState.putParcelable(KEY_CAMERA_POSITION, mMap.getCameraPosition());
             outState.putParcelable(KEY_LOCATION, mLastKnownLocation);
             super.onSaveInstanceState(outState);
@@ -245,6 +251,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(true);
         mMap.getUiSettings().setScrollGesturesEnabled(true);
+
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
@@ -292,13 +299,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         updateLocationUI();
 
         // Get the current location of the device and set the position of the map.
-        getDeviceLocation();
-
+        if (fragmentState == 0) {
+            getDeviceLocation();
+            fragmentState = 1;
+        }
 
         LatLng targetAddress = new LatLng(28.629113,77.103865);
 
         LatLng originAddress = new LatLng(28.667172,77.125752);
-
 
         // Getting URL to the Google Directions API
         String url = getDirectionsUrl(originAddress, targetAddress);
@@ -307,6 +315,32 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
 
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
+    }
+
+    @Override
+    public void onLocationReceived(String key) {
+
+        if (mParcelableGeoPointList != null && mParcelableGeoPointList.get(key) != null) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(mParcelableGeoPointList.get(key).getGeoPoint().getLatitude(),
+                            mParcelableGeoPointList.get(key).getGeoPoint().getLongitude()), DEFAULT_ZOOM));
+        }
+    }
+
+    @Override
+    public void passLocationToFragment(HashMap<String, ParcelableGeoPoint> map) {
+
+        mParcelableGeoPointList = map;
+
+        for (Map.Entry<String, ParcelableGeoPoint> hMap : map.entrySet()) {
+
+            if (hMap.getValue() != null) {
+
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(hMap.getValue().getGeoPoint().getLatitude(),
+                                hMap.getValue().getGeoPoint().getLongitude())));
+            }
+        }
     }
 
     private void checkGPSConfig() {
@@ -558,10 +592,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         }
     }
 
-
-
     ////////////////////////////////////////////////////////////////  route \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
 
@@ -584,19 +615,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
 
-
         return url;
-    }
-
-    @Override
-    public void passLocationToFragment(ArrayList<LatLong> list) {
-
-        for (int i = 0; i < list.size(); i++) {
-
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(Double.parseDouble(list.get(i).getLatitude()),
-                            Double.parseDouble(list.get(i).getLongitude()))));
-        }
     }
 
     private class DownloadTask extends AsyncTask<String,String,String> {
@@ -650,27 +669,29 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList<LatLng> points = new ArrayList<>();
             PolylineOptions lineOptions = new PolylineOptions();
-            MarkerOptions markerOptions = new MarkerOptions();
+            //MarkerOptions markerOptions = new MarkerOptions();
 
-            for (int i = 0; i < result.size(); i++) {
+            if (result != null) {
 
-                List<HashMap<String, String>> path = result.get(i);
+                for (int i = 0; i < result.size(); i++) {
 
-                for (int j = 0; j < path.size(); j++) {
-                    HashMap point = path.get(j);
+                    List<HashMap<String, String>> path = result.get(i);
 
-                    double lat = Double.parseDouble((String) point.get("lat"));
-                    double lng = Double.parseDouble((String) point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
+                    for (int j = 0; j < path.size(); j++) {
+                        HashMap point = path.get(j);
 
-                    points.add(position);
+                        double lat = Double.parseDouble((String) point.get("lat"));
+                        double lng = Double.parseDouble((String) point.get("lng"));
+                        LatLng position = new LatLng(lat, lng);
+
+                        points.add(position);
+                    }
+
+                    lineOptions.addAll(points);
+                    lineOptions.width(12);
+                    lineOptions.color(Color.CYAN);
+                    lineOptions.geodesic(true);
                 }
-
-                lineOptions.addAll(points);
-                lineOptions.width(12);
-                lineOptions.color(Color.CYAN);
-                lineOptions.geodesic(true);
-
             }
 
             // Drawing polyline in the Google Map for the i-th route

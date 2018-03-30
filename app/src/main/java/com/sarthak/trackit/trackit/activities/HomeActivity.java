@@ -10,6 +10,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -32,11 +33,13 @@ import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.fragments.FriendsFragment;
 import com.sarthak.trackit.trackit.fragments.GroupsFragment;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
-import com.sarthak.trackit.trackit.model.LatLong;
+import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.services.LocationService;
 import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
+
+import java.util.ArrayList;
 
 public class HomeActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -52,6 +55,8 @@ public class HomeActivity extends BaseActivity implements
     SearchView searchView;
 
     FloatingActionButton createFriendOrGroupBtn;
+
+    private FragmentManager fragmentManager = getSupportFragmentManager();
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore mFirestore;
@@ -81,11 +86,24 @@ public class HomeActivity extends BaseActivity implements
         /*If the instance state of app onCreate is null,
         MapsFragment is inflated*/
         if (savedInstanceState == null) {
-            fragmentInflate(MapsFragment.newInstance());
+            Bundle bundle = new Bundle();
+            bundle.putInt("activityType", 1);
+
+            bundle.putString("fragmentTag", "map");
+            MapsFragment mapsFragment = (MapsFragment) fragmentManager.findFragmentByTag("map");
+            if (mapsFragment == null) {
+                mapsFragment = new MapsFragment();
+                mapsFragment.setArguments(bundle);
+            }
+            fragmentManager.beginTransaction()
+                    .replace(R.id.home_page_container, mapsFragment, "map")
+                    .addToBackStack(null)
+                    .commit();
         }
 
         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -100,7 +118,6 @@ public class HomeActivity extends BaseActivity implements
         mNavUserName = header.findViewById(R.id.text_nav_username);
         mNavDisplayName = header.findViewById(R.id.text_nav_display_name);
         setUserDetails();
-
     }
 
     private void setUserDetails() {
@@ -185,6 +202,7 @@ public class HomeActivity extends BaseActivity implements
     public void fragmentInflate(Fragment fragment) {
         Bundle bundle = new Bundle();
         bundle.putInt("activityType", 1);
+        bundle.putString("fragmentTag", "map");
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.home_page_container, fragment);
@@ -268,25 +286,55 @@ public class HomeActivity extends BaseActivity implements
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment selectedFragment = null;
+
+            Bundle bundle = new Bundle();
+            bundle.putInt("activityType", 1);
+
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     fragmentType = 0;
-                    selectedFragment = MapsFragment.newInstance();
+                    bundle.putString("fragmentTag", "map");
+                    MapsFragment mapsFragment = (MapsFragment) fragmentManager.findFragmentByTag("map");
+                    if (mapsFragment == null) {
+                        mapsFragment = new MapsFragment();
+                        mapsFragment.setArguments(bundle);
+                    }
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.home_page_container, mapsFragment, "map")
+                            .addToBackStack(null)
+                            .commit();
                     createFriendOrGroupBtn.setVisibility(View.GONE);
                     break;
                 case R.id.navigation_groups:
                     fragmentType = 1;
-                    selectedFragment = GroupsFragment.newInstance();
+                    bundle.putString("fragmentTag", "group");
+                    GroupsFragment groupsFragment = (GroupsFragment) fragmentManager.findFragmentByTag("group");
+                    if (groupsFragment == null) {
+                        groupsFragment = new GroupsFragment();
+                        groupsFragment.setArguments(bundle);
+                    }
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.home_page_container, groupsFragment, "group")
+                            .addToBackStack(null)
+                            .commit();
                     createFriendOrGroupBtn.setVisibility(View.VISIBLE);
                     break;
                 case R.id.navigation_friends:
                     fragmentType = 2;
-                    selectedFragment = FriendsFragment.newInstance();
+                    bundle.putString("fragmentTag", "friend");
+                    FriendsFragment friendsFragment = (FriendsFragment) fragmentManager.findFragmentByTag("friend");
+                    if (friendsFragment == null) {
+                        friendsFragment = new FriendsFragment();
+                        friendsFragment.setArguments(bundle);
+                    }
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.home_page_container, friendsFragment, "friend")
+                            .addToBackStack(null)
+                            .commit();
                     createFriendOrGroupBtn.setVisibility(View.VISIBLE);
                     break;
             }
-            fragmentInflate(selectedFragment);
+
             return true;
         }
     };
@@ -296,11 +344,11 @@ public class HomeActivity extends BaseActivity implements
         @Override
         public void onReceive(Context arg0, Intent arg1) {
 
-            LatLong latLong = arg1.getParcelableExtra("LatLong");
+            ParcelableGeoPoint parcelableGeoPoint = arg1.getParcelableExtra("ParcelableGeoPoint");
 
-            if (latLong != null) {
+            if (parcelableGeoPoint != null) {
 
-                mFirestore.collection(Constants.LOCATION_REFERENCE).document(mUser.getUid()).set(latLong).addOnCompleteListener(new OnCompleteListener<Void>() {
+                mFirestore.collection(Constants.LOCATION_REFERENCE).document(mUser.getUid()).set(parcelableGeoPoint).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
 

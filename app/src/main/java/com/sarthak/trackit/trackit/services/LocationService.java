@@ -24,6 +24,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.model.LatLong;
 import com.sarthak.trackit.trackit.utils.Constants;
+import com.google.firebase.firestore.GeoPoint;
+import com.sarthak.trackit.trackit.fragments.MapsFragment;
+import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,7 +37,7 @@ public class LocationService extends Service {
     public static final long UPLOAD_INTERVAL = 10 * 1000; // 10 seconds
     private static final int TWO_MINUTES = 1000 * 60 * 2;
 
-    public LatLong mLatLong = new LatLong();
+    public ParcelableGeoPoint currentLocation;
 
     // run on another Thread to avoid crash
     private Handler mHandler = new Handler();
@@ -180,7 +183,7 @@ public class LocationService extends Service {
                 loc.getLatitude();
                 loc.getLongitude();
 
-                mLatLong = new LatLong(String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()));
+                currentLocation = new ParcelableGeoPoint(new GeoPoint(loc.getLatitude(), loc.getLongitude()));
 
                 new MapsFragment().getDeviceLocation();
                 intent.putExtra("Latitude", loc.getLatitude());
@@ -226,10 +229,11 @@ public class LocationService extends Service {
                         }
                     });
                     Log.d("TAG", String.valueOf(mLatLong));
+                    Log.d("TAG", String.valueOf(currentLocation));
 
                     Intent intent = new Intent();
                     intent.setAction(BROADCAST_ACTION);
-                    intent.putExtra("LatLong", mLatLong);
+                    intent.putExtra("ParcelableGeoPoint", currentLocation);
                     sendBroadcast(intent);
                 }
             });

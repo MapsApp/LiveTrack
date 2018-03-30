@@ -1,10 +1,10 @@
 package com.sarthak.trackit.trackit.utils;
 
-import com.sarthak.trackit.trackit.model.LatLong;
+import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface LocationSentListener {
 
-    void passLocationToFragment(ArrayList<LatLong> list);
+    void passLocationToFragment(HashMap<String, ParcelableGeoPoint> map);
 }

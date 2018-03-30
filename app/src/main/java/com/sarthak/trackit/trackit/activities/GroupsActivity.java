@@ -73,14 +73,14 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         //mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
 
         initFirebase();
-        
+
+        populateSearch();
+
         setUpView();
 
         fragmentInflate(MapsFragment.newInstance());
 
         getFriends();
-
-        populateSearch();
 
         //Used to change icon in floating button with states of BottomSheet
         sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -283,7 +283,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     /*Used to pass fragment on item selected*/
     public void fragmentInflate(Fragment fragment) {
-    
+
         Bundle bundle = new Bundle();
         bundle.putInt("activityType", 2);
         fragment.setArguments(bundle);

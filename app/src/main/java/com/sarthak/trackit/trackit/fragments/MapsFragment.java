@@ -320,7 +320,8 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
     @Override
     public void onLocationReceived(String key) {
 
-        if (mParcelableGeoPointList != null && mParcelableGeoPointList.get(key) != null) {
+        if (mParcelableGeoPointList != null && mParcelableGeoPointList.get(key) != null && mParcelableGeoPointList.get(key).getGeoPoint() != null) {
+
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(mParcelableGeoPointList.get(key).getGeoPoint().getLatitude(),
                             mParcelableGeoPointList.get(key).getGeoPoint().getLongitude()), DEFAULT_ZOOM));

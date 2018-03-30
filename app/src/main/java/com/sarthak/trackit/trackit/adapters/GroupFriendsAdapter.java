@@ -93,8 +93,6 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
             imgGroupFriend = itemView.findViewById(R.id.image_group_friend);
 
-            itemView.setClickable(true);
-            itemView.setFocusable(true);
             itemView.setOnClickListener(this);
         }
 

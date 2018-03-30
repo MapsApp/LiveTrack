@@ -10,20 +10,14 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.sarthak.trackit.trackit.fragments.MapsFragment;
-import com.sarthak.trackit.trackit.model.LatLong;
-import com.sarthak.trackit.trackit.utils.Constants;
 import com.google.firebase.firestore.GeoPoint;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
@@ -208,35 +202,37 @@ public class LocationService extends Service {
 
     class UploadDataTimerTask extends TimerTask {
 
+
         @Override
+
         public void run() {
+
             // run on another thread
+
             mHandler.post(new Runnable() {
 
+
                 @Override
+
                 public void run() {
 
-                    Log.d("TAG", "pul");
-                    Log.d("TAG", String.valueOf(mLatLong));
 
-                    mFirestore.collection(Constants.LOCATION_REFERENCE).document(mUser.getUid()).set(mLatLong).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-
-                            if (task.isSuccessful()) {
-                                Log.d("TAG", "Upload successful.");
-                            }
-                        }
-                    });
-                    Log.d("TAG", String.valueOf(mLatLong));
                     Log.d("TAG", String.valueOf(currentLocation));
 
+
                     Intent intent = new Intent();
+
                     intent.setAction(BROADCAST_ACTION);
+
                     intent.putExtra("ParcelableGeoPoint", currentLocation);
+
                     sendBroadcast(intent);
+
                 }
+
             });
+
         }
+
     }
 }

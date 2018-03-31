@@ -179,11 +179,10 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
         mSearchRecyclerView = findViewById(R.id.result_list);
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSearchRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mSearchRecyclerView.setAdapter(groupAdapter);
     }
 
     private void getFriendsList() {
-
-        mSearchRecyclerView.setAdapter(groupAdapter);
 
         mFirestore.collection(Constants.CONTACTS_REFERENCE)
                 .document(mUser.getUid())
@@ -197,10 +196,24 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
 
                             userList.clear();
 
-                            for (DocumentSnapshot snapshot : task.getResult()) {
+                            for (final DocumentSnapshot document : task.getResult()) {
 
-                                userList.add(snapshot.toObject(User.class));
-                                groupAdapter.notifyDataSetChanged();
+                                if (document != null && document.exists()) {
+
+                                    mFirestore.collection(Constants.USERS_REFERENCE)
+                                            .document(document.getId())
+                                            .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                            if (task.isSuccessful()) {
+
+                                                userList.add(task.getResult().toObject(User.class));
+                                                groupAdapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                    });
+                                }
                             }
                         }
                     }

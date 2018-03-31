@@ -20,19 +20,18 @@ import java.util.ArrayList;
 public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapter.GroupFriendsViewHolder> {
 
     private ArrayList<String> adminStatusList = new ArrayList<>();
-    private ArrayList<User> mGroupMembersList = new ArrayList<>();
+    private ArrayList<User> groupMemberList = new ArrayList<>();
 
     private ItemClickListener mListener;
 
-    public GroupFriendsAdapter(ArrayList<User> mGroupMembersList, ArrayList<String> adminStatusList) {
+    public GroupFriendsAdapter(ArrayList<User> groupMemberList, ArrayList<String> adminStatusList) {
 
-        this.mGroupMembersList = mGroupMembersList;
+        this.groupMemberList = groupMemberList;
         this.adminStatusList = adminStatusList;
     }
 
     public void setOnRecyclerViewItemClickListener(ItemClickListener listener) {
         this.mListener = listener;
-        System.out.print("yayy");
     }
 
     @NonNull
@@ -61,7 +60,7 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
                 });
 
         holder.txtGroupFriendStatus.setText("Active");
-        holder.txtGroupFriendName.setText(mGroupMembersList.get(position).getDisplayName());
+        holder.txtGroupFriendName.setText(groupMemberList.get(position).getDisplayName());
 
         if (adminStatusList.get(holder.getAdapterPosition()).equals("true")) {
             holder.mAdminTv.setVisibility(View.VISIBLE);
@@ -72,7 +71,7 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
     @Override
     public int getItemCount() {
-        return mGroupMembersList.size();
+        return groupMemberList.size();
     }
 
     public class GroupFriendsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

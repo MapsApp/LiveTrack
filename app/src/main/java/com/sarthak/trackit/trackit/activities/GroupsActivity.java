@@ -41,7 +41,8 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     ArrayList<String> adminStatusList = new ArrayList<>();
     ArrayList<String> userKeyList = new ArrayList<>();
     ArrayList<User> mGroupMembersList = new ArrayList<>();
-
+    
+    HashMap<String, String> memberMap = new HashMap<>();
     HashMap<String, ParcelableGeoPoint> mParcelableGeoPointList = new HashMap<>();
 
     ArrayAdapter<String> adapter;
@@ -223,22 +224,11 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
                         if (task.isSuccessful()) {
 
-                            HashMap<String, String> memberMap;
-
                             final DocumentSnapshot document = task.getResult();
 
                             if (document != null && document.exists()) {
 
                                 for (final String member : document.getData().keySet()) {
-
-                                    memberMap = (HashMap<String, String>) document.getData().get(member);
-                                    if (memberMap.get("admin").equals("true")) {
-
-                                        adminStatusList.add("true");
-                                    } else {
-
-                                        adminStatusList.add("false");
-                                    }
 
                                     mFirestore.collection(Constants.LOCATION_REFERENCE)
                                             .document(member)
@@ -275,6 +265,15 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                                                         DocumentSnapshot snapshot = task.getResult();
 
                                                         if (snapshot != null && snapshot.exists()) {
+
+                                                            memberMap = (HashMap<String, String>) document.getData().get(member);
+                                                            if (memberMap.get("admin").equals("true")) {
+
+                                                                adminStatusList.add("true");
+                                                            } else {
+
+                                                                adminStatusList.add("false");
+                                                            }
 
                                                             userKeyList.add(member);
                                                             mGroupMembersList.add(snapshot.toObject(User.class));

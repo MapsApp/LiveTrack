@@ -356,13 +356,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             final Map<String, Object> timeMap = new HashMap<>();
             timeMap.put("timestamp", timestamp);
 
-            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends").document(userKey).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+            mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends").document(userKey).set(timeMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
 
                     if (task.isSuccessful()) {
 
-                        mFirestore.collection(Constants.CONTACTS_REFERENCE).document(userKey).collection("Friends").document(mUser.getUid()).set(mCurrentUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        mFirestore.collection(Constants.CONTACTS_REFERENCE).document(userKey).collection("Friends").document(mUser.getUid()).set(timeMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
 

@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -68,10 +67,12 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
+
             case R.id.fab_group_complete:
 
-                saveDataFromFirebase();
+                saveDataToFirebase();
         }
     }
 
@@ -111,7 +112,7 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
         });
     }
 
-    private void saveDataFromFirebase() {
+    private void saveDataToFirebase() {
 
         String timestamp = getCurrentTimestamp();
 

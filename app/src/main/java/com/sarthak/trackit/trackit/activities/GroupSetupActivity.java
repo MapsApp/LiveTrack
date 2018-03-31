@@ -49,22 +49,14 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
         setContentView(R.layout.activity_group_setup);
         setUpToolbar(this);
 
-        mFirestore = FirebaseFirestore.getInstance();
-        mUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        mFabCreateGroup = findViewById(R.id.fab_group_complete);
-        mGroupNameEt = findViewById(R.id.edit_text_group_name);
-        mGroupMembersRecycler = findViewById(R.id.recycler_setup_group_members);
-        mGroupMembersRecycler.setLayoutManager(new GridLayoutManager(this, 3));
-
-        getCurrentUserObject();
-
         mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
         groupMembersMap = (HashMap<String, HashMap<String, String>>) getIntent().getSerializableExtra("userKey");
 
-        mToolbar.setTitle("New Group");
-        mToolbar.setSubtitle(mGroupMembersList.size() + " Participants");
-        mGroupMembersRecycler.setAdapter(new GroupSetupMembersAdapter(mGroupMembersList));
+        initFirebase();
+
+        setUpView();
+
+        getCurrentUserObject();
 
         mFabCreateGroup.setOnClickListener(this);
     }
@@ -79,67 +71,35 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.fab_group_complete:
 
-                Long time = System.currentTimeMillis()/1000;
-                String timestamp = time.toString();
-
-                final String groupName = mGroupNameEt.getText().toString() + "+" + timestamp;
-
-                final HashMap<String, String> groupMap = new HashMap<>();
-                groupMap.put(groupName, timestamp);
-
-                if (!mGroupNameEt.getText().toString().isEmpty()) {
-
-                    mGroupMembersList.add(mCurrentUser);
-                    memberMap.put("admin", "true");
-                    memberMap.put("location", "true");
-                    memberMap.put("displayName", mCurrentUser.getDisplayName());
-                    groupMembersMap.put(mUser.getUid(), memberMap);
-
-                    mFirestore.collection(Constants.GROUPS_REFERENCE)
-                            .document(groupName)
-                            .set(groupMembersMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-
-                            if (task.isSuccessful()) {
-
-                                WriteBatch memberBatch = mFirestore.batch();
-
-                                for (String key : groupMembersMap.keySet()) {
-
-                                    DocumentReference memberRef = mFirestore.collection(Constants.USER_GROUPS_REFERENCE).document(key);
-                                    memberBatch.set(memberRef, groupMap, SetOptions.merge());
-                                }
-
-                                memberBatch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                        if (task.isSuccessful()) {
-
-                                            startActivity(new Intent(GroupSetupActivity.this,
-                                                    GroupsActivity.class)
-                                                    .putExtra(Constants.GROUP_NAME,
-                                                            groupName)
-                                                    .putParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST,
-                                                            mGroupMembersList));
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    });
-
-                } else {
-                    Toast.makeText(this, "Group name cannot be empty",
-                            Toast.LENGTH_SHORT).show();
-                }
+                saveDataFromFirebase();
         }
+    }
+
+    private void initFirebase() {
+
+        mFirestore = FirebaseFirestore.getInstance();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    private void setUpView() {
+
+        mFabCreateGroup = findViewById(R.id.fab_group_complete);
+        mGroupNameEt = findViewById(R.id.edit_text_group_name);
+        mGroupMembersRecycler = findViewById(R.id.recycler_setup_group_members);
+        mGroupMembersRecycler.setLayoutManager(new GridLayoutManager(this, 3));
+        mGroupMembersRecycler.setAdapter(new GroupSetupMembersAdapter(mGroupMembersList));
+
+        mToolbar.setTitle("New Group");
+        mToolbar.setSubtitle(mGroupMembersList.size() + " Participants");
     }
 
     private void getCurrentUserObject() {
 
-        FirebaseFirestore.getInstance().collection(Constants.USERS_REFERENCE).document(mUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        FirebaseFirestore.getInstance()
+                .collection(Constants.USERS_REFERENCE)
+                .document(mUser.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
@@ -150,4 +110,79 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
             }
         });
     }
+
+    private void saveDataFromFirebase() {
+
+        String timestamp = getCurrentTimestamp();
+
+        final String groupName = mGroupNameEt.getText().toString() + "+" + timestamp;
+
+        final HashMap<String, String> groupMap = new HashMap<>();
+        groupMap.put(groupName, timestamp);
+
+        if (!mGroupNameEt.getText().toString().isEmpty()) {
+
+            mGroupMembersList.add(mCurrentUser);
+            createAdminMap();
+
+            mFirestore.collection(Constants.GROUPS_REFERENCE)
+                    .document(groupName)
+                    .set(groupMembersMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+
+                    if (task.isSuccessful()) {
+
+                        WriteBatch memberBatch = mFirestore.batch();
+
+                        for (String key : groupMembersMap.keySet()) {
+
+                            DocumentReference memberRef = mFirestore.collection(Constants.USER_GROUPS_REFERENCE).document(key);
+                            memberBatch.set(memberRef, groupMap, SetOptions.merge());
+                        }
+
+                        memberBatch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+                                if (task.isSuccessful()) {
+
+                                    startGroupSetupActivity(groupName);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+        } else {
+            Toast.makeText(this, "Group name cannot be empty",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String getCurrentTimestamp() {
+
+        Long time = System.currentTimeMillis()/1000;
+        return time.toString();
+    }
+
+    private void createAdminMap() {
+
+        memberMap.put("admin", "true");
+        memberMap.put("location", "true");
+        memberMap.put("displayName", mCurrentUser.getDisplayName());
+        groupMembersMap.put(mUser.getUid(), memberMap);
+    }
+
+    private void startGroupSetupActivity(String groupName) {
+
+        startActivity(new Intent(GroupSetupActivity.this,
+                GroupsActivity.class)
+                .putExtra(Constants.GROUP_NAME,
+                        groupName)
+                .putParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST,
+                        mGroupMembersList));
+    }
+
 }

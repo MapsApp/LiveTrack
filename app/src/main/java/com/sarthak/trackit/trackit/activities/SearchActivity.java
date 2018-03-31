@@ -33,8 +33,7 @@ import com.sarthak.trackit.trackit.utils.Constants;
 
 import java.util.ArrayList;
 
-public class SearchActivity extends BaseActivity implements
-        SearchView.OnQueryTextListener {
+public class SearchActivity extends BaseActivity implements SearchView.OnQueryTextListener {
 
     private ArrayList<String> userKeyList = new ArrayList<>();
     private ArrayList<User> userList = new ArrayList<>();
@@ -58,22 +57,9 @@ public class SearchActivity extends BaseActivity implements
         setContentView(R.layout.activity_search);
         setUpToolbar(this);
 
-        mFirestore = FirebaseFirestore.getInstance();
-        mUser = FirebaseAuth.getInstance().getCurrentUser();
+        initFirebase();
 
-        mToolbar.inflateMenu(R.menu.home);
-        menu = mToolbar.getMenu();
-        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        mSearchEt = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        mSearchEt.setHint("Search...");
-        mSearchEt.setHintTextColor(Color.DKGRAY);
-        mSearchEt.setTextColor(getResources().getColor(R.color.colorPrimary));
-        //searchView.setSuggestionsAdapter();
-        searchView.animate();
-        mSearchRecyclerView = findViewById(R.id.result_list);
-        mErrorText = findViewById(R.id.text_no_results);
-
-        initRecyclerView();
+        setUpView();
 
         getFriendsList();
     }
@@ -89,12 +75,11 @@ public class SearchActivity extends BaseActivity implements
 
         getMenuInflater().inflate(R.menu.activity_search, menu);
 
-        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.isSubmitButtonEnabled();
-
         ImageView closeButton = searchView.findViewById(R.id.search_close_btn);
         closeButton.setImageResource(R.drawable.ic_close);
 
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.isSubmitButtonEnabled();
         searchView.setOnQueryTextListener(this);
 
         MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.action_search), new MenuItemCompat.OnActionExpandListener() {
@@ -110,6 +95,7 @@ public class SearchActivity extends BaseActivity implements
                 userList.clear();
                 userKeyList.clear();
                 mSearchRecyclerView.setAdapter(groupAdapter);
+
                 getFriendsList();
                 return true;
             }
@@ -154,13 +140,71 @@ public class SearchActivity extends BaseActivity implements
         return false;
     }
 
-    private void initRecyclerView() {
+
+    private void initFirebase() {
+
+        mFirestore = FirebaseFirestore.getInstance();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    private void setUpView() {
+
+        mToolbar.inflateMenu(R.menu.home);
+        menu = mToolbar.getMenu();
+
+        setUpSearchToolbar();
+
+        setUpRecyclerView();
+
+        mErrorText = findViewById(R.id.text_no_results);
+    }
+
+    private void setUpSearchToolbar() {
+
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        //searchView.setSuggestionsAdapter();
+        searchView.animate();
+
+        mSearchEt = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        mSearchEt.setHint("Search...");
+        mSearchEt.setHintTextColor(Color.DKGRAY);
+        mSearchEt.setTextColor(getResources().getColor(R.color.colorPrimary));
+    }
+
+    private void setUpRecyclerView() {
 
         searchAdapter = new SearchAdapter(SearchActivity.this, userKeyList, userList);
         groupAdapter = new GroupAdapter(userList);
 
+        mSearchRecyclerView = findViewById(R.id.result_list);
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSearchRecyclerView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    private void getFriendsList() {
+
+        mSearchRecyclerView.setAdapter(groupAdapter);
+
+        mFirestore.collection(Constants.CONTACTS_REFERENCE)
+                .document(mUser.getUid())
+                .collection("Friends")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        if (task.isSuccessful()) {
+
+                            userList.clear();
+
+                            for (DocumentSnapshot snapshot : task.getResult()) {
+
+                                userList.add(snapshot.toObject(User.class));
+                                groupAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+                });
     }
 
     private void fireStoreUserSearch(final String userSearch) {
@@ -201,32 +245,6 @@ public class SearchActivity extends BaseActivity implements
                     userList.clear();
                     searchAdapter.notifyDataSetChanged();
                     mErrorText.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-    }
-
-    private void getFriendsList() {
-
-        mSearchRecyclerView.setAdapter(groupAdapter);
-
-        mFirestore.collection(Constants.CONTACTS_REFERENCE)
-                .document(mUser.getUid())
-                .collection("Friends")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                if (task.isSuccessful()) {
-
-                    userList.clear();
-
-                    for (DocumentSnapshot snapshot : task.getResult()) {
-
-                        userList.add(snapshot.toObject(User.class));
-                        groupAdapter.notifyDataSetChanged();
-                    }
                 }
             }
         });

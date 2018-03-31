@@ -14,7 +14,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.sarthak.trackit.trackit.loginmanager.FacebookLoginManager;
-import com.sarthak.trackit.trackit.loginmanager.GuestLogin;
+import com.sarthak.trackit.trackit.loginmanager.GuestLoginManager;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
@@ -26,7 +26,6 @@ public class NewUserActivity extends BaseActivity implements View.OnClickListene
 
     private ProgressBar progressNewUser;
 
-    private FirebaseAuth mAuth;
     private CallbackManager mCallbackManager;
 
     @Override
@@ -37,8 +36,6 @@ public class NewUserActivity extends BaseActivity implements View.OnClickListene
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         setUpView();
-
-        mAuth = FirebaseAuth.getInstance();
 
         mCallbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().registerCallback(mCallbackManager, NewUserActivity.this);
@@ -86,8 +83,8 @@ public class NewUserActivity extends BaseActivity implements View.OnClickListene
 
             case R.id.button_guest_sign_in:
 
-                GuestLogin guestLogin = new GuestLogin(this, progressNewUser);
-                guestLogin.guestLogin();
+                GuestLoginManager guestLoginManager = new GuestLoginManager(this, progressNewUser);
+                guestLoginManager.guestLogin();
                 break;
 
             case R.id.button_phone_login:
@@ -116,7 +113,8 @@ public class NewUserActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void onSuccess(LoginResult loginResult) {
 
-        new FacebookLoginManager(NewUserActivity.this, progressNewUser).handleFacebookAccessToken(loginResult.getAccessToken());
+        new FacebookLoginManager(NewUserActivity.this, progressNewUser)
+                .handleFacebookAccessToken(loginResult.getAccessToken());
     }
 
     @Override

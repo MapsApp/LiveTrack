@@ -64,6 +64,11 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     public LocationSentListener mLocationSentListener;
     public LocationReceivedListener mLocationReceivedListener;
 
+    public interface LocationReceivedListener {
+
+        void onLocationReceived(String key);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -186,12 +191,25 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
     }
 
-    public void sendLocation(LocationSentListener listener) {
-        this.mLocationSentListener = listener;
+    private void populateSearch() {
+
+        MEMBERS = new String[mGroupMembersList.size()];
+
+        for (int i = 0; i < MEMBERS.length; i++) {
+            MEMBERS[i] = mGroupMembersList.get(i).getDisplayName();
+        }
     }
 
-    public void receiveLocation(LocationReceivedListener listener) {
-        this.mLocationReceivedListener = listener;
+    /*Used to pass fragment on item selected*/
+    public void fragmentInflate(Fragment fragment) {
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("activityType", 2);
+        fragment.setArguments(bundle);
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.map_container, fragment);
+        fragmentTransaction.commit();
     }
 
     private void getFriends() {
@@ -272,28 +290,11 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                 });
     }
 
-    private void populateSearch() {
-
-        MEMBERS = new String[mGroupMembersList.size()];
-
-        for (int i = 0; i < MEMBERS.length; i++) {
-            MEMBERS[i] = mGroupMembersList.get(i).getDisplayName();
-        }
+    public void sendLocation(LocationSentListener listener) {
+        this.mLocationSentListener = listener;
     }
 
-    /*Used to pass fragment on item selected*/
-    public void fragmentInflate(Fragment fragment) {
-
-        Bundle bundle = new Bundle();
-        bundle.putInt("activityType", 2);
-        fragment.setArguments(bundle);
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.map_container, fragment);
-        fragmentTransaction.commit();
-    }
-
-    public interface LocationReceivedListener {
-
-        void onLocationReceived(String key);
+    public void receiveLocation(LocationReceivedListener listener) {
+        this.mLocationReceivedListener = listener;
     }
 }

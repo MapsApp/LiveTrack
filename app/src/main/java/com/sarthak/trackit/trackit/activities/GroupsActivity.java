@@ -37,12 +37,14 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     String mGroupName;
     String[] MEMBERS;
+    String locationStatus;
 
     ArrayList<String> adminStatusList = new ArrayList<>();
     ArrayList<String> userKeyList = new ArrayList<>();
     ArrayList<User> mGroupMembersList = new ArrayList<>();
-    
+
     HashMap<String, String> memberMap = new HashMap<>();
+    HashMap<String, String> currentUserMap = new HashMap<>();
     HashMap<String, ParcelableGeoPoint> mParcelableGeoPointList = new HashMap<>();
 
     ArrayAdapter<String> adapter;
@@ -54,6 +56,8 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     FloatingActionButton fabBottomSheet;
     LinearLayout layoutBottomSheet;
     BottomSheetBehavior sheetBehavior;
+
+    LinearLayout mLocationSharingLayout;
 
     RecyclerView groupMembersRecyclerView;
 
@@ -140,6 +144,15 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                     fabBottomSheet.setImageResource(R.drawable.ic_expand_more_white);
                 }
                 break;
+
+            case R.id.location_sharing_layout:
+
+                if (locationStatus.equals("false")) {
+                    currentUserMap.put("location", "true");
+                } else if (locationStatus.equals("true")) {
+                    currentUserMap.put("location", "false");
+                }
+                break;
         }
     }
 
@@ -165,6 +178,9 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
         mGroupNameTv = findViewById(R.id.text_group_name);
         mGroupNameTv.setText(mGroupName.substring(0, mGroupName.indexOf("+")));
+
+        mLocationSharingLayout = findViewById(R.id.location_sharing_layout);
+        mLocationSharingLayout.setOnClickListener(this);
 
         setUpRecyclerView();
 
@@ -275,6 +291,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                                                                 adminStatusList.add("false");
                                                             }
 
+                                                            setLocationLayoutVisibility(member, memberMap);
                                                             userKeyList.add(member);
                                                             mGroupMembersList.add(snapshot.toObject(User.class));
                                                             mGroupFriendsAdapter.notifyDataSetChanged();
@@ -287,6 +304,23 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                         }
                     }
                 });
+    }
+
+    private void setLocationLayoutVisibility(String member, HashMap<String, String> memberMap) {
+
+        if (member.equals(mUser.getUid())) {
+
+            currentUserMap = memberMap;
+            if (memberMap.get("location").equals("false")) {
+
+                locationStatus = "false";
+                mLocationSharingLayout.setVisibility(View.VISIBLE);
+            } else {
+
+                locationStatus = "true";
+                mLocationSharingLayout.setVisibility(View.GONE);
+            }
+        }
     }
 
     public void sendLocation(LocationSentListener listener) {

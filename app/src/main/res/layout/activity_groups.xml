@@ -27,10 +27,14 @@
         </android.support.design.widget.AppBarLayout>
 
     </RelativeLayout>
-    <FrameLayout android:id="@+id/map_container"
+
+    <FrameLayout
+        android:id="@+id/map_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="?actionBarSize" />
+        android:layout_marginBottom="?actionBarSize"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_bottom_sheet"
         android:layout_width="wrap_content"

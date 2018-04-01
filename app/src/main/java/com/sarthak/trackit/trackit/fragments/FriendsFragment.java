@@ -1,10 +1,8 @@
 package com.sarthak.trackit.trackit.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,13 +27,11 @@ import com.sarthak.trackit.trackit.utils.Constants;
 
 import java.util.ArrayList;
 
-public class FriendsFragment extends Fragment implements View.OnClickListener
-        , FriendsAdapter.setOnFriendClickListener
-        , SwipeRefreshLayout.OnRefreshListener {
+public class FriendsFragment extends Fragment implements FriendsAdapter.setOnFriendClickListener,
+        SwipeRefreshLayout.OnRefreshListener {
 
     ArrayList<User> mUserFriendList = new ArrayList<>();
 
-    FloatingActionButton fabCreateGroup;
     SwipeRefreshLayout mSwipeLayout;
 
     FriendsAdapter mFriendsAdapter;
@@ -73,8 +69,6 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        fabCreateGroup = view.findViewById(R.id.fab_create);
-
         mFriendsList = view.findViewById(R.id.recycler_friends);
 
         mFriendsList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -84,7 +78,6 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
         setRecyclerView();
         mFriendsAdapter=new FriendsAdapter(this, mUserFriendList);
         mFriendsList.setAdapter(mFriendsAdapter);
-        fabCreateGroup.setOnClickListener(this);
 
         if (mUserFriendList.isEmpty()) {
             mSwipeLayout.setRefreshing(true);
@@ -93,6 +86,7 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
     }
 
     private void setRecyclerView() {
+
         Query friendQuery = mFirestore
                 .collection(Constants.CONTACTS_REFERENCE)
                 .document(mUser.getUid())
@@ -136,26 +130,8 @@ public class FriendsFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public void onClick(View v) {
-
-        switch (v.getId()) {
-
-            case R.id.fab_create:
-
-                launchSearch();
-                break;
-        }
-    }
-
-    @Override
     public void OnFriendItemClicked(View view, int position) {
 
-    }
-
-    private void launchSearch() {
-
-        Intent intent = new Intent(getContext(), SearchActivity.class);
-        startActivity(intent);
     }
 
     @Override

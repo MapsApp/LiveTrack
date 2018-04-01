@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,10 +33,12 @@ import java.util.HashMap;
 public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.setOnFriendClickListener
         , GroupMembersAdapter.setOnGroupMemberClicked {
 
-    ArrayList<User> mFriendsList = new ArrayList<>();
-    ArrayList<User> mGroupMembersList = new ArrayList<>();
-
+    ArrayList<User> friendList = new ArrayList<>();
     ArrayList<String> friendKeyList = new ArrayList<>();
+
+    ArrayList<User> groupMemberList = new ArrayList<>();
+    ArrayList<String> groupMemberKeyList = new ArrayList<>();
+
     HashMap<String, HashMap<String, String>> groupMemberMap = new HashMap<>();
     HashMap<String, String> memberMap = new HashMap<>();
 
@@ -83,11 +86,12 @@ public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.
 
             case R.id.action_done:
 
-                if (!mGroupMembersList.isEmpty()) {
+                if (!groupMemberList.isEmpty()) {
 
+                    Log.d("oil", groupMemberMap.size() + " " + groupMemberList.size() + " " + groupMemberKeyList.size());
                     Intent groupSetupIntent = new Intent(this, GroupSetupActivity.class);
                     groupSetupIntent.putExtra("userKey", groupMemberMap);
-                    groupSetupIntent.putParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST, mGroupMembersList);
+                    groupSetupIntent.putParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST, groupMemberList);
                     startActivity(groupSetupIntent);
                 } else {
                     Toast.makeText(this, "Add at least one member", Toast.LENGTH_SHORT).show();
@@ -100,23 +104,24 @@ public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.
     @Override
     public void OnFriendItemClicked(View view, int position) {
 
-        if (!mGroupMembersList.contains(mFriendsList.get(position))) {
+        if (!groupMemberList.contains(friendList.get(position))) {
 
-            mGroupMembersList.add(mFriendsList.get(position));
+            groupMemberList.add(friendList.get(position));
+            groupMemberKeyList.add(friendKeyList.get(position));
 
             memberMap.put("admin", "false");
             memberMap.put("location", "false");
-            memberMap.put("displayName", mFriendsList.get(position).getDisplayName());
+            memberMap.put("displayName", friendList.get(position).getDisplayName());
 
             groupMemberMap.put(friendKeyList.get(position), memberMap);
             mGroupFriendsAdapter.notifyDataSetChanged();
 
-            if (mGroupMembersList.size() == 0) {
+            if (groupMemberList.size() == 0) {
                 mGroupCountTv.setText("No Members");
-            } else if (mGroupMembersList.size() == 1) {
-                mGroupCountTv.setText(String.valueOf(mGroupMembersList.size()) + " Member");
+            } else if (groupMemberList.size() == 1) {
+                mGroupCountTv.setText(String.valueOf(groupMemberList.size()) + " Member");
             } else {
-                mGroupCountTv.setText(String.valueOf(mGroupMembersList.size()) + " Members");
+                mGroupCountTv.setText(String.valueOf(groupMemberList.size()) + " Members");
             }
         }
     }
@@ -124,17 +129,19 @@ public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.
     @Override
     public void onGroupMemberClicked(View v, int position) {
 
-        if (!mGroupMembersList.isEmpty()) {
+        if (!groupMemberList.isEmpty()) {
 
-            mGroupMembersList.remove(mGroupMembersList.get(position));
+            groupMemberList.remove(groupMemberList.get(position));
+            groupMemberMap.remove(groupMemberKeyList.get(position));
+            groupMemberKeyList.remove(groupMemberKeyList.get(position));
             mGroupFriendsAdapter.notifyDataSetChanged();
 
-            if (mGroupMembersList.size() == 0) {
+            if (groupMemberList.size() == 0) {
                 mGroupCountTv.setText("No Members");
-            } else if (mGroupMembersList.size() == 1) {
-                mGroupCountTv.setText(String.valueOf(mGroupMembersList.size()) + " Member");
+            } else if (groupMemberList.size() == 1) {
+                mGroupCountTv.setText(String.valueOf(groupMemberList.size()) + " Member");
             } else {
-                mGroupCountTv.setText(String.valueOf(mGroupMembersList.size()) + " Members");
+                mGroupCountTv.setText(String.valueOf(groupMemberList.size()) + " Members");
             }
         }
     }
@@ -145,12 +152,12 @@ public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.
 
         mFriendsRecyclerView = findViewById(R.id.recycler_friends_new_group);
         mFriendsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mFriendsAdapter = new FriendsAdapter(this, mFriendsList);
+        mFriendsAdapter = new FriendsAdapter(this, friendList);
         mFriendsRecyclerView.setAdapter(mFriendsAdapter);
 
         mGroupRecyclerView = findViewById(R.id.recycler_group_members);
         mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        mGroupFriendsAdapter = new GroupMembersAdapter(mGroupMembersList, this);
+        mGroupFriendsAdapter = new GroupMembersAdapter(groupMemberList, this);
         mGroupRecyclerView.setAdapter(mGroupFriendsAdapter);
     }
 
@@ -168,7 +175,7 @@ public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.
 
                 if (task.isSuccessful()) {
 
-                    mFriendsList.clear();
+                    friendList.clear();
 
                     for (DocumentSnapshot document : task.getResult()) {
 
@@ -185,7 +192,7 @@ public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.
 
                                             if (task.isSuccessful()) {
 
-                                                mFriendsList.add(task.getResult().toObject(User.class));
+                                                friendList.add(task.getResult().toObject(User.class));
                                                 friendKeyList.add(task.getResult().getId());
                                                 mFriendsAdapter.notifyDataSetChanged();
                                             }

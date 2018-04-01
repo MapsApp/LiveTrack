@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -36,10 +37,9 @@ import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.services.LocationService;
+import com.sarthak.trackit.trackit.utils.BottomNavigationViewBehavior;
 import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
-
-import java.util.ArrayList;
 
 public class HomeActivity extends BaseActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -102,8 +102,9 @@ public class HomeActivity extends BaseActivity implements
         }
 
         navigation = findViewById(R.id.navigation);
+        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) navigation.getLayoutParams();
+        layoutParams.setBehavior(new BottomNavigationViewBehavior());
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -199,7 +200,7 @@ public class HomeActivity extends BaseActivity implements
     }
 
     /*Used to pass fragment on item selected*/
-    public void fragmentInflate(Fragment fragment) {
+    /*public void fragmentInflate(Fragment fragment) {
         Bundle bundle = new Bundle();
         bundle.putInt("activityType", 1);
         bundle.putString("fragmentTag", "map");
@@ -207,7 +208,7 @@ public class HomeActivity extends BaseActivity implements
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.home_page_container, fragment);
         fragmentTransaction.commit();
-    }
+    }*/
 
     @Override
     public void onBackPressed() {

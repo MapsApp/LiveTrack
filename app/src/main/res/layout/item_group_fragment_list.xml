@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
+    android:orientation="horizontal"
     android:padding="@dimen/padding_smaller">
 
     <com.sarthak.trackit.trackit.utils.SquareImageView
@@ -18,21 +19,18 @@
         android:id="@+id/text_group_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/image_group_dp"
-        android:layout_toRightOf="@+id/image_group_dp"
-        android:layout_centerVertical="true"
         android:paddingLeft="@dimen/padding_small"
         android:paddingStart="@dimen/padding_small"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:layout_gravity="center_vertical"
         tools:ignore="RtlSymmetry" />
 
     <TextView
-        android:id="@+id/text_group_username"
+        android:id="@+id/text_group_members"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text_group_name"
-        android:layout_marginTop="10dp" />
+        android:visibility="gone"/>
 
-</RelativeLayout>
+</LinearLayout>

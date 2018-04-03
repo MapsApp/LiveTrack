@@ -9,7 +9,7 @@ import android.view.MenuItem;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    Toolbar mToolbar;
+    public Toolbar mToolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

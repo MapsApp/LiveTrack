@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sarthak.trackit.trackit.R;
-import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
+import com.sarthak.trackit.trackit.adapters.GroupActivityFriendsAdapter;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 import com.sarthak.trackit.trackit.model.User;
@@ -35,7 +35,7 @@ import java.util.HashMap;
 
 public class GroupsActivity extends BaseActivity implements
         View.OnClickListener
-        , GroupFriendsAdapter.ItemClickListener {
+        , GroupActivityFriendsAdapter.ItemClickListener {
 
     String mGroupName;
     String[] MEMBERS;
@@ -59,7 +59,7 @@ public class GroupsActivity extends BaseActivity implements
 
     RecyclerView groupMembersRecyclerView;
 
-    GroupFriendsAdapter mGroupFriendsAdapter;
+    GroupActivityFriendsAdapter mGroupActivityFriendsAdapter;
 
     FirebaseFirestore mFirestore;
     FirebaseUser mUser;
@@ -142,6 +142,16 @@ public class GroupsActivity extends BaseActivity implements
                     fabBottomSheet.setImageResource(R.drawable.ic_expand_more_white);
                 }
                 break;
+            case R.id.text_group_name:
+                if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    fabBottomSheet.setImageResource(R.drawable.ic_expand_less_white);
+                } else {
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    fabBottomSheet.setImageResource(R.drawable.ic_expand_more_white);
+                }
+                break;
         }
     }
 
@@ -167,7 +177,7 @@ public class GroupsActivity extends BaseActivity implements
 
         mGroupNameTv = findViewById(R.id.text_group_name);
         mGroupNameTv.setText(mGroupName.substring(0, mGroupName.indexOf("+")));
-
+        mGroupNameTv.setOnClickListener(this);
         setUpRecyclerView();
 
         setUpBottomSheet();
@@ -180,9 +190,9 @@ public class GroupsActivity extends BaseActivity implements
         groupMembersRecyclerView.addItemDecoration(new RecyclerViewDivider(this,
                 ContextCompat.getColor(this, R.color.md_blue_grey_200), 0.5f));
 
-        mGroupFriendsAdapter = new GroupFriendsAdapter(mGroupMembersList, adminStatusList);
-        mGroupFriendsAdapter.setOnRecyclerViewItemClickListener(GroupsActivity.this);
-        groupMembersRecyclerView.setAdapter(mGroupFriendsAdapter);
+        mGroupActivityFriendsAdapter = new GroupActivityFriendsAdapter(mGroupMembersList, adminStatusList);
+        mGroupActivityFriendsAdapter.setOnRecyclerViewItemClickListener(GroupsActivity.this);
+        groupMembersRecyclerView.setAdapter(mGroupActivityFriendsAdapter);
     }
 
     private void setUpBottomSheet() {
@@ -279,7 +289,7 @@ public class GroupsActivity extends BaseActivity implements
 
                                                             userKeyList.add(member);
                                                             mGroupMembersList.add(snapshot.toObject(User.class));
-                                                            mGroupFriendsAdapter.notifyDataSetChanged();
+                                                            mGroupActivityFriendsAdapter.notifyDataSetChanged();
                                                         }
                                                     }
                                                 }

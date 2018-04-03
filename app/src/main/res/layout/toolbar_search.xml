@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
     android:layout_width="match_parent"
+    app:layout_scrollFlags="scroll|enterAlways"
     android:layout_height="?attr/actionBarSize"
     app:popupTheme="@style/Base.CardView">
 
@@ -13,7 +14,6 @@
         android:focusableInTouchMode="true"
         android:orientation="horizontal"
         android:weightSum="10">
-
 
         <AutoCompleteTextView
             android:id="@+id/autocomplete_search"

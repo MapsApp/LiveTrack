@@ -10,9 +10,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -170,7 +168,7 @@ public class HomeActivity extends BaseActivity implements
 
         /*if (FirebaseAuth.getInstance().getCurrentUser() == null) {
 
-            Intent loginIntent = new Intent(HomeActivity.this, LoginActivity.class);
+            Intent loginIntent = new Intent(HomeActivity.this, PhoneLoginActivity.class);
             startActivity(loginIntent);
             finish();
         }*/

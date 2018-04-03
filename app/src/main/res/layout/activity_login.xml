@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.sarthak.trackit.trackit.activities.LoginActivity">
+    tools:context="com.sarthak.trackit.trackit.activities.PhoneLoginActivity">
 
     <include
         android:id="@+id/login_activity_toolbar"

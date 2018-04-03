@@ -20,21 +20,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
-import com.sarthak.trackit.trackit.activities.SearchActivity;
-import com.sarthak.trackit.trackit.adapters.FriendsAdapter;
+import com.sarthak.trackit.trackit.adapters.FriendsFragmentAdapter;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 
 import java.util.ArrayList;
 
-public class FriendsFragment extends Fragment implements FriendsAdapter.setOnFriendClickListener,
-        SwipeRefreshLayout.OnRefreshListener {
+public class FriendsFragment extends Fragment implements
+        FriendsFragmentAdapter.setOnFriendClickListener
+        , SwipeRefreshLayout.OnRefreshListener {
 
     ArrayList<User> mUserFriendList = new ArrayList<>();
 
     SwipeRefreshLayout mSwipeLayout;
 
-    FriendsAdapter mFriendsAdapter;
+    FriendsFragmentAdapter mFriendsFragmentAdapter;
     FirebaseFirestore mFirestore;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
@@ -76,8 +76,8 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.setOnFri
         mSwipeLayout = view.findViewById(R.id.swipeToRefresh);
         mSwipeLayout.setColorSchemeResources(R.color.md_red_400, R.color.md_green_400, R.color.md_yellow_400, R.color.md_blue_400);
         setRecyclerView();
-        mFriendsAdapter=new FriendsAdapter(this, mUserFriendList);
-        mFriendsList.setAdapter(mFriendsAdapter);
+        mFriendsFragmentAdapter = new FriendsFragmentAdapter(this, mUserFriendList);
+        mFriendsList.setAdapter(mFriendsFragmentAdapter);
 
         if (mUserFriendList.isEmpty()) {
             mSwipeLayout.setRefreshing(true);
@@ -113,10 +113,9 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.setOnFri
                                     if (task.isSuccessful()) {
 
                                         mUserFriendList.add(task.getResult().toObject(User.class));
-                                        mFriendsAdapter.notifyDataSetChanged();
+                                        mFriendsFragmentAdapter.notifyDataSetChanged();
                                         mSwipeLayout.setRefreshing(false);
-                                    }
-                                    else {
+                                    } else {
                                         mSwipeLayout.setRefreshing(false);
                                     }
                                 }
@@ -137,7 +136,7 @@ public class FriendsFragment extends Fragment implements FriendsAdapter.setOnFri
     @Override
     public void onRefresh() {
         mSwipeLayout.setRefreshing(true);
-        mFriendsAdapter.notifyDataSetChanged();
+        mFriendsFragmentAdapter.notifyDataSetChanged();
         mSwipeLayout.setRefreshing(false);
     }
 

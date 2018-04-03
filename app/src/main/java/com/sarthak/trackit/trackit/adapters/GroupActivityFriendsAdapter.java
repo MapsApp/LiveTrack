@@ -17,14 +17,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapter.GroupFriendsViewHolder> {
+public class GroupActivityFriendsAdapter extends RecyclerView.Adapter<GroupActivityFriendsAdapter.GroupFriendsViewHolder> {
 
     private ArrayList<String> adminStatusList = new ArrayList<>();
     private ArrayList<User> groupMemberList = new ArrayList<>();
 
     private ItemClickListener mListener;
 
-    public GroupFriendsAdapter(ArrayList<User> groupMemberList, ArrayList<String> adminStatusList) {
+    public GroupActivityFriendsAdapter(ArrayList<User> groupMemberList, ArrayList<String> adminStatusList) {
 
         this.groupMemberList = groupMemberList;
         this.adminStatusList = adminStatusList;
@@ -38,7 +38,7 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
     @Override
     public GroupFriendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group_friends, parent, false);
-        return new GroupFriendsAdapter.GroupFriendsViewHolder(itemView);
+        return new GroupActivityFriendsAdapter.GroupFriendsViewHolder(itemView);
     }
 
     @Override

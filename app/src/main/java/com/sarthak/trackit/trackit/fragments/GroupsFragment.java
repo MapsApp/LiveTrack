@@ -22,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.activities.CreateGroupActivity;
 import com.sarthak.trackit.trackit.activities.GroupsActivity;
-import com.sarthak.trackit.trackit.adapters.UserGroupAdapter;
+import com.sarthak.trackit.trackit.adapters.UserGroupFragmentAdapter;
 import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 
@@ -34,7 +34,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener, Re
     FloatingActionButton mCreateGroupFab;
 
     RecyclerView mFriendsListRv;
-    UserGroupAdapter adapter;
+    UserGroupFragmentAdapter adapter;
 
     FirebaseFirestore mFirestore;
     FirebaseUser mUser;
@@ -58,7 +58,7 @@ public class GroupsFragment extends Fragment implements View.OnClickListener, Re
         mCreateGroupFab = view.findViewById(R.id.fab_create_group);
         mFriendsListRv = view.findViewById(R.id.recycler_groups);
 
-        adapter = new UserGroupAdapter(groupList);
+        adapter = new UserGroupFragmentAdapter(groupList);
         adapter.setOnItemClickListener(this);
 
         mFriendsListRv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));

@@ -13,11 +13,11 @@ import com.sarthak.trackit.trackit.model.User;
 
 import java.util.ArrayList;
 
-public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHolder> {
+public class GroupsFragmentAdapter extends RecyclerView.Adapter<GroupsFragmentAdapter.GroupViewHolder> {
 
     private ArrayList<User> userList = new ArrayList<>();
 
-    public GroupAdapter(ArrayList<User> userList) {
+    public GroupsFragmentAdapter(ArrayList<User> userList) {
 
         this.userList = userList;
     }
@@ -28,7 +28,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
 
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group_fragment_list, parent, false);
 
-        return new GroupAdapter.GroupViewHolder(itemView);
+        return new GroupsFragmentAdapter.GroupViewHolder(itemView);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.GroupViewHol
             super(itemView);
 
             mDisplayNameTv = itemView.findViewById(R.id.text_group_name);
-            mUsernameTv = itemView.findViewById(R.id.text_group_username);
+            mUsernameTv = itemView.findViewById(R.id.text_group_members);
         }
 
         void bindView(User user) {

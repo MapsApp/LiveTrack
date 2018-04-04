@@ -37,7 +37,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".activities.PhoneLoginActivity"
             android:label="@string/app_name" />
         <activity android:name=".activities.HomeActivity">
             <meta-data
@@ -87,6 +87,7 @@
         <activity android:name=".activities.RequestStatusActivity" />
         <activity android:name=".activities.CreateGroupActivity" />
         <activity android:name=".activities.GroupSetupActivity" />
+        <activity android:name=".activities.AddFriendsActivity"></activity>
     </application>
 
 </manifest>

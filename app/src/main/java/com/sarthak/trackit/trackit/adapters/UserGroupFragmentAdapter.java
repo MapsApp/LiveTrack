@@ -15,13 +15,13 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.UserGroupViewHolder> {
+public class UserGroupFragmentAdapter extends RecyclerView.Adapter<UserGroupFragmentAdapter.UserGroupViewHolder> {
 
     private ArrayList<String> userList = new ArrayList<>();
 
     private RecyclerViewItemClickedListener mListener;
 
-    public UserGroupAdapter(ArrayList<String> userList) {
+    public UserGroupFragmentAdapter(ArrayList<String> userList) {
 
         this.userList = userList;
     }
@@ -33,15 +33,15 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
 
     @NonNull
     @Override
-    public UserGroupAdapter.UserGroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public UserGroupFragmentAdapter.UserGroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group_fragment_list, parent, false);
 
-        return new UserGroupAdapter.UserGroupViewHolder(itemView);
+        return new UserGroupFragmentAdapter.UserGroupViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final UserGroupAdapter.UserGroupViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final UserGroupFragmentAdapter.UserGroupViewHolder holder, int position) {
 
         holder.bindView(userList.get(holder.getAdapterPosition()));
     }
@@ -61,7 +61,7 @@ public class UserGroupAdapter extends RecyclerView.Adapter<UserGroupAdapter.User
             super(itemView);
 
             mDisplayNameTv = itemView.findViewById(R.id.text_group_name);
-            mUsernameTv = itemView.findViewById(R.id.text_group_username);
+            mUsernameTv = itemView.findViewById(R.id.text_group_members);
             mGroupDpIv=itemView.findViewById(R.id.image_group_dp);
             itemView.setOnClickListener(this);
         }

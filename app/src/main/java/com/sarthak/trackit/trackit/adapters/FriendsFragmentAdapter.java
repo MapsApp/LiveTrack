@@ -26,12 +26,12 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsViewHolder> {
+public class FriendsFragmentAdapter extends RecyclerView.Adapter<FriendsFragmentAdapter.FriendsViewHolder> {
 
     private setOnFriendClickListener mListener;
     private ArrayList<User> mUserList;
 
-    public FriendsAdapter(setOnFriendClickListener mListener, ArrayList<User> mUserList) {
+    public FriendsFragmentAdapter(setOnFriendClickListener mListener, ArrayList<User> mUserList) {
         this.mListener = mListener;
         this.mUserList = mUserList;
     }
@@ -47,7 +47,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendsV
 
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friends, parent, false);
 
-        return new FriendsAdapter.FriendsViewHolder(itemView);
+        return new FriendsFragmentAdapter.FriendsViewHolder(itemView);
     }
 
     @Override

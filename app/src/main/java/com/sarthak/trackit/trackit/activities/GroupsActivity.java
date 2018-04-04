@@ -1,5 +1,6 @@
 package com.sarthak.trackit.trackit.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
@@ -22,7 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sarthak.trackit.trackit.R;
-import com.sarthak.trackit.trackit.adapters.GroupFriendsAdapter;
+import com.sarthak.trackit.trackit.adapters.GroupActivityFriendsAdapter;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 import com.sarthak.trackit.trackit.model.User;
@@ -35,7 +36,7 @@ import java.util.HashMap;
 
 public class GroupsActivity extends BaseActivity implements
         View.OnClickListener
-        , GroupFriendsAdapter.ItemClickListener {
+        , GroupActivityFriendsAdapter.ItemClickListener {
 
     String mGroupName;
     String[] MEMBERS;
@@ -60,10 +61,11 @@ public class GroupsActivity extends BaseActivity implements
     BottomSheetBehavior sheetBehavior;
 
     LinearLayout mLocationSharingLayout;
+    LinearLayout mAddMemberLayout;
 
     RecyclerView groupMembersRecyclerView;
 
-    GroupFriendsAdapter mGroupFriendsAdapter;
+    GroupActivityFriendsAdapter mGroupActivityFriendsAdapter;
 
     FirebaseFirestore mFirestore;
     FirebaseUser mUser;
@@ -147,6 +149,18 @@ public class GroupsActivity extends BaseActivity implements
                 }
                 break;
 
+            case R.id.text_group_name:
+
+                if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    fabBottomSheet.setImageResource(R.drawable.ic_expand_less_white);
+                } else {
+                    sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    fabBottomSheet.setImageResource(R.drawable.ic_expand_more_white);
+                }
+                break;
+
             case R.id.location_sharing_layout:
 
                 if (locationStatus.equals("false")) {
@@ -154,6 +168,12 @@ public class GroupsActivity extends BaseActivity implements
                 } else if (locationStatus.equals("true")) {
                     currentUserMap.put("location", "false");
                 }
+                break;
+
+            case R.id.add_member_layout:
+
+                startActivity(new Intent(GroupsActivity.this, AddFriendsActivity.class)
+                        .putStringArrayListExtra("userKeyList", userKeyList));
                 break;
         }
     }
@@ -180,9 +200,13 @@ public class GroupsActivity extends BaseActivity implements
 
         mGroupNameTv = findViewById(R.id.text_group_name);
         mGroupNameTv.setText(mGroupName.substring(0, mGroupName.indexOf("+")));
+        mGroupNameTv.setOnClickListener(this);
 
         mLocationSharingLayout = findViewById(R.id.location_sharing_layout);
         mLocationSharingLayout.setOnClickListener(this);
+
+        mAddMemberLayout = findViewById(R.id.add_member_layout);
+        mAddMemberLayout.setOnClickListener(this);
 
         setUpRecyclerView();
 
@@ -196,9 +220,9 @@ public class GroupsActivity extends BaseActivity implements
         groupMembersRecyclerView.addItemDecoration(new RecyclerViewDivider(this,
                 ContextCompat.getColor(this, R.color.md_blue_grey_200), 0.5f));
 
-        mGroupFriendsAdapter = new GroupFriendsAdapter(mGroupMembersList, adminStatusList);
-        mGroupFriendsAdapter.setOnRecyclerViewItemClickListener(GroupsActivity.this);
-        groupMembersRecyclerView.setAdapter(mGroupFriendsAdapter);
+        mGroupActivityFriendsAdapter = new GroupActivityFriendsAdapter(mGroupMembersList, adminStatusList);
+        mGroupActivityFriendsAdapter.setOnRecyclerViewItemClickListener(GroupsActivity.this);
+        groupMembersRecyclerView.setAdapter(mGroupActivityFriendsAdapter);
     }
 
     private void setUpBottomSheet() {
@@ -287,6 +311,11 @@ public class GroupsActivity extends BaseActivity implements
                                                             memberMap = (HashMap<String, String>) document.getData().get(member);
                                                             if (memberMap.get("admin").equals("true")) {
 
+                                                                if (member.equals(mUser.getUid())) {
+                                                                    mAddMemberLayout.setVisibility(View.VISIBLE);
+                                                                } else {
+                                                                    mAddMemberLayout.setVisibility(View.GONE);
+                                                                }
                                                                 adminStatusList.add("true");
                                                             } else {
 
@@ -296,7 +325,7 @@ public class GroupsActivity extends BaseActivity implements
                                                             setLocationLayoutVisibility(member, memberMap);
                                                             userKeyList.add(member);
                                                             mGroupMembersList.add(snapshot.toObject(User.class));
-                                                            mGroupFriendsAdapter.notifyDataSetChanged();
+                                                            mGroupActivityFriendsAdapter.notifyDataSetChanged();
                                                         }
                                                     }
                                                 }
@@ -324,6 +353,7 @@ public class GroupsActivity extends BaseActivity implements
             }
         }
     }
+
     public void sendLocation(LocationSentListener listener) {
         this.mLocationSentListener = listener;
     }

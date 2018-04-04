@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,16 +21,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
-import com.sarthak.trackit.trackit.adapters.FriendsAdapter;
-import com.sarthak.trackit.trackit.adapters.GroupMembersAdapter;
+import com.sarthak.trackit.trackit.adapters.FriendsFragmentAdapter;
+import com.sarthak.trackit.trackit.adapters.GroupCreateMembersAdapter;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.setOnFriendClickListener
-        , GroupMembersAdapter.setOnGroupMemberClicked {
+public class CreateGroupActivity extends BaseActivity implements FriendsFragmentAdapter.setOnFriendClickListener
+        , GroupCreateMembersAdapter.setOnGroupMemberClicked {
 
     ArrayList<User> friendList = new ArrayList<>();
     ArrayList<String> friendKeyList = new ArrayList<>();
@@ -45,8 +44,8 @@ public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.
     TextView mGroupCountTv;
     RecyclerView mFriendsRecyclerView, mGroupRecyclerView;
 
-    GroupMembersAdapter mGroupFriendsAdapter = null;
-    FriendsAdapter mFriendsAdapter;
+    GroupCreateMembersAdapter mGroupFriendsAdapter = null;
+    FriendsFragmentAdapter mFriendsFragmentAdapter;
 
     FirebaseUser mUser;
 
@@ -93,6 +92,7 @@ public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.
                     groupSetupIntent.putExtra("userKey", groupMemberMap);
                     groupSetupIntent.putParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST, groupMemberList);
                     startActivity(groupSetupIntent);
+                    finish();
                 } else {
                     Toast.makeText(this, "Add at least one member", Toast.LENGTH_SHORT).show();
                 }
@@ -152,12 +152,12 @@ public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.
 
         mFriendsRecyclerView = findViewById(R.id.recycler_friends_new_group);
         mFriendsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mFriendsAdapter = new FriendsAdapter(this, friendList);
-        mFriendsRecyclerView.setAdapter(mFriendsAdapter);
+        mFriendsFragmentAdapter = new FriendsFragmentAdapter(this, friendList);
+        mFriendsRecyclerView.setAdapter(mFriendsFragmentAdapter);
 
         mGroupRecyclerView = findViewById(R.id.recycler_group_members);
         mGroupRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        mGroupFriendsAdapter = new GroupMembersAdapter(groupMemberList, this);
+        mGroupFriendsAdapter = new GroupCreateMembersAdapter(groupMemberList, this);
         mGroupRecyclerView.setAdapter(mGroupFriendsAdapter);
     }
 
@@ -194,7 +194,7 @@ public class CreateGroupActivity extends BaseActivity implements FriendsAdapter.
 
                                                 friendList.add(task.getResult().toObject(User.class));
                                                 friendKeyList.add(task.getResult().getId());
-                                                mFriendsAdapter.notifyDataSetChanged();
+                                                mFriendsFragmentAdapter.notifyDataSetChanged();
                                             }
                                         }
                                     });

@@ -26,7 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
-import com.sarthak.trackit.trackit.adapters.GroupAdapter;
+import com.sarthak.trackit.trackit.adapters.GroupsFragmentAdapter;
 import com.sarthak.trackit.trackit.adapters.SearchAdapter;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
@@ -40,13 +40,12 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
 
     private Menu menu;
     private SearchView searchView;
-    private EditText mSearchEt;
     private TextView mErrorText;
 
     private RecyclerView mSearchRecyclerView;
 
     private SearchAdapter searchAdapter;
-    private GroupAdapter groupAdapter;
+    private GroupsFragmentAdapter groupsFragmentAdapter;
 
     private FirebaseFirestore mFirestore;
     private FirebaseUser mUser;
@@ -94,7 +93,7 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
 
                 userList.clear();
                 userKeyList.clear();
-                mSearchRecyclerView.setAdapter(groupAdapter);
+                mSearchRecyclerView.setAdapter(groupsFragmentAdapter);
 
                 getFriendsList();
                 return true;
@@ -114,6 +113,7 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
             case R.id.action_search:
 
                 userList.clear();
+                userKeyList.clear();
                 mSearchRecyclerView.setAdapter(searchAdapter);
                 break;
         }
@@ -140,7 +140,6 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
         return false;
     }
 
-
     private void initFirebase() {
 
         mFirestore = FirebaseFirestore.getInstance();
@@ -157,6 +156,7 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
         setUpRecyclerView();
 
         mErrorText = findViewById(R.id.text_no_results);
+        mErrorText.setVisibility(View.VISIBLE);
     }
 
     private void setUpSearchToolbar() {
@@ -165,7 +165,7 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
         //searchView.setSuggestionsAdapter();
         searchView.animate();
 
-        mSearchEt = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        EditText mSearchEt = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         mSearchEt.setHint("Search...");
         mSearchEt.setHintTextColor(Color.DKGRAY);
         mSearchEt.setTextColor(getResources().getColor(R.color.colorPrimary));
@@ -173,13 +173,13 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
 
     private void setUpRecyclerView() {
 
-        searchAdapter = new SearchAdapter(SearchActivity.this, userKeyList, userList);
-        groupAdapter = new GroupAdapter(userList);
+        searchAdapter = new SearchAdapter(userKeyList, userList);
+        groupsFragmentAdapter = new GroupsFragmentAdapter(userList);
 
         mSearchRecyclerView = findViewById(R.id.result_list);
         mSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mSearchRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mSearchRecyclerView.setAdapter(groupAdapter);
+        mSearchRecyclerView.setAdapter(groupsFragmentAdapter);
     }
 
     private void getFriendsList() {
@@ -209,7 +209,7 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
                                             if (task.isSuccessful()) {
 
                                                 userList.add(task.getResult().toObject(User.class));
-                                                groupAdapter.notifyDataSetChanged();
+                                                groupsFragmentAdapter.notifyDataSetChanged();
                                             }
                                         }
                                     });

@@ -89,7 +89,7 @@ public class NewUserActivity extends BaseActivity implements View.OnClickListene
 
             case R.id.button_phone_login:
 
-                Intent loginIntent = new Intent(this, LoginActivity.class);
+                Intent loginIntent = new Intent(this, PhoneLoginActivity.class);
                 startActivity(loginIntent);
                 break;
 

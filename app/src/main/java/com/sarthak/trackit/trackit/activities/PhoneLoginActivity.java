@@ -14,7 +14,7 @@ import com.sarthak.trackit.trackit.R;
 
 import java.util.concurrent.TimeUnit;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class PhoneLoginActivity extends BaseActivity implements View.OnClickListener {
 
     private String phone, verificationId;
 
@@ -66,7 +66,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     String verificationCode = mCodeEt.getText().toString();
 
                     PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, verificationCode);
-                    PhoneLoginManager phoneLoginManager = new PhoneLoginManager(LoginActivity.this);
+                    PhoneLoginManager phoneLoginManager = new PhoneLoginManager(PhoneLoginActivity.this);
                     phoneLoginManager.signInWithPhoneAuthCredential(credential);
                 }
                 break;
@@ -99,14 +99,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 
-                PhoneLoginManager phoneLoginManager = new PhoneLoginManager(LoginActivity.this);
+                PhoneLoginManager phoneLoginManager = new PhoneLoginManager(PhoneLoginActivity.this);
                 phoneLoginManager.signInWithPhoneAuthCredential(phoneAuthCredential);
             }
 
             @Override
             public void onVerificationFailed(FirebaseException e) {
 
-                Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(PhoneLoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override

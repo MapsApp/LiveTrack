@@ -1,16 +1,16 @@
 package com.sarthak.trackit.trackit.adapters;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +39,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     // If 2, request received.
     // If 3, friends.
     int requestType = 0;
+    int flag = 0;
 
     private ArrayList<String> userKeyList = new ArrayList<>();
     private ArrayList<User> userList = new ArrayList<>();
@@ -46,17 +47,15 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     private User mCurrentUser;
     private FirebaseUser mUser;
 
-    private Context mContext;
 
-    public SearchAdapter(Context context, ArrayList<String> userKeyList, ArrayList<User> userList) {
+    public SearchAdapter(ArrayList<String> userKeyList, ArrayList<User> userList) {
 
-        this.mContext = context;
         this.userKeyList = userKeyList;
         this.userList = userList;
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         if (!mUser.isAnonymous())
-        getCurrentUserObject();
+            getCurrentUserObject();
     }
 
     @NonNull
@@ -84,16 +83,16 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
     private void getCurrentUserObject() {
 
-            FirebaseFirestore.getInstance().collection(Constants.USERS_REFERENCE).document(mUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        FirebaseFirestore.getInstance().collection(Constants.USERS_REFERENCE).document(mUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                    if (task.isSuccessful()) {
+                if (task.isSuccessful()) {
 
-                        mCurrentUser = task.getResult().toObject(User.class);
-                    }
+                    mCurrentUser = task.getResult().toObject(User.class);
                 }
-            });
+            }
+        });
     }
 
     public class SearchViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -105,8 +104,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         private Button mRequestBtn, mCancelBtn;
         private ImageButton mSearchExpandBtn;
         private ImageView mSearchUserIv;
-        private ProgressBar progressBar;
-        private LinearLayout searchOptionsLayout;
+        private ProgressBar progressBar, progressBarRequest;
+        private FrameLayout searchOptionsLayout;
 
         private FirebaseFirestore mFirestore;
         private FirebaseUser mUser;
@@ -127,6 +126,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
             searchOptionsLayout = view.findViewById(R.id.search_options_layout);
 
             progressBar = view.findViewById(android.R.id.progress);
+            progressBarRequest = view.findViewById(R.id.progress_bar_request);
 
             mSearchExpandBtn.setOnClickListener(this);
             mRequestBtn.setOnClickListener(this);
@@ -184,11 +184,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
                         case View.GONE:
 
-                            checkForRequest(searchOptionsLayout);
+                            checkForRequest();
 
                             searchOptionsLayout.setVisibility(View.VISIBLE);
 
-                            mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_forward));
+                            mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_forward));
 
                             mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_forward));
 
@@ -198,7 +198,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
                             searchOptionsLayout.setVisibility(View.GONE);
 
-                            mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.rotate_backward));
+                            mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_backward));
 
                             mSearchExpandBtn.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.rotate_backward));
 
@@ -215,7 +215,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
                 case R.id.button_search_add_friend:
 
-                    Toast.makeText(itemView.getContext(), "Request sent.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(itemView.getContext(), "Long click.", Toast.LENGTH_SHORT).show();
                     break;
             }
             return false;
@@ -246,7 +246,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                     });
         }
 
-        private void checkForRequest(final LinearLayout layout) {
+        private void checkForRequest() {
+
+            Log.d("oil","Checking...");
+            flag = 0;
 
             mFirestore
                     .collection(Constants.CONTACTS_REFERENCE)
@@ -266,6 +269,18 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
                                     requestType = 1;
                                     mRequestBtn.setText("Cancel Request");
+                                    mRequestBtn.setEnabled(true);
+                                    mCancelBtn.setEnabled(true);
+                                    progressBarRequest.setVisibility(View.GONE);
+                                } else {
+
+                                    flag = flag + 1;
+                                    if (flag == 6) {
+
+                                        mRequestBtn.setEnabled(true);
+                                        mCancelBtn.setEnabled(true);
+                                        progressBarRequest.setVisibility(View.GONE);
+                                    }
                                 }
                             }
                         }
@@ -288,7 +303,20 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                                 if (document != null && document.exists()) {
 
                                     requestType = 2;
-                                    mRequestBtn.setText("Decline Request");
+                                    mRequestBtn.setText("Accept Request");
+                                    mCancelBtn.setText("Decline Request");
+                                    mRequestBtn.setEnabled(true);
+                                    mCancelBtn.setEnabled(true);
+                                    progressBarRequest.setVisibility(View.GONE);
+                                } else {
+
+                                    flag = flag + 2;
+                                    if (flag == 6) {
+
+                                        mRequestBtn.setEnabled(true);
+                                        mCancelBtn.setEnabled(true);
+                                        progressBarRequest.setVisibility(View.GONE);
+                                    }
                                 }
                             }
                         }
@@ -311,7 +339,19 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                                 if (document != null && document.exists()) {
 
                                     requestType = 3;
-                                    layout.setBackgroundColor(mContext.getResources().getColor(R.color.md_deep_purple_100));
+                                    mRequestBtn.setText("Unfriend");
+                                    mRequestBtn.setEnabled(true);
+                                    mCancelBtn.setEnabled(true);
+                                    progressBarRequest.setVisibility(View.GONE);
+                                } else {
+
+                                    flag = flag + 3;
+                                    if (flag == 6) {
+
+                                        mRequestBtn.setEnabled(true);
+                                        mCancelBtn.setEnabled(true);
+                                        progressBarRequest.setVisibility(View.GONE);
+                                    }
                                 }
                             }
                         }
@@ -319,6 +359,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         }
 
         private void sendFriendRequest() {
+
+            mRequestBtn.setEnabled(false);
+            mCancelBtn.setEnabled(false);
+            progressBarRequest.setVisibility(View.VISIBLE);
 
             Long time = System.currentTimeMillis() / 1000;
             final String timestamp = time.toString();
@@ -339,7 +383,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                                 if (task.isSuccessful()) {
 
                                     requestType = 1;
-                                    Toast.makeText(mContext, "Request sent.", Toast.LENGTH_SHORT).show();
+                                    mRequestBtn.setEnabled(true);
+                                    mRequestBtn.setText("Cancel Request");
+                                    mCancelBtn.setEnabled(true);
+                                    progressBarRequest.setVisibility(View.GONE);
+                                    Toast.makeText(itemView.getContext(), "Request sent.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -349,6 +397,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         }
 
         private void acceptRequest() {
+
+            mRequestBtn.setEnabled(false);
+            mCancelBtn.setEnabled(false);
+            progressBarRequest.setVisibility(View.VISIBLE);
 
             Long time = System.currentTimeMillis() / 1000;
             final String timestamp = time.toString();
@@ -381,7 +433,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                                                         if (task.isSuccessful()) {
 
                                                             requestType = 3;
-                                                            Toast.makeText(mContext, "Added as friends.", Toast.LENGTH_SHORT).show();
+                                                            mRequestBtn.setEnabled(true);
+                                                            mRequestBtn.setText("Unfriend");
+                                                            mCancelBtn.setEnabled(true);
+                                                            mCancelBtn.setText("Cancel");
+                                                            progressBarRequest.setVisibility(View.GONE);
+                                                            Toast.makeText(itemView.getContext(), "Added as friends.", Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                 });
@@ -398,6 +455,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
         private void declineRequest() {
 
+            mRequestBtn.setEnabled(false);
+            mCancelBtn.setEnabled(false);
+            progressBarRequest.setVisibility(View.VISIBLE);
+
             mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Received").document(userKey).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
@@ -411,7 +472,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                                 if (task.isSuccessful()) {
 
                                     requestType = 0;
-                                    Toast.makeText(mContext, "Request declined.", Toast.LENGTH_SHORT).show();
+                                    mRequestBtn.setEnabled(true);
+                                    mRequestBtn.setText("Add Friend");
+                                    mCancelBtn.setEnabled(true);
+                                    mCancelBtn.setText("Cancel");
+                                    progressBarRequest.setVisibility(View.GONE);
+                                    Toast.makeText(itemView.getContext(), "Request declined.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -421,6 +487,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         }
 
         private void cancelRequest() {
+
+            mRequestBtn.setEnabled(false);
+            mCancelBtn.setEnabled(false);
+            progressBarRequest.setVisibility(View.VISIBLE);
 
             mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Sent").document(userKey).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -435,7 +505,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
                                 if (task.isSuccessful()) {
 
                                     requestType = 0;
-                                    Toast.makeText(mContext, "Request cancelled.", Toast.LENGTH_SHORT).show();
+                                    mRequestBtn.setEnabled(true);
+                                    mRequestBtn.setText("Add Friend");
+                                    mCancelBtn.setEnabled(true);
+                                    progressBarRequest.setVisibility(View.GONE);
+                                    Toast.makeText(itemView.getContext(), "Request cancelled.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -445,6 +519,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         }
 
         private void unFriend() {
+
+            mRequestBtn.setEnabled(false);
+            mCancelBtn.setEnabled(false);
+            progressBarRequest.setVisibility(View.VISIBLE);
 
             mFirestore.collection(Constants.CONTACTS_REFERENCE).document(mUser.getUid()).collection("Friends").document(userKey).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -460,7 +538,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
 
                                     // TODO: Prompt confirmation
                                     requestType = 0;
-                                    Toast.makeText(mContext, "Unfriend.", Toast.LENGTH_SHORT).show();
+                                    mRequestBtn.setEnabled(true);
+                                    mRequestBtn.setText("Add Friend");
+                                    mCancelBtn.setEnabled(true);
+                                    progressBarRequest.setVisibility(View.GONE);
+                                    Toast.makeText(itemView.getContext(), "Unfriend.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

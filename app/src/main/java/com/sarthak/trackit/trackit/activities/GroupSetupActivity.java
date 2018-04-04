@@ -149,6 +149,7 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
                                 if (task.isSuccessful()) {
 
                                     startGroupSetupActivity(groupName);
+                                    finish();
                                 }
                             }
                         });

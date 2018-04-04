@@ -68,47 +68,59 @@
         app:srcCompat="@drawable/ic_expand_more_black"
         tools:ignore="ContentDescription" />
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/search_options_layout"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/layout"
-        android:background="#f5f5f5"
-        android:visibility="gone"
-        android:weightSum="2">
+        android:visibility="gone">
 
-        <Button
-            android:id="@+id/button_search_add_friend"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:longClickable="true"
-            android:text="Add friend"
-            android:textAllCaps="false" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="#f5f5f5"
+            android:weightSum="2">
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="#eeeeee" />
+            <Button
+                android:id="@+id/button_search_add_friend"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:longClickable="true"
+                android:enabled="false"
+                android:text="Add friend"
+                android:textAllCaps="false" />
 
-        <Button
-            android:id="@+id/button_cancel"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:longClickable="true"
-            android:text="Cancel"
-            android:textAllCaps="false" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#eeeeee" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="#eeeeee" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/button_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:longClickable="true"
+                android:enabled="false"
+                android:text="Cancel"
+                android:textAllCaps="false"
+                tools:ignore="ButtonOrder" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progress_bar_request"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
 </RelativeLayout>

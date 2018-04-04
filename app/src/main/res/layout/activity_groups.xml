@@ -1,68 +1,62 @@
-<?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sarthak.trackit.trackit.activities.GroupsActivity">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_smaller"
-            android:background="@android:color/white"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:layout_scrollFlags="scroll|enterAlways">
-
-            <include
-                android:id="@+id/groups_activity_toolbar"
-                layout="@layout/toolbar_search"
-                app:layout_scrollFlags="scroll|enterAlways" />
-
-            <LinearLayout
-                android:id="@+id/location_sharing_layout"
-                android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
-                android:background="@android:color/white"
-                android:visibility="gone">
-
-                <com.sarthak.trackit.trackit.utils.SquareImageView
-                    android:layout_width="28dp"
-                    android:layout_height="20dp"
-                    android:src="@mipmap/ic_location_off"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginRight="20dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Location sharing is off"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="20sp"
-                    android:layout_gravity="center_vertical" />
-
-            </LinearLayout>
-
-        </android.support.design.widget.AppBarLayout>
-
-    </RelativeLayout>
+    android:fitsSystemWindows="true">
 
     <FrameLayout
         android:id="@+id/map_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="?actionBarSize"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:layout_marginBottom="?actionBarSize" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_small">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include
+                android:id="@+id/groups_activity_toolbar"
+                layout="@layout/toolbar_search" />
+
+        </android.support.v7.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/location_sharing_layout"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="@android:color/white"
+            android:visibility="gone">
+
+            <com.sarthak.trackit.trackit.utils.SquareImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@mipmap/ic_location_off"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location sharing is off"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp"
+                android:layout_gravity="center_vertical" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_bottom_sheet"

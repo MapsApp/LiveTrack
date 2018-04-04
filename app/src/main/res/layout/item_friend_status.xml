@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:orientation="horizontal"
-    android:weightSum="5">
+    android:focusable="true"
+    android:clickable="true"
+    android:background="?selectableItemBackground">
 
     <RelativeLayout
-        android:layout_width="0dp"
+        android:id="@+id/relativeLayout"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_centerVertical="true">
 
         <ProgressBar
             android:id="@android:id/progress"
@@ -20,34 +22,77 @@
 
         <com.sarthak.trackit.trackit.utils.SquareImageView
             android:id="@+id/image_person"
-            android:layout_width="match_parent"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="@dimen/padding_small" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:padding="@dimen/padding_smaller" />
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/text_person_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="4"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_small">
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/relativeLayout"
+        android:layout_toRightOf="@+id/relativeLayout"
+        android:ellipsize="end"
+        android:maxLength="15"
+        android:maxLines="1"
+        android:paddingTop="@dimen/margin_smaller"
+        android:text="@string/app_name"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:ignore="RtlSymmetry" />
 
-        <TextView
-            android:id="@+id/text_person_name"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/text_person_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_person_name"
+        android:layout_toEndOf="@+id/relativeLayout"
+        android:layout_toRightOf="@+id/relativeLayout"
+        android:ellipsize="end"
+        android:maxLength="10"
+        android:maxLines="1"
+        android:paddingEnd="@dimen/padding_smaller"
+        android:paddingTop="@dimen/margin_smaller"
+        android:text="@string/app_name"
+        android:textSize="14sp"
+        tools:ignore="RtlCompat" />
 
-        <TextView
-            android:id="@+id/text_person_username"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/padding_smaller"
-            android:text="@string/app_name"
-            android:textSize="14sp" />
-    </LinearLayout>
-</LinearLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@+id/text_person_username"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/margin_smaller"
+        android:layout_marginStart="@dimen/margin_smaller"
+        android:layout_toLeftOf="@+id/button2"
+        android:layout_toStartOf="@+id/button2"
+        android:background="@drawable/btn_selector_status_blue"
+        android:padding="@dimen/padding_smaller"
+        android:stateListAnimator="@null"
+        android:text="Accept"
+        android:textSize="12sp"
+        tools:ignore="UnusedAttribute" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="@dimen/margin_smaller"
+        android:layout_marginStart="@dimen/margin_smaller"
+        android:background="@drawable/btn_selector_status_blue"
+        android:padding="@dimen/padding_smaller"
+        android:stateListAnimator="@null"
+        android:text="Cancel"
+        android:textSize="12sp"
+        tools:ignore="ButtonOrder,UnusedAttribute" />
+</RelativeLayout>

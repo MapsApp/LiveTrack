@@ -14,6 +14,10 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
 import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
@@ -40,10 +44,18 @@ public class LocationService extends Service {
     public MyLocationListener listener;
     public Location previousBestLocation = null;
 
+    public FirebaseFirestore mFirestore;
+    public FirebaseUser mUser;
+
     @Override
     public void onCreate() {
         super.onCreate();
         intent = new Intent(BROADCAST_ACTION);
+
+        FirebaseApp.initializeApp(LocationService.this);
+
+        mFirestore = FirebaseFirestore.getInstance();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
         // cancel if already existed
         /*if(mTimer != null) {
             mTimer.cancel();
@@ -53,11 +65,11 @@ public class LocationService extends Service {
         }*/
 
         // schedule task
-        mTimer.schedule(new UploadDataTimerTask(), 0,  UPLOAD_INTERVAL);
+        mTimer.schedule(new UploadDataTimerTask(), 0, UPLOAD_INTERVAL);
     }
 
     @Override
-    public int onStartCommand(Intent intent, int f,  int startId) {
+    public int onStartCommand(Intent intent, int f, int startId) {
 
         Toast.makeText(this, "Service started.", Toast.LENGTH_SHORT).show();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -79,8 +91,7 @@ public class LocationService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent)
-    {
+    public IBinder onBind(Intent intent) {
         return null;
     }
 
@@ -126,7 +137,9 @@ public class LocationService extends Service {
         return false;
     }
 
-    /** Checks whether two providers are the same */
+    /**
+     * Checks whether two providers are the same
+     */
     private boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
             return provider2 == null;
@@ -158,10 +171,9 @@ public class LocationService extends Service {
 
     public class MyLocationListener implements android.location.LocationListener {
 
-        public void onLocationChanged(final Location loc)
-        {
+        public void onLocationChanged(final Location loc) {
             Log.i("**********************", "Location changed");
-            if(isBetterLocation(loc, previousBestLocation)) {
+            if (isBetterLocation(loc, previousBestLocation)) {
                 loc.getLatitude();
                 loc.getLongitude();
 
@@ -175,40 +187,52 @@ public class LocationService extends Service {
             }
         }
 
-        public void onProviderDisabled(String provider)
-        {
-            Toast.makeText( getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT ).show();
+        public void onProviderDisabled(String provider) {
+            Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
         }
 
-        public void onProviderEnabled(String provider)
-        {
-            Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
+        public void onProviderEnabled(String provider) {
+            Toast.makeText(getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
         }
 
-        public void onStatusChanged(String provider, int status, Bundle extras)
-        {
+        public void onStatusChanged(String provider, int status, Bundle extras) {
 
         }
     }
 
     class UploadDataTimerTask extends TimerTask {
 
+
         @Override
+
         public void run() {
+
             // run on another thread
+
             mHandler.post(new Runnable() {
 
+
                 @Override
+
                 public void run() {
+
 
                     Log.d("TAG", String.valueOf(currentLocation));
 
+
                     Intent intent = new Intent();
+
                     intent.setAction(BROADCAST_ACTION);
+
                     intent.putExtra("ParcelableGeoPoint", currentLocation);
+
                     sendBroadcast(intent);
+
                 }
+
             });
+
         }
+
     }
 }

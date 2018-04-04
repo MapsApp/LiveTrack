@@ -86,7 +86,7 @@ public class GroupFriendsAdapter extends RecyclerView.Adapter<GroupFriendsAdapte
 
             txtGroupFriendName = itemView.findViewById(R.id.text_group_friend_name);
             txtGroupFriendStatus = itemView.findViewById(R.id.text_group_friend_username);
-            mAdminTv = itemView.findViewById(R.id.admin_tv);
+            mAdminTv = itemView.findViewById(R.id.text_admin);
 
             progressBar = itemView.findViewById(android.R.id.progress);
 

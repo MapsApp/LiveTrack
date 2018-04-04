@@ -1,8 +1,8 @@
 package com.sarthak.trackit.trackit.activities;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,9 +13,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.model.User;
+import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.UserSharedPreferences;
 
 public class AccountSetupActivity extends BaseActivity implements View.OnFocusChangeListener, View.OnClickListener {
@@ -112,9 +112,12 @@ public class AccountSetupActivity extends BaseActivity implements View.OnFocusCh
     private void setUpUserCredentials() {
 
         // get device Id to allow login on one device.
+        // current device Id will be matched with that in databaseand if found different, user will be signed out.
+        // TODO: 2. Match current device Id with that in database.
+        final String deviceToken = FirebaseInstanceId.getInstance().getToken();
+        // get device Id to allow login on one device.
         // current device Id will be matched with that in database and if found different, user will be signed out.
         // TODO: 2. Match curent device Id with that in database.
-        deviceToken = FirebaseInstanceId.getInstance().getToken();
 
         // variable account stores phone/email of the user.
         // phone in case of Phone auth.

@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -53,7 +54,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.GeoPoint;
 import com.sarthak.trackit.trackit.R;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.sarthak.trackit.trackit.activities.GroupsActivity;
@@ -285,7 +285,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback, Locati
                 title.setText(marker.getTitle());
 
                 TextView snippet = infoWindow.findViewById(R.id.snippet);
-                snippet.setText(marker.getSnippet());
+                snippet.setText(marker.getTitle());
 
 
                 return infoWindow;

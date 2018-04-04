@@ -33,7 +33,9 @@ import com.sarthak.trackit.trackit.utils.RecyclerViewDivider;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class GroupsActivity extends BaseActivity implements View.OnClickListener, GroupFriendsAdapter.ItemClickListener {
+public class GroupsActivity extends BaseActivity implements
+        View.OnClickListener
+        , GroupFriendsAdapter.ItemClickListener {
 
     String mGroupName;
     String[] MEMBERS;
@@ -322,7 +324,6 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             }
         }
     }
-
     public void sendLocation(LocationSentListener listener) {
         this.mLocationSentListener = listener;
     }

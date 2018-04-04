@@ -241,8 +241,11 @@ public class SearchActivity extends BaseActivity implements SearchView.OnQueryTe
 
                         if (documentSnapshot != null && documentSnapshot.exists()) {
 
-                            userKeyList.add(documentSnapshot.getId());
-                            userList.add(documentSnapshot.toObject(User.class));
+                            if (!documentSnapshot.getId().equals(mUser.getUid())) {
+
+                                userKeyList.add(documentSnapshot.getId());
+                                userList.add(documentSnapshot.toObject(User.class));
+                            }
                             mErrorText.setVisibility(View.GONE);
                         } else {
 

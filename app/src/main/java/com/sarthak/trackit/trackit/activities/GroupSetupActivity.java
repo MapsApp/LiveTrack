@@ -21,6 +21,8 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupSetupMembersAdapter;
+import com.sarthak.trackit.trackit.model.Group;
+import com.sarthak.trackit.trackit.model.GroupMember;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 
@@ -29,8 +31,7 @@ import java.util.HashMap;
 
 public class GroupSetupActivity extends BaseActivity implements View.OnClickListener {
 
-    HashMap<String, HashMap<String, String>> groupMembersMap = new HashMap<>();
-    HashMap<String, String> memberMap = new HashMap<>();
+    HashMap<String, GroupMember> groupMembersMap = new HashMap<>();
     ArrayList<User> mGroupMembersList = new ArrayList<>();
 
     EditText mGroupNameEt;
@@ -49,7 +50,7 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
         setUpToolbar(this);
 
         mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
-        groupMembersMap = (HashMap<String, HashMap<String, String>>) getIntent().getSerializableExtra("userKey");
+        groupMembersMap = (HashMap<String, GroupMember>) getIntent().getSerializableExtra("userKey");
 
         initFirebase();
 
@@ -101,25 +102,28 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
                 .document(mUser.getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                if (task.isSuccessful()) {
+                        if (task.isSuccessful()) {
 
-                    mCurrentUser = task.getResult().toObject(User.class);
-                }
-            }
-        });
+                            mCurrentUser = task.getResult().toObject(User.class);
+                        }
+                    }
+                });
     }
 
     private void saveDataToFirebase() {
 
-        String timestamp = getCurrentTimestamp();
+        final String timestamp = getCurrentTimestamp();
 
-        final String groupName = mGroupNameEt.getText().toString() + "+" + timestamp;
+        final String groupName = mGroupNameEt.getText().toString();
 
-        final HashMap<String, String> groupMap = new HashMap<>();
-        groupMap.put(groupName, timestamp);
+        final String groupKey = mUser.getUid() + "+" + timestamp;
+
+        ArrayList<String> adminList = new ArrayList<>();
+        adminList.add(mUser.getUid());
+        Group group = new Group(groupName, timestamp, adminList);
 
         if (!mGroupNameEt.getText().toString().isEmpty()) {
 
@@ -127,35 +131,60 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
             createAdminMap();
 
             mFirestore.collection(Constants.GROUPS_REFERENCE)
-                    .document(groupName)
-                    .set(groupMembersMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
+                    .document(groupKey)
+                    .collection("GroupDetails")
+                    .add(group)
+                    .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentReference> task) {
 
-                    if (task.isSuccessful()) {
+                            if (task.isSuccessful()) {
 
-                        WriteBatch memberBatch = mFirestore.batch();
+                                WriteBatch groupBatch = mFirestore.batch();
 
-                        for (String key : groupMembersMap.keySet()) {
+                                for (String member : groupMembersMap.keySet()) {
 
-                            DocumentReference memberRef = mFirestore.collection(Constants.USER_GROUPS_REFERENCE).document(key);
-                            memberBatch.set(memberRef, groupMap, SetOptions.merge());
-                        }
+                                    DocumentReference groupRef = mFirestore.collection(Constants.GROUPS_REFERENCE)
+                                            .document(groupKey)
+                                            .collection("GroupMembers")
+                                            .document(member);
 
-                        memberBatch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-
-                                if (task.isSuccessful()) {
-
-                                    startGroupSetupActivity(groupName);
-                                    finish();
+                                    groupBatch.set(groupRef, groupMembersMap.get(member), SetOptions.merge());
                                 }
+
+                                groupBatch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                        if (task.isSuccessful()) {
+
+                                            WriteBatch memberBatch = mFirestore.batch();
+                                            HashMap<String, String> timeMap = new HashMap<>();
+                                            timeMap.put(groupKey, timestamp);
+
+                                            for (String key : groupMembersMap.keySet()) {
+
+                                                DocumentReference memberRef = mFirestore.collection(Constants.USER_GROUPS_REFERENCE).document(key);
+                                                memberBatch.set(memberRef, timeMap, SetOptions.merge());
+                                            }
+
+                                            memberBatch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+
+                                                    if (task.isSuccessful()) {
+
+                                                        startGroupSetupActivity(groupName, groupKey);
+                                                        finish();
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
                             }
-                        });
-                    }
-                }
-            });
+                        }
+                    });
 
         } else {
             Toast.makeText(this, "Group name cannot be empty",
@@ -165,24 +194,25 @@ public class GroupSetupActivity extends BaseActivity implements View.OnClickList
 
     private String getCurrentTimestamp() {
 
-        Long time = System.currentTimeMillis()/1000;
+        Long time = System.currentTimeMillis() / 1000;
         return time.toString();
     }
 
     private void createAdminMap() {
 
-        memberMap.put("admin", "true");
-        memberMap.put("location", "true");
-        memberMap.put("displayName", mCurrentUser.getDisplayName());
-        groupMembersMap.put(mUser.getUid(), memberMap);
+        GroupMember member = new GroupMember();
+        member.setLocation("true");
+        groupMembersMap.put(mUser.getUid(), member);
     }
 
-    private void startGroupSetupActivity(String groupName) {
+    private void startGroupSetupActivity(String groupName, String groupKey) {
 
         startActivity(new Intent(GroupSetupActivity.this,
                 GroupsActivity.class)
                 .putExtra(Constants.GROUP_NAME,
                         groupName)
+                .putExtra(Constants.GROUP_KEY,
+                        groupKey)
                 .putParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST,
                         mGroupMembersList));
     }

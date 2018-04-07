@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +22,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.FriendsFragmentAdapter;
 import com.sarthak.trackit.trackit.adapters.GroupCreateMembersAdapter;
+import com.sarthak.trackit.trackit.model.GroupMember;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
 
@@ -38,8 +38,7 @@ public class CreateGroupActivity extends BaseActivity implements FriendsFragment
     ArrayList<User> groupMemberList = new ArrayList<>();
     ArrayList<String> groupMemberKeyList = new ArrayList<>();
 
-    HashMap<String, HashMap<String, String>> groupMemberMap = new HashMap<>();
-    HashMap<String, String> memberMap = new HashMap<>();
+    HashMap<String, GroupMember> groupMemberMap = new HashMap<>();
 
     TextView mGroupCountTv;
     RecyclerView mFriendsRecyclerView, mGroupRecyclerView;
@@ -87,7 +86,6 @@ public class CreateGroupActivity extends BaseActivity implements FriendsFragment
 
                 if (!groupMemberList.isEmpty()) {
 
-                    Log.d("oil", groupMemberMap.size() + " " + groupMemberList.size() + " " + groupMemberKeyList.size());
                     Intent groupSetupIntent = new Intent(this, GroupSetupActivity.class);
                     groupSetupIntent.putExtra("userKey", groupMemberMap);
                     groupSetupIntent.putParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST, groupMemberList);
@@ -109,11 +107,9 @@ public class CreateGroupActivity extends BaseActivity implements FriendsFragment
             groupMemberList.add(friendList.get(position));
             groupMemberKeyList.add(friendKeyList.get(position));
 
-            memberMap.put("admin", "false");
-            memberMap.put("location", "false");
-            memberMap.put("displayName", friendList.get(position).getDisplayName());
-
-            groupMemberMap.put(friendKeyList.get(position), memberMap);
+            GroupMember groupMember = new GroupMember();
+            groupMember.setLocation("false");
+            groupMemberMap.put(friendKeyList.get(position), groupMember);
             mGroupFriendsAdapter.notifyDataSetChanged();
 
             if (groupMemberList.size() == 0) {
@@ -132,7 +128,6 @@ public class CreateGroupActivity extends BaseActivity implements FriendsFragment
         if (!groupMemberList.isEmpty()) {
 
             groupMemberList.remove(groupMemberList.get(position));
-            groupMemberMap.remove(groupMemberKeyList.get(position));
             groupMemberKeyList.remove(groupMemberKeyList.get(position));
             mGroupFriendsAdapter.notifyDataSetChanged();
 

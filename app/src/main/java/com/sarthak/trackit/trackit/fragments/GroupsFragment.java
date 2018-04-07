@@ -19,10 +19,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.activities.CreateGroupActivity;
 import com.sarthak.trackit.trackit.activities.GroupsActivity;
 import com.sarthak.trackit.trackit.adapters.UserGroupFragmentAdapter;
+import com.sarthak.trackit.trackit.model.Group;
 import com.sarthak.trackit.trackit.utils.Constants;
 import com.sarthak.trackit.trackit.utils.RecyclerViewItemClickedListener;
 
@@ -31,6 +33,8 @@ import java.util.ArrayList;
 public class GroupsFragment extends Fragment implements View.OnClickListener, RecyclerViewItemClickedListener {
 
     private ArrayList<String> groupList = new ArrayList<>();
+    private ArrayList<String> groupKeyList = new ArrayList<>();
+
     FloatingActionButton mCreateGroupFab;
 
     RecyclerView mFriendsListRv;
@@ -85,10 +89,11 @@ public class GroupsFragment extends Fragment implements View.OnClickListener, Re
     public void onItemClicked(View view, int position) {
 
         String groupName = groupList.get(position);
-        Toast.makeText(getActivity(), groupList.get(position).substring(0, groupList.get(position).indexOf("+")), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), groupList.get(position), Toast.LENGTH_SHORT).show();
 
         startActivity(new Intent(getContext(), GroupsActivity.class)
-                .putExtra(Constants.GROUP_NAME, groupName));
+                .putExtra(Constants.GROUP_NAME, groupName)
+                .putExtra(Constants.GROUP_KEY, groupKeyList.get(position)));
     }
 
     private void getUserGroups() {
@@ -108,10 +113,25 @@ public class GroupsFragment extends Fragment implements View.OnClickListener, Re
 
                             if (document != null && document.exists()) {
 
-                                for (String group : document.getData().keySet()) {
+                                for (final String group : document.getData().keySet()) {
 
-                                    groupList.add(group);
-                                    adapter.notifyDataSetChanged();
+                                    mFirestore.collection(Constants.GROUPS_REFERENCE)
+                                            .document(group)
+                                            .collection("GroupDetails")
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                                    for (DocumentSnapshot groupSnapshot : task.getResult()) {
+
+                                                        Group groupDetails = groupSnapshot.toObject(Group.class);
+                                                        groupList.add(groupDetails.getName());
+                                                        groupKeyList.add(group);
+                                                        adapter.notifyDataSetChanged();
+                                                    }
+                                                }
+                                            });
                                 }
                             }
                         }

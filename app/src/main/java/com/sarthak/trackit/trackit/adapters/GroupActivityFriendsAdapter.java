@@ -2,6 +2,7 @@ package com.sarthak.trackit.trackit.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.CircleTransform;
@@ -20,18 +22,24 @@ import java.util.ArrayList;
 public class GroupActivityFriendsAdapter extends RecyclerView.Adapter<GroupActivityFriendsAdapter.GroupFriendsViewHolder> {
 
     private ArrayList<String> adminStatusList = new ArrayList<>();
+    private ArrayList<String> memberKeyList = new ArrayList<>();
     private ArrayList<User> groupMemberList = new ArrayList<>();
 
     private ItemClickListener mListener;
 
-    public GroupActivityFriendsAdapter(ArrayList<User> groupMemberList, ArrayList<String> adminStatusList) {
+    public GroupActivityFriendsAdapter(ArrayList<User> groupMemberList, ArrayList<String> memberKeyList) {
 
         this.groupMemberList = groupMemberList;
+        this.memberKeyList = memberKeyList;
         this.adminStatusList = adminStatusList;
     }
 
     public void setOnRecyclerViewItemClickListener(ItemClickListener listener) {
         this.mListener = listener;
+    }
+
+    public void setAdminList(ArrayList<String> adminList) {
+        this.adminStatusList = adminList;
     }
 
     @NonNull
@@ -62,10 +70,17 @@ public class GroupActivityFriendsAdapter extends RecyclerView.Adapter<GroupActiv
         holder.txtGroupFriendStatus.setText("Active");
         holder.txtGroupFriendName.setText(groupMemberList.get(position).getDisplayName());
 
-        if (adminStatusList.get(holder.getAdapterPosition()).equals("true")) {
-            holder.mAdminTv.setVisibility(View.VISIBLE);
-        } else {
-            holder.mAdminTv.setVisibility(View.GONE);
+        Log.d("oil", ""+adminStatusList.size());
+        if (adminStatusList != null) {
+
+            for (int i = 0; i < adminStatusList.size(); i++) {
+
+                if (memberKeyList.get(holder.getAdapterPosition()).equals(adminStatusList.get(i))) {
+                    holder.mAdminTv.setVisibility(View.VISIBLE);
+                } else {
+                    holder.mAdminTv.setVisibility(View.GONE);
+                }
+            }
         }
     }
 

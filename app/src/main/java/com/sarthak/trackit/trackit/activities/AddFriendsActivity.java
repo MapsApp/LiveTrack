@@ -36,8 +36,6 @@ public class AddFriendsActivity extends AppCompatActivity implements RecyclerVie
     private ArrayList<String> groupMemberKeyList = new ArrayList<>();
     private ArrayList<User> groupMemberList = new ArrayList<>();
 
-    private HashMap<String, String> memberMap = new HashMap<>();
-
     private RecyclerView mFriendsRv;
 
     private AddFriendsAdapter groupsFragmentAdapter;
@@ -124,10 +122,7 @@ public class AddFriendsActivity extends AppCompatActivity implements RecyclerVie
             groupMemberList.add(friendList.get(position));
             groupMemberKeyList.add(friendKeyList.get(position));
 
-            memberMap.put("admin", "false");
-            memberMap.put("location", "false");
-            memberMap.put("displayName", friendList.get(position).getDisplayName());
-
+            //addFriendToGroupDatabase();
             Toast.makeText(this, friendList.get(position).getDisplayName() + " added to list.", Toast.LENGTH_SHORT).show();
         } else {
 

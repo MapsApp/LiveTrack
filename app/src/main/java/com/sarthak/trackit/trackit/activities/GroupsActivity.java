@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -22,9 +23,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.sarthak.trackit.trackit.R;
 import com.sarthak.trackit.trackit.adapters.GroupActivityFriendsAdapter;
 import com.sarthak.trackit.trackit.fragments.MapsFragment;
+import com.sarthak.trackit.trackit.model.Group;
+import com.sarthak.trackit.trackit.model.GroupMember;
 import com.sarthak.trackit.trackit.model.ParcelableGeoPoint;
 import com.sarthak.trackit.trackit.model.User;
 import com.sarthak.trackit.trackit.utils.Constants;
@@ -38,19 +42,22 @@ public class GroupsActivity extends BaseActivity implements
         View.OnClickListener
         , GroupActivityFriendsAdapter.ItemClickListener {
 
-    String mGroupName;
+    String groupName;
+    String groupKey;
+
+    ArrayList<String> adminKeyList = new ArrayList<>();
+
     String[] MEMBERS;
     String locationStatus;
 
-    ArrayList<String> adminStatusList = new ArrayList<>();
     ArrayList<String> userKeyList = new ArrayList<>();
-    ArrayList<User> mGroupMembersList = new ArrayList<>();
+    ArrayList<User> groupMembersList = new ArrayList<>();
 
-    HashMap<String, String> memberMap = new HashMap<>();
-    HashMap<String, String> currentUserMap = new HashMap<>();
     HashMap<String, ParcelableGeoPoint> mParcelableGeoPointList = new HashMap<>();
 
     ArrayAdapter<String> adapter;
+
+    GroupMember groupMember = new GroupMember();
 
     AutoCompleteTextView mGroupMembersSearchAtv;
 
@@ -65,7 +72,7 @@ public class GroupsActivity extends BaseActivity implements
 
     RecyclerView groupMembersRecyclerView;
 
-    GroupActivityFriendsAdapter mGroupActivityFriendsAdapter;
+    GroupActivityFriendsAdapter groupActivityFriendsAdapter;
 
     FirebaseFirestore mFirestore;
     FirebaseUser mUser;
@@ -83,8 +90,9 @@ public class GroupsActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
         setUpToolbar(this);
-        mGroupName = getIntent().getStringExtra(Constants.GROUP_NAME);
-        //mGroupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
+        groupName = getIntent().getStringExtra(Constants.GROUP_NAME);
+        groupKey = getIntent().getStringExtra(Constants.GROUP_KEY);
+        //groupMembersList = getIntent().getParcelableArrayListExtra(Constants.GROUP_MEMBERS_LIST);
 
         initFirebase();
 
@@ -164,9 +172,9 @@ public class GroupsActivity extends BaseActivity implements
             case R.id.location_sharing_layout:
 
                 if (locationStatus.equals("false")) {
-                    currentUserMap.put("location", "true");
+                    groupMember.setLocation("true");
                 } else if (locationStatus.equals("true")) {
-                    currentUserMap.put("location", "false");
+                    groupMember.setLocation("false");
                 }
                 break;
 
@@ -199,7 +207,7 @@ public class GroupsActivity extends BaseActivity implements
         mGroupMembersSearchAtv.setAdapter(adapter);
 
         mGroupNameTv = findViewById(R.id.text_group_name);
-        mGroupNameTv.setText(mGroupName.substring(0, mGroupName.indexOf("+")));
+        mGroupNameTv.setText(groupName);
         mGroupNameTv.setOnClickListener(this);
 
         mLocationSharingLayout = findViewById(R.id.location_sharing_layout);
@@ -220,9 +228,9 @@ public class GroupsActivity extends BaseActivity implements
         groupMembersRecyclerView.addItemDecoration(new RecyclerViewDivider(this,
                 ContextCompat.getColor(this, R.color.md_blue_grey_200), 0.5f));
 
-        mGroupActivityFriendsAdapter = new GroupActivityFriendsAdapter(mGroupMembersList, adminStatusList);
-        mGroupActivityFriendsAdapter.setOnRecyclerViewItemClickListener(GroupsActivity.this);
-        groupMembersRecyclerView.setAdapter(mGroupActivityFriendsAdapter);
+        groupActivityFriendsAdapter = new GroupActivityFriendsAdapter(groupMembersList, userKeyList);
+        groupActivityFriendsAdapter.setOnRecyclerViewItemClickListener(GroupsActivity.this);
+        groupMembersRecyclerView.setAdapter(groupActivityFriendsAdapter);
     }
 
     private void setUpBottomSheet() {
@@ -236,10 +244,10 @@ public class GroupsActivity extends BaseActivity implements
 
     private void populateSearch() {
 
-        MEMBERS = new String[mGroupMembersList.size()];
+        MEMBERS = new String[groupMembersList.size()];
 
         for (int i = 0; i < MEMBERS.length; i++) {
-            MEMBERS[i] = mGroupMembersList.get(i).getDisplayName();
+            MEMBERS[i] = groupMembersList.get(i).getDisplayName();
         }
     }
 
@@ -258,22 +266,39 @@ public class GroupsActivity extends BaseActivity implements
     private void getFriends() {
 
         mFirestore.collection(Constants.GROUPS_REFERENCE)
-                .document(mGroupName)
+                .document(groupKey)
+                .collection("GroupDetails")
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        for (DocumentSnapshot groupSnapshot : task.getResult()) {
+
+                            Group group = groupSnapshot.toObject(Group.class);
+                            adminKeyList = group.getAdmin();
+                            Log.d("TAG", group.getAdmin().size()+"");
+                            groupActivityFriendsAdapter.setAdminList(adminKeyList);
+                         }
+                    }
+                });
+
+        mFirestore.collection(Constants.GROUPS_REFERENCE)
+                .document(groupKey)
+                .collection("GroupMembers")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                         if (task.isSuccessful()) {
 
-                            final DocumentSnapshot document = task.getResult();
+                            for (final DocumentSnapshot document : task.getResult()) {
 
-                            if (document != null && document.exists()) {
-
-                                for (final String member : document.getData().keySet()) {
+                                if (document != null && document.exists()) {
 
                                     mFirestore.collection(Constants.LOCATION_REFERENCE)
-                                            .document(member)
+                                            .document(document.getId())
                                             .get()
                                             .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
@@ -285,7 +310,7 @@ public class GroupsActivity extends BaseActivity implements
 
                                                         if (snapshot != null && snapshot.exists()) {
 
-                                                            mParcelableGeoPointList.put(member, snapshot.toObject(ParcelableGeoPoint.class));
+                                                            mParcelableGeoPointList.put(document.getId(), snapshot.toObject(ParcelableGeoPoint.class));
 
                                                             if (mLocationSentListener != null) {
                                                                 mLocationSentListener.passLocationToFragment(mParcelableGeoPointList);
@@ -296,7 +321,7 @@ public class GroupsActivity extends BaseActivity implements
                                             });
 
                                     mFirestore.collection(Constants.USERS_REFERENCE)
-                                            .document(member)
+                                            .document(document.getId())
                                             .get()
                                             .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
@@ -304,28 +329,20 @@ public class GroupsActivity extends BaseActivity implements
 
                                                     if (task.isSuccessful()) {
 
-                                                        DocumentSnapshot snapshot = task.getResult();
+                                                        final DocumentSnapshot snapshot = task.getResult();
 
                                                         if (snapshot != null && snapshot.exists()) {
 
-                                                            memberMap = (HashMap<String, String>) document.getData().get(member);
-                                                            if (memberMap.get("admin").equals("true")) {
-
-                                                                if (member.equals(mUser.getUid())) {
-                                                                    mAddMemberLayout.setVisibility(View.VISIBLE);
-                                                                } else {
-                                                                    mAddMemberLayout.setVisibility(View.GONE);
-                                                                }
-                                                                adminStatusList.add("true");
+                                                            if (adminKeyList.contains(snapshot.getId())) {
+                                                                mAddMemberLayout.setVisibility(View.VISIBLE);
                                                             } else {
-
-                                                                adminStatusList.add("false");
+                                                                mAddMemberLayout.setVisibility(View.GONE);
                                                             }
 
-                                                            setLocationLayoutVisibility(member, memberMap);
-                                                            userKeyList.add(member);
-                                                            mGroupMembersList.add(snapshot.toObject(User.class));
-                                                            mGroupActivityFriendsAdapter.notifyDataSetChanged();
+                                                            setLocationLayoutVisibility(document.getId(), document.toObject(GroupMember.class));
+                                                            userKeyList.add(document.getId());
+                                                            groupMembersList.add(snapshot.toObject(User.class));
+                                                            groupActivityFriendsAdapter.notifyDataSetChanged();
                                                         }
                                                     }
                                                 }
@@ -337,12 +354,11 @@ public class GroupsActivity extends BaseActivity implements
                 });
     }
 
-    private void setLocationLayoutVisibility(String member, HashMap<String, String> memberMap) {
+    private void setLocationLayoutVisibility(String member, GroupMember groupMember) {
 
         if (member.equals(mUser.getUid())) {
 
-            currentUserMap = memberMap;
-            if (memberMap.get("location").equals("false")) {
+            if (groupMember.getLocation().equals("false")) {
 
                 locationStatus = "false";
                 mLocationSharingLayout.setVisibility(View.VISIBLE);

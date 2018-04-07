@@ -68,7 +68,7 @@ public class UserGroupFragmentAdapter extends RecyclerView.Adapter<UserGroupFrag
 
         void bindView(String name) {
 
-            mDisplayNameTv.setText(name.substring(0, name.indexOf("+")));
+            mDisplayNameTv.setText(name);
             //mUsernameTv.setText(user.getUsername());
             Picasso.with(itemView.getContext())
                     .load("https://www.w3schools.com/css/trolltunga.jpg")

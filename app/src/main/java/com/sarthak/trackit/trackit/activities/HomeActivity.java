@@ -330,7 +330,7 @@ public class HomeActivity extends BaseActivity implements
                             .replace(R.id.home_page_container, friendsFragment, "friend")
                             .addToBackStack(null)
                             .commit();
-                    createFriendOrGroupBtn.setVisibility(View.VISIBLE);
+                    createFriendOrGroupBtn.setVisibility(View.GONE);
                     break;
             }
 
